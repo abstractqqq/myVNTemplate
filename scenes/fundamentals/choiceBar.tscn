@@ -8,15 +8,15 @@
 [ext_resource path="res://scenes/fundamentals/choiceBar.gd" type="Script" id=6]
 
 [sub_resource type="DynamicFont" id=1]
-size = 18
+size = 20
 font_data = ExtResource( 4 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 18
+size = 20
 font_data = ExtResource( 5 )
 
 [sub_resource type="DynamicFont" id=3]
-size = 18
+size = 20
 font_data = ExtResource( 3 )
 
 [node name="choiceBar" type="TextureButton"]
@@ -32,8 +32,8 @@ __meta__ = {
 }
 
 [node name="text" type="RichTextLabel" parent="."]
-margin_left = 20.0
-margin_top = 16.0
+margin_left = 18.0
+margin_top = 14.0
 margin_right = 250.0
 margin_bottom = 42.0
 rect_min_size = Vector2( 230, 0 )

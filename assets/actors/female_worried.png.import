@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/test2_default2.png-edce1402886a16248141e504c40bc225.stex"
+path="res://.import/female_worried.png-e6ede0ab3ccce16e4dc07581735b3519.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/test2_default2.png"
-dest_files=[ "res://.import/test2_default2.png-edce1402886a16248141e504c40bc225.stex" ]
+source_file="res://assets/actors/female_worried.png"
+dest_files=[ "res://.import/female_worried.png-e6ede0ab3ccce16e4dc07581735b3519.stex" ]
 
 [params]
 

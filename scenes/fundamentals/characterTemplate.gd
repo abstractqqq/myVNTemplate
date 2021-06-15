@@ -21,6 +21,7 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 var display_name = null
 var unique_id = null
 var expression_mapping = {}
+var anim_mapping = {}
 var current_expression = ""
 var on_stage = false
 var default_color = null
@@ -47,6 +48,7 @@ func change_expression(expression : String) -> bool:
 	if expression == "":
 		expression = 'default'
 	
+	self.visible = true
 	if expression_mapping.has(expression):
 		self.texture = load(vn.CHARA_DIR + expression_mapping[expression])
 		current_expression = expression
@@ -143,7 +145,7 @@ func reset():
 func fadein(time : float):
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "modulate", Color(0.86,0.86,0.86,0), Color(0.86,0.86,0.86,1), time,
+	tween.interpolate_property(self, "modulate", Color(0.86,0.86,0.86,0), vn.DIM, time,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
@@ -152,7 +154,7 @@ func fadein(time : float):
 func fadeout(time : float):
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "modulate", Color(0.86,0.86,0.86,1), Color(0.86,0.86,0.86,0), time,
+	tween.interpolate_property(self, "modulate", vn.DIM, Color(0.86,0.86,0.86,0), time,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")

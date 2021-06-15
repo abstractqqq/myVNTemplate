@@ -52,7 +52,9 @@ screenEffects="*res://scenes/fundamentals/details/ScreenEffects.tscn"
 
 window/size/width=1920
 window/size/height=1080
+window/dpi/allow_hidpi=true
 window/stretch/mode="2d"
+window/stretch/aspect="keep"
 
 [input]
 
@@ -81,4 +83,3 @@ ui_accpet={
 
 environment/default_clear_color=Color( 0.113725, 0.0941176, 0.0941176, 1 )
 environment/default_environment="res://default_env.tres"
-quality/dynamic_fonts/use_oversampling=false

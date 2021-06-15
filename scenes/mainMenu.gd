@@ -8,9 +8,8 @@ var loadScreen = preload("res://scenes/fundamentals/loadScreen.tscn")
 func _ready():
 	# no need to read quit message to quit the game in main menu
 	get_tree().set_auto_accept_quit(true)
+	OS.set_window_maximized(true)
 
-# if you want to start from a non-sample scene, then change
-# _on_newGameButoon_pressed() below
 
 func _on_exitButton_pressed():
 	get_tree().quit()

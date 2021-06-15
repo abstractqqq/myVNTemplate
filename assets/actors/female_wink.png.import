@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/test2_annoyed2.png-f82f1bb321bbe746face26e37ddfb87a.stex"
+path="res://.import/female_wink.png-424020d87f5296a83c5f58a1c65f236f.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/test2_annoyed2.png"
-dest_files=[ "res://.import/test2_annoyed2.png-f82f1bb321bbe746face26e37ddfb87a.stex" ]
+source_file="res://assets/actors/female_wink.png"
+dest_files=[ "res://.import/female_wink.png-424020d87f5296a83c5f58a1c65f236f.stex" ]
 
 [params]
 

@@ -16,7 +16,7 @@ var main_block = [
 	# start of content
 	{"bg": "busstop.jpg"},
 	{'dvar': 'money = 100'},
-	{'chara': "female fadein", 'time':3, "loc": Vector2(1600,600), "expression": ''},
+	{'chara': "female join", "loc": Vector2(1600,600), "expression": ''},
 	{"female": "Some random filler."},
 	{"female": "Even more fillers."},
 	{"female": "Let's try the pixellate transition."},

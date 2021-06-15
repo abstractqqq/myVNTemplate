@@ -1,0 +1,133 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://fonts/EBGregular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://actor_editor/actor_editor.gd" type="Script" id=2]
+
+[node name="control" type="Node2D"]
+script = ExtResource( 2 )
+
+[node name="UID" type="Control" parent="."]
+margin_left = 19.9252
+margin_top = 190.749
+margin_right = 457.925
+margin_bottom = 415.749
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="UID"]
+margin_left = 10.2379
+margin_top = 5.0
+margin_right = 189.238
+margin_bottom = 67.0
+custom_fonts/font = ExtResource( 1 )
+text = "Enter UID:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="scaleLabelx" type="Label" parent="UID"]
+margin_left = 178.048
+margin_top = 4.25085
+margin_right = 357.048
+margin_bottom = 66.2509
+custom_fonts/font = ExtResource( 1 )
+text = "Scale:x"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="scaleLabely" type="Label" parent="UID"]
+margin_left = 266.448
+margin_top = 4.25085
+margin_right = 445.449
+margin_bottom = 66.2509
+custom_fonts/font = ExtResource( 1 )
+text = "Scale:y"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEdit" type="LineEdit" parent="UID"]
+margin_left = 48.1135
+margin_top = 76.4736
+margin_right = 148.113
+margin_bottom = 106.474
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Button" type="Button" parent="UID"]
+margin_left = 48.7962
+margin_top = 127.514
+margin_right = 148.796
+margin_bottom = 147.514
+custom_fonts/font = ExtResource( 1 )
+text = "Check"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="LineEditx" type="LineEdit" parent="UID"]
+margin_left = 235.983
+margin_top = 76.4137
+margin_right = 295.983
+margin_bottom = 106.414
+
+[node name="LineEdity" type="LineEdit" parent="UID"]
+margin_left = 324.384
+margin_top = 77.1628
+margin_right = 384.384
+margin_bottom = 107.163
+
+[node name="spriteInfo" type="Control" parent="."]
+margin_left = 26.0
+margin_top = 440.0
+margin_right = 326.0
+margin_bottom = 640.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="spriteName" type="Label" parent="spriteInfo"]
+margin_left = 33.8745
+margin_top = -28.1843
+margin_right = 212.874
+margin_bottom = 33.8157
+custom_fonts/font = ExtResource( 1 )
+text = "Available Sprites:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="OptionButton" type="OptionButton" parent="spriteInfo"]
+margin_left = 39.8282
+margin_top = 35.0124
+margin_right = 239.828
+margin_bottom = 76.0128
+custom_fonts/font = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Animations" type="Control" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sprite" type="Sprite" parent="."]
+centered = false
+offset = Vector2( 1000, 0 )
+
+[connection signal="pressed" from="UID/Button" to="." method="_on_Button_pressed"]
+[connection signal="item_selected" from="spriteInfo/OptionButton" to="." method="_on_OptionButton_item_selected"]

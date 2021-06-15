@@ -62,11 +62,11 @@ func readSave(save : saveSlot) -> bool:
 	return success
 
 #-------------------------------------------------------------------------------
-func get_chara_sprites(chara_id):
+func get_chara_sprites(uid):
 	var sprites = []
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.CHARA_DIR):
-			dir.make_dir_recursive(vn.CHARA_DIR)
+		dir.make_dir_recursive(vn.CHARA_DIR)
 	
 	dir.open(vn.CHARA_DIR)
 	dir.list_dir_begin()
@@ -77,12 +77,10 @@ func get_chara_sprites(chara_id):
 			break
 		elif not pic.begins_with("."):
 			var temp = pic.split(".")
-			if temp[temp.size()-1] == "import":
-				continue
-			else:
+			var ext = temp[temp.size()-1]
+			if ext in image_exts:
 				var pic_id = (temp[0].split("_"))[0]
-				var ext = temp[1]
-				if ext in image_exts and pic_id == chara_id:
+				if pic_id == uid:
 					sprites.append(pic)
 				
 	dir.list_dir_end()

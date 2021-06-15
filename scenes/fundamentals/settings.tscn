@@ -116,7 +116,7 @@ text = "Music            "
 
 [node name="musicSettings" type="VBoxContainer" parent="musicBox"]
 margin_left = 300.0
-margin_right = 600.0
+margin_right = 500.0
 margin_bottom = 85.0
 size_flags_horizontal = 3
 __meta__ = {
@@ -124,7 +124,7 @@ __meta__ = {
 }
 
 [node name="musicVolume" type="Label" parent="musicBox/musicSettings"]
-margin_right = 300.0
+margin_right = 200.0
 margin_bottom = 36.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.109804, 0.117647, 0.517647, 1 )
@@ -137,7 +137,7 @@ __meta__ = {
 
 [node name="volumeSlider" type="HSlider" parent="musicBox/musicSettings"]
 margin_top = 40.0
-margin_right = 300.0
+margin_right = 200.0
 margin_bottom = 56.0
 min_value = -50.0
 max_value = 50.0
@@ -164,7 +164,7 @@ text = "Voice            "
 
 [node name="voiceSettings" type="VBoxContainer" parent="voiceBox"]
 margin_left = 297.0
-margin_right = 597.0
+margin_right = 500.0
 margin_bottom = 85.0
 size_flags_horizontal = 3
 __meta__ = {
@@ -172,7 +172,7 @@ __meta__ = {
 }
 
 [node name="voiceVolume" type="Label" parent="voiceBox/voiceSettings"]
-margin_right = 300.0
+margin_right = 203.0
 margin_bottom = 36.0
 custom_fonts/font = SubResource( 6 )
 custom_colors/font_color = Color( 0.109804, 0.117647, 0.517647, 1 )
@@ -185,7 +185,7 @@ __meta__ = {
 
 [node name="voiceSlider" type="HSlider" parent="voiceBox/voiceSettings"]
 margin_top = 40.0
-margin_right = 300.0
+margin_right = 203.0
 margin_bottom = 56.0
 min_value = -50.0
 max_value = 50.0
@@ -212,7 +212,7 @@ text = "Sound Effect  "
 
 [node name="effectSettings" type="VBoxContainer" parent="effectBox"]
 margin_left = 297.0
-margin_right = 597.0
+margin_right = 500.0
 margin_bottom = 85.0
 size_flags_horizontal = 3
 __meta__ = {
@@ -220,7 +220,7 @@ __meta__ = {
 }
 
 [node name="effectVolume" type="Label" parent="effectBox/effectSettings"]
-margin_right = 300.0
+margin_right = 203.0
 margin_bottom = 31.0
 custom_fonts/font = SubResource( 7 )
 custom_colors/font_color = Color( 0.109804, 0.117647, 0.517647, 1 )
@@ -233,7 +233,7 @@ __meta__ = {
 
 [node name="effectVolumeSlider" type="HSlider" parent="effectBox/effectSettings"]
 margin_top = 35.0
-margin_right = 300.0
+margin_right = 203.0
 margin_bottom = 51.0
 min_value = -50.0
 max_value = 50.0

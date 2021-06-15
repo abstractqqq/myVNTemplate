@@ -472,7 +472,7 @@ func quick_menu(ev: Dictionary):
 
 func fadein(time : float, auto_forw = true) -> void:
 	clear_boxes()
-	show_boxes()
+	if not self.nvl: show_boxes()
 	QM.visible = false
 	if not vn.skipping:
 		screenEffects.fadein(time)
@@ -489,7 +489,7 @@ func fadeout(time : float, auto_forw = true) -> void:
 		screenEffects.fadeout(time)
 		yield(get_tree().create_timer(time), "timeout")
 	QM.visible = true
-	show_boxes()
+	if not self.nvl: show_boxes()
 	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
@@ -563,7 +563,9 @@ func character_event(ev : Dictionary) -> void:
 					auto_load_next()
 				else:
 					character_fadeout(uid,ev)
-			'leave': stage.remove_chara(uid)
+			'leave': 
+				stage.remove_chara(uid)
+				auto_load_next()
 			_: vn.error('Unknown character event/action.', ev)
 		
 	else: # uid is not all, and character not on stage
@@ -588,8 +590,6 @@ func character_shake(uid:String, ev:Dictionary) -> void:
 		vn.error('Character shake effect expects an amount and a time.', ev)
 
 func join(uid : String, pos : Vector2, expression : String) -> void:
-	if expression == "":
-		expression = "default"
 	
 	var join_chara = chara.all_chara[uid]
 	stage.add_child(join_chara)
@@ -597,6 +597,7 @@ func join(uid : String, pos : Vector2, expression : String) -> void:
 	if join_chara.change_expression(expression):
 		join_chara.position = pos
 		join_chara.loc = pos
+		join_chara.modulate = vn.DIM
 		if !vn.inLoading:
 			auto_load_next()
 	else:

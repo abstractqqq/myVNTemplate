@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/female_surprised.png-62a9aba9ef94d5008c82beff87a4f8af.stex"
+path="res://.import/female_smile1.png-45a25c25ecf2fab7fc678d11f5ee4507.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/female_surprised.png"
-dest_files=[ "res://.import/female_surprised.png-62a9aba9ef94d5008c82beff87a4f8af.stex" ]
+source_file="res://assets/actors/female_smile1.png"
+dest_files=[ "res://.import/female_smile1.png-45a25c25ecf2fab7fc678d11f5ee4507.stex" ]
 
 [params]
 

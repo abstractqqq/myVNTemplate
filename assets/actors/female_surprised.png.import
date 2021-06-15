@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/test2_annoyed1.png-fafda7f673615a6819a55847a28ec593.stex"
+path="res://.import/female_surprised.png-b1a28220abede0c7d4f2e3f91bb77c98.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/characters/test2_annoyed1.png"
-dest_files=[ "res://.import/test2_annoyed1.png-fafda7f673615a6819a55847a28ec593.stex" ]
+source_file="res://assets/actors/female_surprised.png"
+dest_files=[ "res://.import/female_surprised.png-b1a28220abede0c7d4f2e3f91bb77c98.stex" ]
 
 [params]
 

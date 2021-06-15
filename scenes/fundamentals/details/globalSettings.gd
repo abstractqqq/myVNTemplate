@@ -22,14 +22,16 @@ const VOICE_DIR = "res://voice/"
 const BGM_DIR = "res://bgm/"
 const AUDIO_DIR = "res://audio/"
 const BG_DIR = "res://assets/background/"
-const CHARA_DIR = "res://assets/characters/"
+const CHARA_DIR = "res://assets/actors/"
+const CHARA_ANIM = "res://assets/actors/sprite_anim/"
 const SAVE_DIR = "user://save/"
 const THUMBNAIL_DIR = "user://temp/"
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 100
 
-# const starter_scene = "scene1" # 
+# Dim color
+const DIM = Color(0.86,0.86,0.86,1)
 
 
 # --------------------------- Game Experience Variables ------------------------
