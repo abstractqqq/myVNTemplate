@@ -1,0 +1,6 @@
+chara : a join, loc : 1200 500, expression : happy
+a : this is the world
+: the brutal world
+: that we live in.
+: "This is broken ' don't you agree? "
+:

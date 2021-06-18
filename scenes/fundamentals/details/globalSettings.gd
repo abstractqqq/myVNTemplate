@@ -25,6 +25,7 @@ const BG_DIR = "res://assets/background/"
 const CHARA_DIR = "res://assets/actors/"
 const CHARA_ANIM = "res://assets/actors/sprite_anim/"
 const SAVE_DIR = "user://save/"
+const SCRIPT_DIR = "res://scriptEditor(WIP)/scripts/"
 const THUMBNAIL_DIR = "user://temp/"
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
 const THUMBNAIL_WIDTH = 175
@@ -83,8 +84,8 @@ func error(message, ev = {}):
 	if ev.size() != 0:
 		message += "\n Possible error at event: " + str(ev)
 			
-	message += "\n Index is " + str(game.currentIndex) +\
-	" in block " + game.currentBlock
+	#message += "\n Index is " + str(game.currentIndex) +\
+	#" in block " + game.currentBlock
 	
 	push_error(message)
 	get_tree().quit()

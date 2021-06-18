@@ -34,6 +34,7 @@ func _on_Button_pressed():
 	var c = chara.all_chara[cur_uid]
 	cur_exp_mapping = c.expression_mapping
 	var keys = cur_exp_mapping.keys()
+	sprite_options.clear()
 	for i in keys:
 		sprite_options.add_item(i)
 	

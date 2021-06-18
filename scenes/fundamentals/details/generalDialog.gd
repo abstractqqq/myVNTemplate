@@ -15,14 +15,15 @@ var centered = false
 var waiting_acc = false
 var waiting_cho = false
 var just_loaded = false
+var hide_vnui = false
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/', '%']
 onready var bg = $background
 onready var vnui = $VNUI
 onready var QM = vnui.get_node('quickMenu')
 onready var nvlBox = vnui.get_node('nvlBox')
-onready var dialogbox = vnui.get_node('dialog')
-onready var speaker = vnui.get_node('speaker')
+onready var dialogbox = vnui.get_node('textBox/dialog')
+onready var speaker = vnui.get_node('nameBox/speaker')
 # signals
 signal player_accept
 
@@ -35,6 +36,16 @@ func intepret_events(event):
 	# Try to keep the code under each case <=3 lines
 	# Also keep the number of cases small. Try to repeat the use of key words.
 	if debug_mode: print("Debug :" + str(event))
+	
+	# Pre-parse
+	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
+	elif event.has('color'): event['color'] = parse_color(event['color'], event)
+	elif event.has('nvl'):
+		if event['nvl'] != 'clear': 
+			event['nvl'] = parse_true_false(event['nvl'], event)
+	elif event.has('quick_menu'): event['quick_menu'] = parse_true_false(event['quick_menu'], event)
+
+	# End of pre-parse. Actual match event
 	match event:
 		{"condition", "then", "else",..}: conditional_branch(event)
 		{"condition",..}:
@@ -125,7 +136,6 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 	else:
 		vn.error('nvl expects a boolean or the keyword clear.', ev)
 	
-
 func speech_parse(ev : Dictionary) -> void:
 	var combine = "NANITHEFUCK"
 	for k in ev.keys(): # None voice, none speed, means it has to be "uid expression"
@@ -248,6 +258,16 @@ func _input(ev):
 		# Waiting for a choice. Do nothing. Any input will be nullified.
 		# In a choice event, game resumes only when a choice button is selected.
 		return
+		
+	if ev.is_action_pressed('ui_cancel') and ev is InputEventMouseButton:
+		hide_vnui = ! hide_vnui 
+		if hide_vnui:
+			QM.visible = false
+			hide_boxes()
+		else:
+			QM.visible = true
+			show_boxes()
+			
 	
 	if ev.is_action_pressed("ui_accept") and waiting_acc:
 		if ev is InputEventMouseButton:
@@ -445,17 +465,12 @@ func check_condition(cond : String) -> bool:
 #--------------- Related to transition and other screen effects-----------------
 func screen_effects(ev: Dictionary):
 	var ef = ev['screen']
-	if typeof(ef) == 1 and ef == false:
-		screenEffects.removeTint()
-		# One lasting screen effect is allowed.
-		game.playback_events['screen'] = {}
-		auto_load_next()
-		return
-	
-	# If we require more parameters, I would love to process the parameters
-	# here. If there is no parameters like shockwave, then directly call it.
 	match ef:
+		"": 
+			screenEffects.removeTint()
+			game.playback_events['screen'] = {}
 		"tint": tint(ev)
+		"tintwave": tint(ev)
 		_: vn.error('Unknown screen effect.' , ev)
 	
 	if !vn.inLoading:
@@ -493,16 +508,15 @@ func fadeout(time : float, auto_forw = true) -> void:
 	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
-	
 	if ev.has('time') and ev.has('color'):
-		if ev.has('wave') and typeof(ev['wave']) == 1 and ev['wave']:
+		if ev['screen'] == 'tintwave':
 			screenEffects.tintWave(ev['color'], ev['time'])
-		else:
+		elif ev['screen'] == 'tint':
 			screenEffects.tint(ev['color'], ev['time'])
 			
 		game.playback_events['screen'] = ev
 	else:
-		vn.error("Tint requires color and time keywords, and one optional key wave.", ev)
+		vn.error("Tint or tintwave requires color and time keywords.", ev)
 
 # Sprite animations...
 func anim_player(ev : Dictionary) -> void:
@@ -642,7 +656,7 @@ func character_move(uid:String, ev:Dictionary):
 		elif ev['type'] == 'linear':
 			if ev.has('time'):
 				stage.change_pos_linear(uid, ev['loc'], ev['time'])
-				yield(get_tree().create_timer(ev['time']), 'timeout')
+				# yield(get_tree().create_timer(ev['time']), 'timeout')
 				auto_load_next()
 			else:
 				vn.error('Linear move expects a time.', ev)
@@ -708,6 +722,9 @@ func has_dvar(key : String) -> bool:
 		return false
 
 func check_dialog():
+	show_boxes()
+	QM.visible = true
+	hide_vnui = false
 	if dialogbox.adding:
 		dialogbox.force_finish()
 	else:
@@ -837,3 +854,44 @@ func bg_change(path: String):
 		bg.texture = load(bg_path)
 	else:
 		vn.error("p")
+
+
+#-------------------- Extra Parsing ----------------------
+func parse_loc(loc : String, ev = {}) -> Vector2:
+	var vec = loc.split(" ")
+	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
+		vn.error("Expecting value of the form float1 float2 after loc.", ev)
+	
+	return Vector2(float(vec[0]), float(vec[1]))
+
+func parse_color(color : String, ev = {}) -> Color:
+	if color.is_valid_html_color():
+		return Color(color)
+	else:
+		var vec = color.split(" ")
+		var s = vec.size()
+		var temp2 = []
+		if s == 3 or s == 4:
+			for i in s:
+				if vec[i].is_valid_float():
+					temp2.append(float(vec[i]))
+				else:
+					vn.error("Script Editor: Expecting float values for color.")
+					# we are able to finish, that means all entries valid
+			
+			if s == 3:
+				return Color(temp2[0], temp2[1], temp2[2])
+			else:
+				return Color(temp2[0], temp2[1], temp2[2], temp2[3])
+		else:
+			vn.error("Expecting value of the form flaot1 float2 float3( float4) after color.", ev)
+			return Color()
+
+func parse_true_false(truth: String, ev = {}) -> bool:
+	if truth == "true":
+		return true
+	elif truth == "false":
+		return false
+	else:
+		vn.error("Expecting true or false after this indicator.", ev)
+		return false

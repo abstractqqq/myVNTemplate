@@ -92,3 +92,4 @@ func path_valid(path : String) -> bool:
 	var exists = file.file_exists(path)
 	file.close()
 	return exists
+#------------------------ Loading Json -------------------------------
