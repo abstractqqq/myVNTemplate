@@ -3,6 +3,7 @@ onready var t = $TextEdit
 onready var na = $dialogName
 
 func _ready():
+	OS.set_window_title("Script Editor")
 	OS.set_window_size(Vector2(1280,720))
 
 func script_to_json():
@@ -36,10 +37,16 @@ func _on_saveButton_pressed():
 	to_txt()
 
 func _on_loadButton_pressed():
-	$loadScript.popup_centered()
+	$FileDialog.popup_centered()
+	$FileDialog.deselect_items()
 
-func _on_loadScript_file_selected(path):
-	t.loading = true
+
+func _on_jsonButton_pressed():
+	script_to_json()
+
+
+func _on_FileDialog_file_selected(path):
+	
 	var f = File.new()
 	var error = f.open(path, File.READ)
 	if error == OK:
@@ -50,8 +57,5 @@ func _on_loadScript_file_selected(path):
 		f.close()
 	else:
 		vn.error('Unknown error when opening script.')
-	
-	t.loading = false
 
-func _on_jsonButton_pressed():
-	script_to_json()
+

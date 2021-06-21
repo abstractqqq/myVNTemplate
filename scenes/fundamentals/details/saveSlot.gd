@@ -11,7 +11,7 @@ var raw_thumbnail_data = null
 var path = ''
 
 func _on_Button_pressed():
-	if mode == 0: # if we are accessing this in the safe screen
+	if mode == 0: # if we are accessing this in the save screen
 		if self.path != '':
 			notif.show("override")
 			var override_choice = notif.get_current_notif()
@@ -76,7 +76,7 @@ func make_save(save_path):
 		self.path = save_path
 	# else path is already assigned, no need to change anything
 	
-	var error = file.open_encrypted_with_pass(save_path, File.WRITE, "nanithefuck")
+	var error = file.open_encrypted_with_pass(save_path, File.WRITE, vn.PASSWORD)
 	if error == OK:
 		file.store_var(data)
 		file.close()

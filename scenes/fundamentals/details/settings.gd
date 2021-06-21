@@ -48,8 +48,10 @@ func _on_BackButton_pressed():
 	self.queue_free()
 	
 
-func _process(_delta):
-	if Input.is_action_pressed("ui_cancel"):
+func _input(ev):
+	var mouse_right = (ev is InputEventMouseButton) and ev.button_index == 2
+	if ev.is_action_pressed('ui_cancel') or mouse_right:
+		get_tree().set_input_as_handled()
 		vn.inSetting = false
 		self.queue_free()
 		

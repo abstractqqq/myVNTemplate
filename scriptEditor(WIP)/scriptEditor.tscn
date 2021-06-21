@@ -15,6 +15,7 @@ font_data = ExtResource( 1 )
 [node name="scriptEditor" type="ColorRect"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+input_pass_on_modal_close_click = false
 color = Color( 0.164706, 0.152941, 0.152941, 1 )
 script = ExtResource( 3 )
 __meta__ = {
@@ -71,6 +72,7 @@ margin_top = -940.0
 margin_right = 556.0
 margin_bottom = -40.0
 custom_fonts/font = ExtResource( 2 )
+custom_constants/line_spacing = 4
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
@@ -166,29 +168,17 @@ margin_right = 1000.0
 margin_bottom = 100.0
 custom_fonts/font = ExtResource( 2 )
 
-[node name="loadScript" type="FileDialog" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -960.0
-margin_top = -540.0
-margin_right = 192.0
-margin_bottom = 240.0
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_right = 953.0
+margin_bottom = 611.0
+input_pass_on_modal_close_click = false
 theme = ExtResource( 5 )
 popup_exclusive = true
 window_title = "Open a File"
 mode = 0
-filters = PoolStringArray( "*.txt ; text file", "*.json; json file" )
-current_dir = "res://scriptEditor(WIP)/scripts"
-current_file = "abc.txt"
-current_path = "res://scriptEditor(WIP)/scripts/abc.txt"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+filters = PoolStringArray( "*.txt", "*.json" )
 
-[connection signal="text_changed" from="TextEdit" to="TextEdit" method="_on_TextEdit_text_changed"]
 [connection signal="pressed" from="saveButton" to="." method="_on_saveButton_pressed"]
 [connection signal="pressed" from="jsonButton" to="." method="_on_jsonButton_pressed"]
 [connection signal="pressed" from="loadButton" to="." method="_on_loadButton_pressed"]
-[connection signal="file_selected" from="loadScript" to="." method="_on_loadScript_file_selected"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

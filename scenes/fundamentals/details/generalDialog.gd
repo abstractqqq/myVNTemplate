@@ -259,7 +259,8 @@ func _input(ev):
 		# In a choice event, game resumes only when a choice button is selected.
 		return
 		
-	if ev.is_action_pressed('ui_cancel') and ev is InputEventMouseButton:
+	#var mouse_right = (ev is InputEventMouseButton) and ev.button_index == 2
+	if (ev.is_action_pressed('ui_cancel')) and not vn.inNotif and not vn.inSetting:
 		hide_vnui = ! hide_vnui 
 		if hide_vnui:
 			QM.visible = false
@@ -267,10 +268,11 @@ func _input(ev):
 		else:
 			QM.visible = true
 			show_boxes()
-			
 	
-	if ev.is_action_pressed("ui_accept") and waiting_acc:
-		if ev is InputEventMouseButton:
+	
+	var mouse_left = (ev is InputEventMouseButton) and ev.button_index == 1
+	if (ev.is_action_pressed("ui_accept") or mouse_left) and waiting_acc:
+		if mouse_left:
 			if vn.auto_on or vn.skipping:
 				if not vn.noMouse:
 					QM.reset_auto()
@@ -280,7 +282,7 @@ func _input(ev):
 			else:
 				if not vn.noMouse and not vn.inNotif and not vn.inSetting:
 					check_dialog()
-		else: # non mouse
+		else: # not mouse
 			if vn.auto_on or vn.skipping:
 				QM.reset_auto()
 				QM.reset_skip()
@@ -346,6 +348,7 @@ func play_bgm(ev : Dictionary) -> void:
 			return
 			
 		if ev.has('fadein'):
+			print(typeof(ev['fadein']))
 			music.fadein(music_path, ev['fadein'], vol)
 			game.playback_events['bgm'] = ev
 			if !vn.inLoading:
@@ -408,7 +411,7 @@ func change_scene_to(path : String):
 	music.stop_voice()
 	QM.reset_auto()
 	QM.reset_skip()
-	var error = get_tree().change_scene(path)
+	var error = get_tree().change_scene(vn.ROOT_DIR + path)
 	if error == OK:
 		self.queue_free()
 	else:
@@ -520,7 +523,7 @@ func tint(ev : Dictionary) -> void:
 
 # Sprite animations...
 func anim_player(ev : Dictionary) -> void:
-	var target_scene = load(ev['sfx']).instance()
+	var target_scene = load(vn.ROOT_DIR + ev['sfx']).instance()
 	add_child(target_scene)
 	if ev.has('loc'): target_scene.position = ev['loc']
 	if ev.has('anim'):

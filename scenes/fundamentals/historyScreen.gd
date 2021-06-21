@@ -25,7 +25,12 @@ func _process(_delta):
 		var bar = scrollContainer.get_v_scrollbar()
 		scrollContainer.set_v_scroll(bar.max_value)
 		atBottom = true
-		
-	if Input.is_action_pressed("ui_cancel"):
+		set_process(false)
+	
+func _input(ev):
+	var mouse_right = (ev is InputEventMouseButton) and ev.button_index == 2
+	if ev.is_action_pressed('ui_cancel') or mouse_right:
+		get_tree().set_input_as_handled()
 		vn.inSetting = false
 		self.queue_free()
+		

@@ -36,7 +36,7 @@ func data2Thumbnail(img_data:PoolByteArray, format) -> ImageTexture:
 func readSave(save : saveSlot) -> bool:
 	var success = false
 	var file = File.new()
-	var error = file.open_encrypted_with_pass(save.path, File.READ, "nanithefuck")
+	var error = file.open_encrypted_with_pass(save.path, File.READ, vn.PASSWORD)
 	if error == OK:
 		success = true
 		var data = file.get_var()
@@ -93,3 +93,11 @@ func path_valid(path : String) -> bool:
 	file.close()
 	return exists
 #------------------------ Loading Json -------------------------------
+
+func load_json(path: String):
+	var f = File.new()
+	var error = f.open(vn.SCRIPT_DIR + path, File.READ)
+	if error == OK:
+		return JSON.parse(f.get_as_text()).get_result()
+	else:
+		vn.error("Unknow error when opening the json.")

@@ -10,7 +10,7 @@ var main_block = [
 	# start of content
 	{"bg": "condo.jpg"},
 	{"fadein": 2},
-	{'chara': "female join", "loc": Vector2(1600,600), "expression":""},
+	{'chara': "female join", "loc": "1600 600", "expression":""},
 	{"female smile1": "Hello. Alas, my friend disappeared."},
 	{"female smile1": "This scene is meant to show you how to change from a Godot scene " +\
 	"to another."},
