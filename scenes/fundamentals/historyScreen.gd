@@ -28,8 +28,7 @@ func _process(_delta):
 		set_process(false)
 	
 func _input(ev):
-	var mouse_right = (ev is InputEventMouseButton) and ev.button_index == 2
-	if ev.is_action_pressed('ui_cancel') or mouse_right:
+	if ev.is_action_pressed('ui_cancel') or ev.is_action_pressed('vn_cancel'):
 		get_tree().set_input_as_handled()
 		vn.inSetting = false
 		self.queue_free()

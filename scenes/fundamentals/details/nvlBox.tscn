@@ -6,15 +6,15 @@
 [ext_resource path="res://scenes/fundamentals/details/nvlBox.gd" type="Script" id=4]
 
 [sub_resource type="DynamicFont" id=1]
-size = 26
+size = 28
 font_data = ExtResource( 1 )
 
 [sub_resource type="DynamicFont" id=2]
-size = 26
+size = 28
 font_data = ExtResource( 3 )
 
 [sub_resource type="DynamicFont" id=3]
-size = 26
+size = 28
 font_data = ExtResource( 2 )
 
 [node name="nvlBox" type="RichTextLabel"]

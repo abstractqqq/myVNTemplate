@@ -77,6 +77,7 @@ func intepret_events(event):
 		{'wait'}: wait(event['wait'])
 		{'nvl'}: set_nvl(event)
 		{'GDscene'}: change_scene_to(event['GDscene'])
+		{'history', ..}: history_manipulation(event)
 		{'center'}:
 			self.centered = true
 			set_nvl({'nvl': true}, false)
@@ -213,6 +214,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 		# Only that their sprite won't be shown. And this will be pointless.
 		chara.all_chara[temp[0]].change_expression(temp[1])
 			
+	words = preprocess(words)
 	if vn.skipping: cps = 0
 	waiting_acc = true
 	if self.nvl:
@@ -259,8 +261,8 @@ func _input(ev):
 		# In a choice event, game resumes only when a choice button is selected.
 		return
 		
-	#var mouse_right = (ev is InputEventMouseButton) and ev.button_index == 2
-	if (ev.is_action_pressed('ui_cancel')) and not vn.inNotif and not vn.inSetting:
+	if (ev.is_action_pressed('ui_cancel') or ev.is_action_pressed('vn_cancel')) \
+	and not vn.inNotif and not vn.inSetting and not self.nvl:
 		hide_vnui = ! hide_vnui 
 		if hide_vnui:
 			QM.visible = false
@@ -269,10 +271,9 @@ func _input(ev):
 			QM.visible = true
 			show_boxes()
 	
-	
-	var mouse_left = (ev is InputEventMouseButton) and ev.button_index == 1
-	if (ev.is_action_pressed("ui_accept") or mouse_left) and waiting_acc:
-		if mouse_left:
+	# vn_accept is mouse left click
+	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
+		if ev.is_action_pressed('vn_accept'):
 			if vn.auto_on or vn.skipping:
 				if not vn.noMouse:
 					QM.reset_auto()
@@ -681,7 +682,26 @@ func change_weather(ev:Dictionary):
 			game.playback_events['weather'] = ev
 		auto_load_next()
 
-
+#--------------------------------- History -------------------------------------
+func history_manipulation(ev: Dictionary):
+	
+	var what = ev['history']
+	if what == "push":
+		if ev.size() != 2:
+			vn.error('History push got more fields than 2.', ev)
+		
+		for k in ev.keys():
+			if k != 'history':
+				game.history.push_back([k, preprocess(ev[k])])
+				break
+		
+	elif what == "pop":
+		game.history.pop_back()
+	else:
+		vn.error('History expects either push or pop.', ev)
+		
+	auto_load_next()
+	
 #--------------------------------- Utility -------------------------------------
 func conditional_branch(ev : Dictionary) -> void:
 	if check_condition(ev['condition']):
@@ -725,11 +745,13 @@ func has_dvar(key : String) -> bool:
 		return false
 
 func check_dialog():
-	show_boxes()
 	QM.visible = true
 	hide_vnui = false
-	if dialogbox.adding:
+	if not self.nvl and dialogbox.adding:
+		show_boxes()
 		dialogbox.force_finish()
+	elif self.nvl and nvlBox.adding:
+		nvlBox.force_finish()
 	else:
 		emit_signal("player_accept")
 
@@ -859,7 +881,7 @@ func bg_change(path: String):
 		vn.error("p")
 
 
-#-------------------- Extra Parsing ----------------------
+#-------------------- Extra Preprocessing ----------------------
 func parse_loc(loc : String, ev = {}) -> Vector2:
 	var vec = loc.split(" ")
 	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
@@ -898,3 +920,44 @@ func parse_true_false(truth: String, ev = {}) -> bool:
 	else:
 		vn.error("Expecting true or false after this indicator.", ev)
 		return false
+
+func preprocess(words : String) -> String:
+	# preprocess the input to see if there are any special things
+	# I think this is a good idea because for dialog, the sentences
+	# won't be too long.
+	var leng = words.length()
+	var output = ''
+	var i = 0
+	while i < leng:
+		var c = words[i]
+		var inner = ""
+		if c == '[':
+			i += 1
+			while words[i] != ']':
+				inner += words[i]
+				i += 1
+				if i >= leng:
+					vn.error("Please do not use square brackets " +\
+					"unless for bbcode and display dvar purposes.")
+					
+			match inner:
+				"nw":
+					if not vn.skipping:
+						if self.nvl:
+							nvlBox.nw = true
+						else:
+							dialogbox.nw = true
+				_: 
+					dialogbox.nw = false
+					nvlBox.nw = false
+					if has_dvar(inner):
+						output += str(vn.dvar[inner])
+					else:
+						output += '[' + inner + ']'
+						
+		else:
+			output += c
+			
+		i += 1
+	
+	return output

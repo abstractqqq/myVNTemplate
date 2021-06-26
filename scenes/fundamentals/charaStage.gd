@@ -60,9 +60,7 @@ func change_expression(uid:String, expression:String):
 
 func fadein(uid: String, time: float, loc: Vector2, expression:String) -> void:
 	var c = chara.all_chara[uid]
-	if c.on_stage:
-		vn.error('Cannot fadein a character that is already on stage.')
-	else:
+	if not c.on_stage:
 		add_child(c)
 		
 	c.position = loc
@@ -93,7 +91,7 @@ func set_highlight(uid : String) -> void:
 func remove_highlight() -> void:
 	for n in get_children():
 		if n.apply_highlight:
-			n.modulate = Color(0.86,0.86,0.86,1)
+			n.modulate = vn.DIM
 
 func remove_chara(uid : String):
 	if uid == 'absolute_all':

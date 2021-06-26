@@ -8,12 +8,11 @@ const default_size = Vector2(1100,800)
 const default_pos = Vector2(410,50)
 const center_size = Vector2(1100,300)
 const center_pos = Vector2(410,400)
-
 var skipCounter = 0
 var autoCounter = 0
-var new_dialog = ''
 var last_uid = ''
 var adding = false
+var new_dialog = ''
 var nw = false
 var bblength = 0 # Only used in timer to make the condition checking faster
 signal load_next
@@ -40,10 +39,9 @@ func set_dialog(uid : String, words : String, cps = vn.cps):
 	else:
 		self.bbcode_text += " "
 	
-	nw = false
-	new_dialog = preprocess(words)
 	self.visible_characters = self.text.length()
-	self.bbcode_text += new_dialog
+	self.new_dialog = words
+	self.bbcode_text += words
 	bblength = self.text.length() # latest bbcode_text.length()
 	
 	match cps:
@@ -79,41 +77,7 @@ func _on_Timer_timeout():
 			nw = false
 			emit_signal("load_next")
 
-func preprocess(words : String) -> String:
-	# preprocess the input to see if there are any dvar
-	# I think this is a good idea because for dialog purpose, the sentences
-	# won't be too long.
-	var leng = words.length()
-	var output = ''
-	var i = 0
-	while i < leng:
-		var c = words[i]
-		var inner = ""
-		if c == '[':
-			i += 1
-			while words[i] != ']':
-				inner += words[i]
-				i += 1
-				if i >= leng:
-					vn.error("Please do not use square brackets " +\
-					"unless for bbcode and display dvar purposes.")
-					
-			match inner:
-				"nw": 
-					if not vn.skipping:
-						self.nw = true
-				_: 
-					if check_dvar(inner):
-						output += str(vn.dvar[inner])
-					else:
-						output += '[' + inner + ']'
-						
-		else:
-			output += c
-			
-		i += 1
-	
-	return output
+
 
 # Call this after set_dialog, to get newly parsed words. (Pvars will be parsed
 # into text.)
@@ -138,12 +102,6 @@ func clear():
 	self.grow_horizontal = Control.GROW_DIRECTION_END
 	self.grow_vertical = Control.GROW_DIRECTION_END
 	autoCounter = 0
-
-func check_dvar(vname : String) -> bool:
-	if vn.dvar.has(vname):
-		return true
-	else:
-		return false
 
 
 func _on_autoTimer_timeout():
