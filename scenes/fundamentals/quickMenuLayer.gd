@@ -12,8 +12,12 @@ func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		notif.clear()
 		notif.show("quit")
+		reset_auto()
+		reset_skip()
 
 func _on_SettingButton_pressed():
+	reset_auto()
+	reset_skip()
 	get_parent().add_child(settingsScene.instance())
 
 
@@ -54,10 +58,14 @@ func _on_mainButton_mouse_exited():
 	vn.noMouse = false
 
 func _on_historyButton_pressed():
+	reset_auto()
+	reset_skip()
 	get_parent().add_child(historyScene.instance())
 
 
 func _on_SaveButton_pressed():
+	reset_auto()
+	reset_skip()
 	var thumbnail = get_viewport().get_texture().get_data()
 	thumbnail.flip_y()
 	thumbnail.resize(vn.THUMBNAIL_WIDTH, vn.THUMBNAIL_HEIGHT, Image.INTERPOLATE_LANCZOS)
@@ -81,13 +89,18 @@ func _on_SaveButton_pressed():
 func _on_quitButton_pressed():
 	notif.clear()
 	notif.show("quit")
+	reset_auto()
+	reset_skip()
 	
 func _on_mainButton_pressed():
 	notif.clear()
 	notif.show("main")
+	reset_auto()
+	reset_skip()
 
 
 func _on_autoButton_pressed():
+	reset_skip()
 	var auto = get_node('autoButton')
 	vn.auto_on = not vn.auto_on
 	if vn.auto_on:
@@ -137,6 +150,17 @@ func _on_loadButton_mouse_exited():
 	vn.noMouse = false
 
 func _on_loadButton_pressed():
+	reset_auto()
+	reset_skip()
 	get_parent().add_child(loadScene.instance())
 
 
+func disable_skip_auto():
+	reset_auto()
+	reset_skip()
+	get_node("autoButton").disabled = true
+	get_node("skipButton").disabled = true
+	
+func enable_skip_auto():
+	get_node("autoButton").disabled = false
+	get_node("skipButton").disabled = false

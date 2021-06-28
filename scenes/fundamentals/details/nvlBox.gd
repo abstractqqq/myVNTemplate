@@ -66,7 +66,8 @@ func force_finish():
 		timer.stop()
 		if nw:
 			nw = false
-			emit_signal("load_next")
+			if not vn.skipping:
+				emit_signal("load_next")
 
 func _on_Timer_timeout():
 	self.visible_characters += 1
@@ -105,7 +106,8 @@ func clear():
 
 
 func _on_autoTimer_timeout():
-	if vn.skipping and not nw:
+	if vn.skipping:
+		force_finish()
 		skipCounter = (skipCounter + 1)%2
 		if skipCounter == 1:
 			emit_signal("load_next")
@@ -119,3 +121,5 @@ func _on_autoTimer_timeout():
 	
 		else:
 			autoCounter = 0
+			
+		skipCounter = 0

@@ -16,7 +16,10 @@ const narrator_display_name = ''
 const main_menu_path = "res://scenes/mainMenu.tscn"
 const start_scene_path = "res://scenes/sampleScene.tscn"
 const credit_scene_path = "" # if you have one
-const ending_scene_path = "res://scenes/mainMenu.tscn" # by default, ending scene = go back to main
+const ending_scene_path = "/scenes/mainMenu.tscn" # by default, ending scene = go back to main
+# Why no res:// here? Well it's because of a legacy bug.. I don't want to revert.
+# So might as well keep it this way. It has something to do with the script editor
+# and with how GDscene works.
 # default directories
 const ROOT_DIR = "res:/"
 const VOICE_DIR = "res://voice/"
@@ -28,6 +31,7 @@ const CHARA_ANIM = "res://assets/actors/sprite_anim/"
 const SAVE_DIR = "user://save/"
 const SCRIPT_DIR = "res://VNScript/"
 const THUMBNAIL_DIR = "user://temp/"
+const FONT_DIR = "res://fonts/"
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 100

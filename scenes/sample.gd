@@ -12,6 +12,10 @@ var main_block = [
 	{'chara': 'female join', 'loc': "1600 600", 'expression':''},
 	{'female': 'Hello there. Let me introduce you to the system.'},
 	{'female': 'It is a long long long long long long long sentence.'},
+	{'female': 'Let it rain.'},
+	{'weather': 'rain'},
+	{'chara' : 'test2 fadein', 'time':2, 'loc': '300 600', 'expression':''},
+	{'test2' : "Hey."},
 	{'female': 'Let us try out the NVL mode.'},
 	{'nvl': 'true'},
 	{'female': "I just said something."},
@@ -23,10 +27,14 @@ var main_block = [
 	{'female': 'Ok, enough of that nvl nonsense.'},
 	{'center': 'Hello?'},
 	{'female': 'This is how you show centered text.'},
-	{'history': 'push', 'female': 'secret text to be added to history. And I know your money [money]'},
+	{'history': 'push', '': 'THIS IS SUPPOSED TO BE SECRET!'},
 	{'female': 'This is how you add secret text to history.'},
 	{'history': 'pop'},
-	{'female': "This is how you remove the last entry in history."}
+	{'female': "This is how you remove the last entry in history."},
+	{'bgm':'myuu-angels.mp3'},
+	{'female': 'This is how you play music.'},
+	{'female': "This is how you switch to another Godot scene."},
+	{'GDscene' : '/scenes/sampleScene2.tscn'}
 	
 ]
 
@@ -42,7 +50,6 @@ var choice_blocks = {}
 
 #---------------------------------------------------------------------
 func _ready():
-	print(main_block)
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
 	start_scene(conversation_blocks, choice_blocks, game.load_instruction)

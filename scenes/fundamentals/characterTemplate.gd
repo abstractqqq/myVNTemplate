@@ -36,13 +36,33 @@ func _init(name : String, id : String, color = Color(0,0,0,1)) -> void:
 	apply_highlight = true
 
 func autofill_expression_mapping():
+	var file2Check = File.new()
+	if file2Check.file_exists(vn.CHARA_DIR + unique_id + ".json"):
+		var error = file2Check.open(vn.CHARA_DIR + unique_id + ".json", File.READ)
+		if error == OK:
+			expression_mapping = JSON.parse(file2Check.get_as_text()).get_result()
+			file2Check.close()
+			return
+		else:
+			vn.error('Failed to load Character JSON file.')
+	
+	# Need to create new expression mapping, will only be used
+	# in editor
 	var related_sprites = fileRelated.get_chara_sprites(unique_id)
 	for na in related_sprites:
 		var temp = na.split(".")
 		temp = temp[0].split("_") # throwing out the extension
 		expression_mapping[temp[1]] = na
-		
-	#print(expression_mapping)
+	
+	# For loop ends, means that we're creating the character for the 
+	# first time. So we need to create a json.
+	var file = File.new()
+	var error = file.open(vn.CHARA_DIR + unique_id + '.json', File.WRITE)
+	if error == OK:
+		file.store_line(JSON.print(expression_mapping, '\t'))
+		file.close()
+	else:
+		vn.error('Error when saving character JSON files. (???)')
 
 func change_expression(expression : String) -> bool:
 	if expression == "":

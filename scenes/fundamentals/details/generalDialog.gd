@@ -15,6 +15,7 @@ var centered = false
 var waiting_acc = false
 var waiting_cho = false
 var just_loaded = false
+var hide_all_boxes = false
 var hide_vnui = false
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/', '%']
@@ -44,6 +45,7 @@ func intepret_events(event):
 		if event['nvl'] != 'clear': 
 			event['nvl'] = parse_true_false(event['nvl'], event)
 	elif event.has('quick_menu'): event['quick_menu'] = parse_true_false(event['quick_menu'], event)
+	elif event.has('hide_boxes'): event['hide_boxes'] = parse_true_false(event['hide_boxes'], event)
 
 	# End of pre-parse. Actual match event
 	match event:
@@ -67,12 +69,15 @@ func intepret_events(event):
 				camera_effect(event)
 		{"express"}: express(event['express'])
 		{"bgm",..}: play_bgm(event)
-		{'audio'}: play_sound(event['audio'])
+		{'audio',..}: play_sound(event)
 		{'dvar'}: set_dvar(event)
 		{'font', 'path'}: change_font(event)
 		{'sfx',..}: anim_player(event)
 		{'then',..}: then(event)
 		{'quick_menu'}: quick_menu(event)
+		{'hide_boxes'}:
+			hide_all_boxes = event['hide_boxes']
+			auto_load_next()
 		{'choice',..}: generate_choices(event)
 		{'wait'}: wait(event['wait'])
 		{'nvl'}: set_nvl(event)
@@ -164,8 +169,7 @@ func generate_choices(event: Dictionary):
 	if self.nvl:
 		nvl_off()
 	if vn.auto_on or vn.skipping:
-		QM.reset_skip() 
-		QM.reset_auto()
+		QM.disable_skip_auto()
 	waiting_cho = true
 	if event.has('voice'):
 		voice(event['voice'])
@@ -292,29 +296,28 @@ func _input(ev):
 				
 	
 func change_font(ev : Dictionary):
-	var path = ev['path']
-	if fileRelated.path_valid(path):
-		match ev['font']:
-			'normal':
-				dialogbox.add_font_override("normal_font", load(path))
-				nvlBox.add_font_override("normal_font", load(path))
-			'bold':
-				dialogbox.add_font_override("bold_font", load(path))
-				nvlBox.add_font_override("bold_font", load(path))
-			'italics':
-				dialogbox.add_font_override("bold_font", load(path))
-				nvlBox.add_font_override("bold_font", load(path))
-			'bold_italics':
-				dialogbox.add_font_override("bold_font", load(path))
-				nvlBox.add_font_override("bold_font", load(path))
-			'mono':
-				dialogbox.add_font_override("mono_font", load(path))
-				nvlBox.add_font_override("mono_font", load(path))
-			_: vn.error("Unknown font style (Use normal, bold, italics, bold_italics or mono.).", ev)
+	var path = vn.FONT_DIR + ev['path']
+	
+	match ev['font']:
+		'normal':
+			dialogbox.add_font_override("normal_font", load(path))
+			nvlBox.add_font_override("normal_font", load(path))
+		'bold':
+			dialogbox.add_font_override("bold_font", load(path))
+			nvlBox.add_font_override("bold_font", load(path))
+		'italics':
+			dialogbox.add_font_override("bold_font", load(path))
+			nvlBox.add_font_override("bold_font", load(path))
+		'bold_italics':
+			dialogbox.add_font_override("bold_font", load(path))
+			nvlBox.add_font_override("bold_font", load(path))
+		'mono':
+			dialogbox.add_font_override("mono_font", load(path))
+			nvlBox.add_font_override("mono_font", load(path))
+		_: vn.error("Unknown font style (Use normal, bold, italics, bold_italics or mono.).", ev)
 			
-		auto_load_next()
-	else:
-		vn.error("p", ev)
+	auto_load_next()
+	
 	
 #------------------------ Related to Music and Sound ---------------------------
 func play_bgm(ev : Dictionary) -> void:
@@ -340,53 +343,52 @@ func play_bgm(ev : Dictionary) -> void:
 	var vol = 0
 	if ev.has('vol'): vol = ev['vol']
 	var music_path = vn.BGM_DIR + path
-	if fileRelated.path_valid(music_path):
-		if ev.size() == 1: # only a path is provided
-			music.play_bgm(music_path, vol)
-			game.playback_events['bgm'] = ev
-			if !vn.inLoading:
-				auto_load_next()
-			return
+	if not ev.has('fadein'): # has path or volume
+		music.play_bgm(music_path, vol)
+		game.playback_events['bgm'] = ev
+		if !vn.inLoading:
+			auto_load_next()
+		return
 			
-		if ev.has('fadein'):
-			print(typeof(ev['fadein']))
-			music.fadein(music_path, ev['fadein'], vol)
-			game.playback_events['bgm'] = ev
-			if !vn.inLoading:
-				auto_load_next()
-			return
-		else:
-			vn.error('If fadein is intended, please supply a time. Otherwise, unknown '+\
-			'keyword format.', ev)
+	if ev.has('fadein'):
+		
+		music.fadein(music_path, ev['fadein'], vol)
+		game.playback_events['bgm'] = ev
+		if !vn.inLoading:
+			auto_load_next()
+		return
 	else:
-		vn.error('p', ev)
+		vn.error('If fadein is intended, please supply a time. Otherwise, unknown '+\
+		'keyword format.', ev)
 	
-func play_sound(path : String) -> void:
-	var audio_path = vn.AUDIO_DIR + path
-	if fileRelated.path_valid(audio_path):
-		music.play_sound(audio_path)
-		auto_load_next()
-	else:
-		vn.error("p")
+	
+func play_sound(ev :Dictionary) -> void:
+	var audio_path = vn.AUDIO_DIR + ev['audio']
+	var vol = 0
+	if ev.has('vol'): vol = ev['vol'] 
+	music.play_sound(audio_path, vol)
+	auto_load_next()
+	
 		
 func voice(path:String) -> void:
 	var voice_path = vn.VOICE_DIR + path
-	if fileRelated.path_valid(voice_path):
-		music.play_voice(voice_path)
-		# DO NOT AUTO LOAD FOR VOICE BECAUSE VOICE ONLY COMES
-		# FROM SPEECH EVENT OR CHOICE EVENT
-	else:
-		vn.error('p')
+	music.play_voice(voice_path)
+	# DO NOT AUTO LOAD FOR VOICE BECAUSE VOICE ONLY COMES
+	# FROM SPEECH EVENT OR CHOICE EVENT
+	
+	
 #------------------- Related to Background and Godot Scene Change ----------------------
 func change_background(ev : Dictionary) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg_change(path)
 	elif ev.has('fade'):
-		var t = float(ev['fade'])
-		fadeout(t/2, false)
+		var t = float(ev['fade'])/2
+		fadeout(t, false)
+		yield(get_tree().create_timer(t), 'timeout')
 		bg_change(path)
-		fadein(t/2, false)
+		fadein(t, false)
+		yield(get_tree().create_timer(t), 'timeout')
 	elif ev.has('pixellate'):
 		var t = float(ev['pixellate'])/2
 		screenEffects.pixel_out(t)
@@ -410,6 +412,7 @@ func change_background(ev : Dictionary) -> void:
 func change_scene_to(path : String):
 	stage.remove_chara('absolute_all')
 	music.stop_voice()
+	screenEffects.weather_off()
 	QM.reset_auto()
 	QM.reset_skip()
 	var error = get_tree().change_scene(vn.ROOT_DIR + path)
@@ -680,6 +683,7 @@ func change_weather(ev:Dictionary):
 			game.playback_events['weather'] = {}
 		else:
 			game.playback_events['weather'] = ev
+		
 		auto_load_next()
 
 #--------------------------------- History -------------------------------------
@@ -760,8 +764,9 @@ func hide_boxes():
 	vnui.get_node('nameBox').visible = false
 
 func show_boxes():
-	vnui.get_node('textBox').visible = true
-	vnui.get_node('nameBox').visible = true
+	if not hide_all_boxes:
+		vnui.get_node('textBox').visible = true
+		vnui.get_node('nameBox').visible = true
 
 func clear_boxes():
 	speaker.bbcode_text = ''
@@ -769,6 +774,7 @@ func clear_boxes():
 
 func wait(time : float) -> void:
 	if vn.skipping:
+		auto_load_next()
 		return
 	if time >= 0.1:
 		time = stepify(time, 0.1)
@@ -778,6 +784,7 @@ func wait(time : float) -> void:
 		vn.error('Wait time has to be 0.1s or longer.')
 
 func on_choice_made(ev : Dictionary) -> void:
+	QM.enable_skip_auto()
 	for n in vnui.get_node('choiceContainer').get_children():
 		n.queue_free()
 	
@@ -875,21 +882,24 @@ func trigger_accept():
 
 func bg_change(path: String):
 	var bg_path = vn.BG_DIR + path
-	if fileRelated.path_valid(bg_path):
-		bg.texture = load(bg_path)
-	else:
-		vn.error("p")
+	bg.texture = load(bg_path)
+
 
 
 #-------------------- Extra Preprocessing ----------------------
-func parse_loc(loc : String, ev = {}) -> Vector2:
+func parse_loc(loc, ev = {}) -> Vector2:
+	if typeof(loc) == 5: # 5 = loc 
+		return loc
+	
 	var vec = loc.split(" ")
 	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
 		vn.error("Expecting value of the form float1 float2 after loc.", ev)
 	
 	return Vector2(float(vec[0]), float(vec[1]))
 
-func parse_color(color : String, ev = {}) -> Color:
+func parse_color(color, ev = {}) -> Color:
+	if typeof(color) == 14: # 14 = color
+		return color
 	if color.is_valid_html_color():
 		return Color(color)
 	else:
@@ -912,7 +922,9 @@ func parse_color(color : String, ev = {}) -> Color:
 			vn.error("Expecting value of the form flaot1 float2 float3( float4) after color.", ev)
 			return Color()
 
-func parse_true_false(truth: String, ev = {}) -> bool:
+func parse_true_false(truth, ev = {}) -> bool:
+	if typeof(truth) == 1: # 1 = bool
+		return truth
 	if truth == "true":
 		return true
 	elif truth == "false":
@@ -947,6 +959,9 @@ func preprocess(words : String) -> String:
 							nvlBox.nw = true
 						else:
 							dialogbox.nw = true
+				
+				"nl":
+					output += "\n"
 				_: 
 					dialogbox.nw = false
 					nvlBox.nw = false

@@ -63,6 +63,7 @@ func readSave(save : saveSlot) -> bool:
 
 #-------------------------------------------------------------------------------
 func get_chara_sprites(uid):
+	
 	var sprites = []
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.CHARA_DIR):
@@ -98,6 +99,8 @@ func load_json(path: String):
 	var f = File.new()
 	var error = f.open(vn.SCRIPT_DIR + path, File.READ)
 	if error == OK:
-		return JSON.parse(f.get_as_text()).get_result()
+		var t = JSON.parse(f.get_as_text()).get_result()
+		f.close()
+		return t
 	else:
 		vn.error("Unknow error when opening the json.")
