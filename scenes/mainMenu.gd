@@ -19,7 +19,7 @@ func _on_settingsButton_pressed():
 
 func _on_newGameButton_pressed():
 	game.load_instruction = "new_game"
-	var error = get_tree().change_scene(vn.start_scene_path)
+	var error = get_tree().change_scene(vn.ROOT_DIR + vn.start_scene_path)
 	if error == OK:
 		self.queue_free()
 

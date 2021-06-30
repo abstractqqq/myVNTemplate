@@ -40,6 +40,7 @@ func readSave(save : saveSlot) -> bool:
 	if error == OK:
 		success = true
 		var data = file.get_var()
+		print(data)
 		game.currentSaveDesc = data['currentSaveDesc']
 		game.currentIndex = data['currentIndex']
 		game.currentNodePath = data['currentNodePath']

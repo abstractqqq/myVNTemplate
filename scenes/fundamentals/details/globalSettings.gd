@@ -13,13 +13,12 @@ var max_dialog_display = 300 # only display 300.
 const narrator_UID = ''
 const narrator_display_name = ''
 # paths
-const main_menu_path = "res://scenes/mainMenu.tscn"
-const start_scene_path = "res://scenes/sampleScene.tscn"
+const main_menu_path = "/scenes/mainMenu.tscn"
+const start_scene_path = "/scenes/sampleScene.tscn"
 const credit_scene_path = "" # if you have one
 const ending_scene_path = "/scenes/mainMenu.tscn" # by default, ending scene = go back to main
-# Why no res:// here? Well it's because of a legacy bug.. I don't want to revert.
-# So might as well keep it this way. It has something to do with the script editor
-# and with how GDscene works.
+# 
+
 # default directories
 const ROOT_DIR = "res:/"
 const VOICE_DIR = "res://voice/"
@@ -40,7 +39,8 @@ const PASSWORD = "nanithefuck"
 
 # Dim color
 const DIM = Color(0.86,0.86,0.86,1)
-
+const CENTER_DIM = Color(0.7,0.7,0.7,1)
+const NVL_DIM = Color(0.2,0.2,0.2,1)
 
 # --------------------------- Game Experience Variables ------------------------
 # can be changed in game

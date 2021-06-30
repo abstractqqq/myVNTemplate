@@ -17,6 +17,7 @@ var waiting_cho = false
 var just_loaded = false
 var hide_all_boxes = false
 var hide_vnui = false
+var no_right_click = false
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/', '%']
 onready var bg = $background
@@ -31,14 +32,18 @@ signal player_accept
 #--------------------------------- Intepretor ----------------------------------
 
 func load_event_at_index(ind : int) -> void:
-	intepret_events(current_block[ind])
+	if ind >= current_block.size():
+		print("IMPORTANT: THERE IS NO PROPER END OF BLOCK EVENT. GOING BACK TO MAIN MENU.")
+		change_scene_to(vn.ending_scene_path)
+	else:
+		intepret_events(current_block[ind])
 
 func intepret_events(event):
 	# Try to keep the code under each case <=3 lines
 	# Also keep the number of cases small. Try to repeat the use of key words.
 	if debug_mode: print("Debug :" + str(event))
 	
-	# Pre-parse
+	# Pre-parse, keep this at minimum
 	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
 	elif event.has('color'): event['color'] = parse_color(event['color'], event)
 	elif event.has('nvl'):
@@ -78,6 +83,7 @@ func intepret_events(event):
 		{'hide_boxes'}:
 			hide_all_boxes = event['hide_boxes']
 			auto_load_next()
+		{"system"}: system(event)
 		{'choice',..}: generate_choices(event)
 		{'wait'}: wait(event['wait'])
 		{'nvl'}: set_nvl(event)
@@ -105,6 +111,7 @@ func start_scene(blocks : Dictionary, choices: Dictionary, load_instruction : St
 		game.currentIndex = 0
 		game.currentBlock = 'starter' # this is the name corresponding to the array
 	elif load_instruction == "load_game":
+		game.load_instruction = "new_game" # reset after loading
 		current_index = game.currentIndex
 		current_block = blocks[game.currentBlock]
 		load_playback(game.playback_events)
@@ -260,20 +267,35 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	# If this is a question, then displaying the text is all we need.
 
 func _input(ev):
+	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif:
+		QM._on_historyButton_pressed()
+		return
+	
 	if waiting_cho:
 		# Waiting for a choice. Do nothing. Any input will be nullified.
 		# In a choice event, game resumes only when a choice button is selected.
 		return
 		
 	if (ev.is_action_pressed('ui_cancel') or ev.is_action_pressed('vn_cancel')) \
-	and not vn.inNotif and not vn.inSetting and not self.nvl:
+	and not vn.inNotif and not vn.inSetting and not no_right_click:
 		hide_vnui = ! hide_vnui 
 		if hide_vnui:
 			QM.visible = false
 			hide_boxes()
+			nvlBox.visible = false
+			if self.nvl:
+				dimming(Color(1,1,1,1))
 		else:
 			QM.visible = true
-			show_boxes()
+			if self.nvl:
+				nvlBox.visible = true
+				if self.centered:
+					dimming(vn.CENTER_DIM)
+				else:
+					dimming(vn.NVL_DIM)
+			else:
+				show_boxes()
+
 	
 	# vn_accept is mouse left click
 	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
@@ -412,6 +434,8 @@ func change_background(ev : Dictionary) -> void:
 func change_scene_to(path : String):
 	stage.remove_chara('absolute_all')
 	music.stop_voice()
+	if path == vn.main_menu_path:
+		music.stop_bgm()
 	screenEffects.weather_off()
 	QM.reset_auto()
 	QM.reset_skip()
@@ -751,11 +775,21 @@ func has_dvar(key : String) -> bool:
 func check_dialog():
 	QM.visible = true
 	hide_vnui = false
-	if not self.nvl and dialogbox.adding:
-		show_boxes()
-		dialogbox.force_finish()
-	elif self.nvl and nvlBox.adding:
+	if hide_vnui:
+		hide_vnui = false
+		if self.nvl:
+			nvlBox.visible = true
+			if self.centered:
+				dimming(vn.CENTER_DIM)
+			else:
+				dimming(vn.NVL_DIM)
+		else:
+			show_boxes()
+	
+	if self.nvl and nvlBox.adding:
 		nvlBox.force_finish()
+	elif not self.nvl and dialogbox.adding:
+		dialogbox.force_finish()
 	else:
 		emit_signal("player_accept")
 
@@ -868,24 +902,78 @@ func nvl_on():
 	nvlBox.get_node('autoTimer').start()
 	if centered:
 		nvlBox.center_mode()
-		get_node('background').modulate = Color(0.7,0.7,0.7,1)
-		stage.set_modulate_4_all(Color(0.7,0.7,0.7,1))
+		get_node('background').modulate = vn.CENTER_DIM
+		stage.set_modulate_4_all(vn.CENTER_DIM)
 	else:
-		get_node('background').modulate = Color(0.2,0.2,0.2,1)
-		stage.set_modulate_4_all(Color(0.2,0.2,0.2,1))
+		get_node('background').modulate = vn.NVL_DIM
+		stage.set_modulate_4_all(vn.NVL_DIM)
 	
 	self.nvl = true
 
 func trigger_accept():
 	if not waiting_cho:
 		emit_signal("player_accept")
+		if hide_vnui:
+			QM.visible = true
+			if self.nvl:
+				nvlBox.visible = true
+				if self.centered:
+					dimming(vn.CENTER_DIM)
+				else:
+					dimming(vn.NVL_DIM)
+			else:
+				show_boxes()
+		
 
 func bg_change(path: String):
 	var bg_path = vn.BG_DIR + path
 	bg.texture = load(bg_path)
 
+func dimming(c : Color):
+	get_node('background').modulate = c
+	stage.set_modulate_4_all(c)
+
+func system(ev : Dictionary):
+	if ev.size != 1:
+		vn.error("System event only receives one field.")
+	
+	var all = false
+	var k = ev.keys()[0]
+	var temp = ev[k].split(" ")
+	match temp[0]:
+		"all":
+			all = true
+			continue
+		
+		"right_click":
+			if temp[1] == "on":
+				self.no_right_click = false
+			elif temp[1] == "off":
+				self.no_right_click = true
+			if all:
+				continue
+				
+		"quick_menu":
+			if temp[1] == "on":
+				QM.visible = true
+				QM.hiding = false
+			elif temp[1] == "off":
+				QM.visible = false
+				QM.hiding = true
+			if all:
+				continue
+		
+		"textbox":
+			if temp[1] == "on":
+				hide_all_boxes = false
+			elif temp[1] == "off":
+				hide_all_boxes = true
+			if all:
+				continue
 
 
+	auto_load_next()
+	
 #-------------------- Extra Preprocessing ----------------------
 func parse_loc(loc, ev = {}) -> Vector2:
 	if typeof(loc) == 5: # 5 = loc 
