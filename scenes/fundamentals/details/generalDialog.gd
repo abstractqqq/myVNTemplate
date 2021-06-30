@@ -17,6 +17,7 @@ var waiting_cho = false
 var just_loaded = false
 var hide_all_boxes = false
 var hide_vnui = false
+var no_scroll = false
 var no_right_click = false
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/', '%']
@@ -267,7 +268,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	# If this is a question, then displaying the text is all we need.
 
 func _input(ev):
-	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif:
+	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
 		QM._on_historyButton_pressed()
 		return
 	
@@ -934,24 +935,17 @@ func dimming(c : Color):
 	stage.set_modulate_4_all(c)
 
 func system(ev : Dictionary):
-	if ev.size != 1:
+	if ev.size() != 1:
 		vn.error("System event only receives one field.")
 	
-	var all = false
 	var k = ev.keys()[0]
 	var temp = ev[k].split(" ")
 	match temp[0]:
-		"all":
-			all = true
-			continue
-		
 		"right_click":
 			if temp[1] == "on":
 				self.no_right_click = false
 			elif temp[1] == "off":
 				self.no_right_click = true
-			if all:
-				continue
 				
 		"quick_menu":
 			if temp[1] == "on":
@@ -960,16 +954,32 @@ func system(ev : Dictionary):
 			elif temp[1] == "off":
 				QM.visible = false
 				QM.hiding = true
-			if all:
-				continue
 		
 		"textbox":
 			if temp[1] == "on":
 				hide_all_boxes = false
 			elif temp[1] == "off":
 				hide_all_boxes = true
-			if all:
-				continue
+				
+		"scroll":
+			if temp[1] == "on":
+				no_scroll = false
+			elif temp[1] == "off":
+				no_scroll = true
+				
+		"all":
+			if temp[1] == "on":
+				no_scroll = false
+				hide_all_boxes = false
+				QM.visible = true
+				QM.hiding = false
+				self.no_right_click = false
+			elif temp[1] == "off":
+				no_scroll = true
+				hide_all_boxes = true
+				QM.visible = false
+				QM.hiding = true
+				no_right_click = true
 
 
 	auto_load_next()
