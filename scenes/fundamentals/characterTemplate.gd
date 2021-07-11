@@ -182,12 +182,13 @@ func fadeout(time : float):
 	stage.remove_chara(unique_id)
 	
 	
-func change_pos_linear(loca:Vector2, time:float):
+func change_pos_2(loca:Vector2, time:float, mode = "linear"):
 	self.loc = loca
+	var m = fun.movement_type(mode)
 	var tween = Tween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "position", self.position, loca, time,
-		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+		m, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()

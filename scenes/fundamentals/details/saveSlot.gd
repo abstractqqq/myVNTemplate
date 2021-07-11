@@ -57,6 +57,7 @@ func make_save(save_path):
 	# actual saving process
 		
 	# Actual save
+	game.get_camera() # get latest camera data
 	game.get_latest_nvl() # get current nvl text.
 	game.get_latest_onstage() # get current on stage characters.
 	var data = {'currentNodePath':game.currentNodePath, 'currentBlock': game.currentBlock,\

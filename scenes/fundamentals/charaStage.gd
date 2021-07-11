@@ -2,6 +2,17 @@ extends CanvasLayer
 
 # Only put actors as children of this singleton.
 
+# In defense of this seemingly redundant design:
+# This singleton might seem useless, because in reality you can put these
+# functions in general dialog, instead of using stage.some_function()...
+# (Since gameCharacter.gd is again a singleton...)
+
+# However, that will make code in generalDialog.gd unncesaarily long.
+# Here, we can offload some commands, like character actions with "all".
+# Another point is that I need a stage singleton to control all 
+# characters on stage (conveniently!). So I might as well use it as a 
+# "midway" point where I can call from anywhere.
+
 
 func is_on_stage(uid : String) -> bool:
 	var c = chara.all_chara[uid]
@@ -42,10 +53,12 @@ func change_pos(uid:String, loca:Vector2): # instant position change.
 		print("Attempted to move a character with uid " + uid + " who's not on "+\
 		"stage. Nothing is done.")
 
-func change_pos_linear(uid:String, loca:Vector2, time:float):
+# If you're mad about how little this function does, see my comment at the
+# top
+func change_pos_2(uid:String, loca:Vector2, time:float, mode):
 	var c = chara.all_chara[uid]
 	if c.on_stage:
-		c.change_pos_linear(loca, time)
+		c.change_pos_2(loca, time, mode)
 	else:
 		print("Attempted to move a character with uid " + uid + " who's not on "+\
 		"stage. Nothing is done.")

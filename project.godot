@@ -39,6 +39,7 @@ config/icon="res://icon.png"
 
 [autoload]
 
+fun="*res://scenes/fundamentals/details/globalFunctions.gd"
 game="*res://scenes/fundamentals/details/gameProgress.gd"
 vn="*res://scenes/fundamentals/details/globalSettings.gd"
 chara="*res://scenes/fundamentals/details/gameCharacters.gd"

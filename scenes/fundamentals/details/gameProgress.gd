@@ -39,7 +39,7 @@ var nvl_text = ''
 # Current characters on stage together w/ their expressions 
 
 
-var playback_events = {'bg':{}, 'bgm':{}, 'screen':{}, 'charas':[], 'weather': {}, 'nvl': ''}
+var playback_events = {'bg':{}, 'bgm':{}, 'camera':{}, 'screen':{}, 'charas':[], 'weather': {}, 'nvl': ''}
 # specific to one scene in godot
 
 func get_latest_onstage():
@@ -48,6 +48,8 @@ func get_latest_onstage():
 func get_latest_nvl():
 	playback_events['nvl'] = nvl_text
 
+func get_camera():
+	playback_events['camera'] = screenEffects.get_camera_data()
 
 #-------------------------------------------------------------------------------
 # "new_game" = start from new

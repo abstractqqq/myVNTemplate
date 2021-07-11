@@ -68,11 +68,7 @@ func intepret_events(event):
 		{"bg",..}: change_background(event)
 		{"chara",..}: character_event(event)
 		{"weather"}: change_weather(event)
-		{"camera", ..}: 
-			if vn.skipping:
-				auto_load_next()
-			else:
-				camera_effect(event)
+		{"camera", ..}: camera_effect(event)
 		{"express"}: express(event['express'])
 		{"bgm",..}: play_bgm(event)
 		{'audio',..}: play_sound(event)
@@ -565,18 +561,41 @@ func anim_player(ev : Dictionary) -> void:
 	else: # Animation is not specified, that means it will automatically play
 		auto_load_next()
 
-func camera_effect(event : Dictionary) -> void:
-	var ef_name = event['camera']
+func camera_effect(ev : Dictionary) -> void:
+	var ef_name = ev['camera']
 	match ef_name:
-		"vpunch": screenEffects.vpunch()
-		"hpunch": screenEffects.hpunch()
-		"shake":
-			if event.has("amount") and event.has("time"):
-				screenEffects.shake(event['amount'], event['time'])
+		"vpunch": if not vn.skipping: screenEffects.vpunch()
+		"hpunch": if not vn.skipping: screenEffects.hpunch()
+		"reset": screenEffects.reset_zoom()
+		"zoom":
+			if ev.has('scale'):
+				ev['scale'] = parse_loc(ev['scale'],ev)
+				var offset = Vector2(0,0)
+				var mode = 'linear'
+				if ev.has('type'): mode = ev['type']
+				if ev.has('loc'): offset = ev['loc']
+				if ev.has('time'):
+					screenEffects.zoom_timed(ev['scale'], ev['time'],mode,offset)
+				else:
+					screenEffects.zoom(ev['scale'], offset)
 			else:
-				vn.error("Shake expects an amount and time.", event)
+				vn.error('Camera zoom expects a scale.', ev)
+		"move":
+			if ev.has('time') and ev.has('loc'):
+				if vn.skipping: ev['time'] = 0
+				if ev.has('type'):
+					screenEffects.camera_move(ev['loc'],ev['time'],ev['type'])
+				else:
+					screenEffects.camera_move(ev['loc'],ev['time'])
+			else:
+				vn.error("Camera move expects a loc and time, and type (optional)", ev)
+		"shake":
+			if ev.has("amount") and ev.has("time") and not vn.skipping:
+				screenEffects.shake(ev['amount'], ev['time'])
+			else:
+				vn.error("Shake expects an amount and time.", ev)
 		_:
-			vn.error("Camera effect not found.", event)
+			vn.error("Camera effect not found.", ev)
 			
 	auto_load_next()
 #----------------------------- Related to Character ----------------------------
@@ -685,15 +704,13 @@ func character_move(uid:String, ev:Dictionary):
 		if ev['type'] == 'instant' or vn.skipping:
 			stage.change_pos(uid, ev['loc'])
 			auto_load_next()
-		elif ev['type'] == 'linear':
+		else:
 			if ev.has('time'):
-				stage.change_pos_linear(uid, ev['loc'], ev['time'])
+				stage.change_pos_2(uid, ev['loc'], ev['time'], ev['type'])
 				# yield(get_tree().create_timer(ev['time']), 'timeout')
 				auto_load_next()
 			else:
-				vn.error('Linear move expects a time.', ev)
-		else:
-			vn.error('Unknown movement type.', ev)
+				vn.error('Non-instant type movement expects a time.', ev)
 	else:
 		vn.error("Character move expects a loc and a type. If type is linear, a time "+\
 		"should be supplied.", ev)
@@ -837,6 +854,8 @@ func load_playback(play_back):
 		intepret_events(play_back['bgm'])
 	if play_back['screen'].size() > 0:
 		intepret_events(play_back['screen'])
+	if play_back['camera'].size() > 0:
+		screenEffects.set_camera(play_back['camera'])
 	
 	for d in play_back['charas']:
 		var dkeys = d.keys()
@@ -986,12 +1005,12 @@ func system(ev : Dictionary):
 	
 #-------------------- Extra Preprocessing ----------------------
 func parse_loc(loc, ev = {}) -> Vector2:
-	if typeof(loc) == 5: # 5 = loc 
+	if typeof(loc) == 5: # 5 = Vector2
 		return loc
 	
 	var vec = loc.split(" ")
 	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
-		vn.error("Expecting value of the form float1 float2 after loc.", ev)
+		vn.error("Expecting value of the form \"float1 float2\" after loc.", ev)
 	
 	return Vector2(float(vec[0]), float(vec[1]))
 

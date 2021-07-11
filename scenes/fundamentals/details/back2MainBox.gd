@@ -26,7 +26,7 @@ func _on_yesButton_pressed():
 	music.stop_bgm()
 	stage.remove_chara('absolute_all')
 	#----------------------------------------
-	var error = get_tree().change_scene(vn.main_menu_path)
+	var error = get_tree().change_scene(vn.ROOT_DIR + vn.main_menu_path)
 	if error == OK:
 		vn.reset_states()
 		notif.hide()
