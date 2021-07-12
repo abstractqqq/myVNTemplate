@@ -4,6 +4,7 @@ export(bool) var debug_mode
 # preloading
 var choiceBar = preload("res://scenes/fundamentals/choiceBar.tscn")
 var bottomLayer = preload("res://scenes/fundamentals/details/bottomLayerRect.tscn")
+var flt = preload("res://scenes/fundamentals/details/floatText.tscn")
 
 var current_dialog = ""
 var current_index = 0
@@ -86,6 +87,7 @@ func intepret_events(event):
 		{'nvl'}: set_nvl(event)
 		{'GDscene'}: change_scene_to(event['GDscene'])
 		{'history', ..}: history_manipulation(event)
+		{'float', 'wait',..}: float_text(event)
 		{'center'}:
 			self.centered = true
 			set_nvl({'nvl': true}, false)
@@ -546,7 +548,7 @@ func tint(ev : Dictionary) -> void:
 	else:
 		vn.error("Tint or tintwave requires color and time keywords.", ev)
 
-# Sprite animations...
+# Scene animations...
 func anim_player(ev : Dictionary) -> void:
 	var target_scene = load(vn.ROOT_DIR + ev['sfx']).instance()
 	add_child(target_scene)
@@ -903,6 +905,23 @@ func dvar_or_float(dvar:String):
 	else:
 		vn.error('Variable is not a dvar and is not a valid float.')
 	return output
+
+func float_text(ev: Dictionary) -> void:
+	var wt = ev['wait']
+	ev['float'] = preprocess(ev['float'])
+	var loc = Vector2(600,300)
+	if ev.has('loc'): loc = ev['loc']
+	var f = flt.instance()
+	self.add_child(f)
+	if ev.has('time') and ev['time'] > wt:
+		f.display(ev['float'], ev['time'], loc)
+	else:
+		f.display(ev['float'], wt, loc)
+	
+	if vn.FLOAT_HIS:
+		game.history.push_back(["", ev['float']])
+		
+	wait(wt)
 
 func nvl_off():
 	show_boxes()

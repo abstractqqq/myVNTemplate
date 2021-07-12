@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://fonts/EBGregular.tres" type="DynamicFont" id=1]
+[ext_resource path="res://scenes/fundamentals/details/floatText.gd" type="Script" id=2]
+
+[node name="float" type="RichTextLabel"]
+margin_right = 800.0
+margin_bottom = 200.0
+rect_min_size = Vector2( 800, 200 )
+custom_fonts/normal_font = ExtResource( 1 )
+bbcode_enabled = true
+bbcode_text = "Hello World."
+text = "Hello World."
+scroll_active = false
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

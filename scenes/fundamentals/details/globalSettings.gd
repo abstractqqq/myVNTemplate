@@ -37,6 +37,9 @@ const THUMBNAIL_HEIGHT = 100
 # Encryption password used for saves
 const PASSWORD = "nanithefuck"
 
+# Should float text be recorded in history?
+const FLOAT_HIS = false
+
 # Dim color
 const DIM = Color(0.86,0.86,0.86,1)
 const CENTER_DIM = Color(0.7,0.7,0.7,1)
