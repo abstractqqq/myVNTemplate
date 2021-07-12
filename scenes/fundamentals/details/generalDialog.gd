@@ -574,7 +574,7 @@ func camera_effect(ev : Dictionary) -> void:
 				var mode = 'linear'
 				if ev.has('type'): mode = ev['type']
 				if ev.has('loc'): offset = ev['loc']
-				if ev.has('time'):
+				if ev.has('time') and mode != 'instant':
 					screenEffects.zoom_timed(ev['scale'], ev['time'],mode,offset)
 				else:
 					screenEffects.zoom(ev['scale'], offset)
@@ -584,6 +584,7 @@ func camera_effect(ev : Dictionary) -> void:
 			if ev.has('time') and ev.has('loc'):
 				if vn.skipping: ev['time'] = 0
 				if ev.has('type'):
+					if ev['type'] == 'instant': ev['time'] = 0
 					screenEffects.camera_move(ev['loc'],ev['time'],ev['type'])
 				else:
 					screenEffects.camera_move(ev['loc'],ev['time'])
