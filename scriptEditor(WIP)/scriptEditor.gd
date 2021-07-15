@@ -14,6 +14,7 @@ func script_to_json():
 	else:
 		var error = file.open(vn.SCRIPT_DIR + na.text + '.json', File.WRITE)
 		if error == OK:
+			print("TO JSON SUCCESS.")
 			file.store_line(JSON.print(all_events, '\t'))
 			file.close()
 		else:
@@ -22,7 +23,7 @@ func script_to_json():
 func to_txt():
 	var file = File.new()
 	if na.text == "":
-		# shoudl give user a warning instead of assigning a random name
+		# should give user a warning instead of assigning a random name
 		# but this is ok for test purpose
 		na.text = "temp"
 	

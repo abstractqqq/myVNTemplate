@@ -1,9 +1,10 @@
 [
 	{
-		"bg": "busstop.jpg"
+		"bg": "busstop.jpg",
+		"pixelate": 2
 	},
 	{
-		"dvar": "money = 100"
+		"dvar": "money = 50"
 	},
 	{
 		"chara": "female join",
@@ -11,109 +12,186 @@
 		"expression": ""
 	},
 	{
-		"female": "Some random filler."
-	},
-	{
-		"female": "Even more fillers."
-	},
-	{
-		"female": "Let's try the pixellate transition."
-	},
-	{
-		"bg": "busstop.jpg",
-		"pixellate": 3
-	},
-	{
-		"female": "Cool?"
-	},
-	{
-		"female": "Let me turn on the weather system."
-	},
-	{
-		"weather": "rain"
-	},
-	{
-		"female": "You can customize the rain in the weather scene."
-	},
-	{
-		"audio": "thunder.wav"
-	},
-	{
-		"sfx": "/scenes/sfx_scenes/flash.tscn"
-	},
-	{
-		"female": "Scary. Let me go home."
-	},
-	{
-		"bg": "condo.jpg",
-		"fade": 3
-	},
-	{
-		"female": "Remember to turn off weather system."
-	},
-	{
-		"weather": ""
-	},
-	{
-		"female": "Music, start."
+		"female": "Hello there. Let me introduce you to the system.",
+		"voice": "001.wav"
 	},
 	{
 		"bgm": "myuu-angels.mp3",
 		"fadein": 3
 	},
 	{
-		"female": "Alright, let me show you some other functions."
+		"female": "Music start"
 	},
 	{
-		"chara": "test2 join",
-		"loc": "200 630",
-		"expression": ""
+		"female": "Let me hide the quick menu for a second"
 	},
 	{
-		"audio": "cartoon_jump.wav"
+		"system": "quick_menu off"
 	},
 	{
-		"chara": "female jump",
-		"amount": 80,
-		"time": 0.4,
-		"dir": "up"
+		"female": "It is gone. Now let me make it visible again."
 	},
 	{
-		"test2": "Hello, I suddenly appeared."
+		"system": "quick_menu on"
 	},
 	{
-		"female": "You scared me."
+		"female": "You can call a premade event like this. To see a list of premade events, go to globalFunctions.gd."
 	},
 	{
-		"test2": "It will get even scarier."
+		"premade": "EXAMPLE"
 	},
 	{
-		"screen": "tintwave",
-		"color": "1 0 0 0.5",
-		"time": 1
+		"female": "This is how you show basic floating text."
 	},
 	{
-		"chara": "female shake",
-		"amount": 200,
-		"time": 1
+		"float": "[color=#ff0000]Hello World1[/color]",
+		"wait": 1,
+		"time": 4,
+		"loc": "600 300",
+		"fadein": 0.5
 	},
 	{
-		"female": "What is this?"
+		"float": "[color=#ff0000]Hello World2[/color]",
+		"wait": 1,
+		"time": 4,
+		"loc": "600 400",
+		"fadein": 1
 	},
 	{
-		"test2": "A screen tint effect with wave."
+		"female": "Let me tint the screen."
 	},
 	{
-		"female": "Might be useful for a horror game."
+		"screen": "tint",
+		"color": "0 1 0 0.5",
+		"time": 2
 	},
 	{
-		"test2": "Certainly, and you can turn it off like this."
+		"female": "Cool?"
+	},
+	{
+		"female": "You can turn screen tint off like this."
 	},
 	{
 		"screen": ""
 	},
 	{
-		"female": "We all need to break up our VN into chapters or similar structures like that. One good way to do that is to go to another Godot scene. It can be done like this."
+		"female": "Let me zoom the camera"
+	},
+	{
+		"camera": "zoom",
+		"time": 1,
+		"loc": "100 200",
+		"scale": "0.5 0.5"
+	},
+	{
+		"female": "Let me move the camera"
+	},
+	{
+		"camera": "move",
+		"time": 1,
+		"loc": "800 200",
+		"type": "quad"
+	},
+	{
+		"female": "Now reset."
+	},
+	{
+		"camera": "reset"
+	},
+	{
+		"female": "Lets get moving!"
+	},
+	{
+		"chara": "female move",
+		"type": "cubic",
+		"loc": "600 600",
+		"time": 1
+	},
+	{
+		"female": "Let it rain."
+	},
+	{
+		"weather": "rain"
+	},
+	{
+		"female": "This is how you play your custom Godot special effect scenes."
+	},
+	{
+		"sfx": "/scenes/sfx_scenes/flash.tscn"
+	},
+	{
+		"chara": "test2 fadei",
+		", time": 2,
+		"loc": "200 600",
+		"expression": ""
+	},
+	{
+		"test2": "Hey."
+	},
+	{
+		"female": "Let us try out the NVL mode."
+	},
+	{
+		"nvl": "true"
+	},
+	{
+		"female": "I just said something."
+	},
+	{
+		"female": "More more more more."
+	},
+	{
+		"": "This is the narrator speaking."
+	},
+	{
+		"": "More more more more."
+	},
+	{
+		"": "I know you have [money] much money."
+	},
+	{
+		"nvl": "false"
+	},
+	{
+		"female": "Ok, enough of that nvl nonsense."
+	},
+	{
+		"center": "Hello?"
+	},
+	{
+		"female": "This is how you show centered text."
+	},
+	{
+		"history": "push",
+		"": "THIS IS SUPPOSED TO BE SOME SECRET TEXT!"
+	},
+	{
+		"female": "This is how you add secret text to history."
+	},
+	{
+		"history": "pop"
+	},
+	{
+		"female": "This is how you remove the last entry in history."
+	},
+	{
+		"female": "Lets make a choice. Should B leave?",
+		"choice": "choice_1",
+		"id": 0
+	},
+	{
+		"female": "You chose Yes right? (Youre seeing this because you chose A.)",
+		"condition": "leave=1"
+	},
+	{
+		"female": "You chose No right? (Youre seeing this because you chose No.)",
+		"condition": "leave=0"
+	},
+	{
+		"female smile2": "Now lets move."
+	},
+	{
+		"female": "This is how you switch to another Godot scene."
 	},
 	{
 		"GDscene": "/scenes/sampleScene2.tscn"

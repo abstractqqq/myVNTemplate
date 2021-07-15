@@ -20,7 +20,8 @@ func strip_text(t:String) -> String:
 func detail_to_event(arr: Array) -> Dictionary:
 	var ev = {}
 	for term in arr:
-		if not ":" in term:
+		if not "::" in term:
+			print(term)
 			vn.error("Script Editor: One double-colon is expected.")
 			
 		
@@ -31,7 +32,8 @@ func detail_to_event(arr: Array) -> Dictionary:
 			right = float(right)
 			
 		if temp.size() > 2:
-			vn.error("Expecting only one double-colon, but got more.")
+			print(term)
+			vn.error("Expecting a key value pair. But got more than 2 values.")
 		
 
 		ev[left] = right
@@ -43,8 +45,8 @@ func detail_to_event(arr: Array) -> Dictionary:
 func get_events():
 	var all_events = []
 	var ev_list = text.split("\n")
-	for i in ev_list.size():
-		var line = (ev_list[i]).lstrip(' ') 
+	for line in ev_list:
+		line = line.lstrip(' ') 
 		if line == "": continue
 		if line[0] == "#": continue
 		# A typical line looks like 
