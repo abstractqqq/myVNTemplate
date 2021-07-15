@@ -15,7 +15,7 @@ func _ready():
 	# format: (display_name, unique_id, Color)
 	
 	# Your characters...
-	var _female = character.new("A", "female", Color(0,0,0))
+	var _female = character.new("A", "female", Color(1,0,0))
 	var _t = character.new('B', 'test2', Color(0,0,1))
 
 #----------------------------------------------------------------------------

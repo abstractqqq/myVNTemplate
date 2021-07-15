@@ -11,12 +11,12 @@ var current_index = 0
 var current_block = null
 var all_blocks = null
 var all_choices = null
+var hide_all_boxes = false
 var nvl = false
 var centered = false
 var waiting_acc = false
 var waiting_cho = false
 var just_loaded = false
-var hide_all_boxes = false
 var hide_vnui = false
 var no_scroll = false
 var no_right_click = false
@@ -49,10 +49,8 @@ func intepret_events(event):
 	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
 	elif event.has('color'): event['color'] = parse_color(event['color'], event)
 	elif event.has('nvl'):
-		if event['nvl'] != 'clear': 
+		if (typeof(event['nvl'])!=1) and event['nvl'] != 'clear': 
 			event['nvl'] = parse_true_false(event['nvl'], event)
-	elif event.has('quick_menu'): event['quick_menu'] = parse_true_false(event['quick_menu'], event)
-	elif event.has('hide_boxes'): event['hide_boxes'] = parse_true_false(event['hide_boxes'], event)
 
 	# End of pre-parse. Actual match event
 	match event:
@@ -75,12 +73,12 @@ func intepret_events(event):
 		{'audio',..}: play_sound(event)
 		{'dvar'}: set_dvar(event)
 		{'font', 'path'}: change_font(event)
-		{'sfx',..}: anim_player(event)
+		{'sfx',..}: sfx_player(event)
 		{'then',..}: then(event)
-		{'quick_menu'}: quick_menu(event)
-		{'hide_boxes'}:
-			hide_all_boxes = event['hide_boxes']
-			auto_load_next()
+		{'premade'}:
+			if debug_mode:
+				print("PREMADE EVENT:")
+			intepret_events(fun.call_premade_events(event['premade']))
 		{"system"}: system(event)
 		{'choice',..}: generate_choices(event)
 		{'wait'}: wait(event['wait'])
@@ -275,29 +273,13 @@ func _input(ev):
 		# In a choice event, game resumes only when a choice button is selected.
 		return
 		
-	if (ev.is_action_pressed('ui_cancel') or ev.is_action_pressed('vn_cancel')) \
-	and not vn.inNotif and not vn.inSetting and not no_right_click:
-		hide_vnui = ! hide_vnui 
-		if hide_vnui:
-			QM.visible = false
-			hide_boxes()
-			nvlBox.visible = false
-			if self.nvl:
-				dimming(Color(1,1,1,1))
-		else:
-			QM.visible = true
-			if self.nvl:
-				nvlBox.visible = true
-				if self.centered:
-					dimming(vn.CENTER_DIM)
-				else:
-					dimming(vn.NVL_DIM)
-			else:
-				show_boxes()
+	if ev.is_action_pressed('vn_cancel') and not vn.inNotif and not vn.inSetting and not no_right_click:
+		hide_UI()
 
-	
-	# vn_accept is mouse left click
 	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
+		if hide_vnui: # Show UI
+			hide_UI(true)
+		# vn_accept is mouse left click
 		if ev.is_action_pressed('vn_accept'):
 			if vn.auto_on or vn.skipping:
 				if not vn.noMouse:
@@ -346,6 +328,15 @@ func play_bgm(ev : Dictionary) -> void:
 	if path == "" and ev.size() == 1:
 		music.stop_bgm()
 		game.playback_events['bgm'] = {}
+		auto_load_next()
+		return
+		
+	if path == "pause":
+		music.pause_bgm()
+		auto_load_next()
+		return
+	elif path == "resume":
+		music.resume_bgm()
 		auto_load_next()
 		return
 		
@@ -410,8 +401,8 @@ func change_background(ev : Dictionary) -> void:
 		bg_change(path)
 		fadein(t, false)
 		yield(get_tree().create_timer(t), 'timeout')
-	elif ev.has('pixellate'):
-		var t = float(ev['pixellate'])/2
+	elif ev.has('pixelate'):
+		var t = float(ev['pixelate'])/2
 		screenEffects.pixel_out(t)
 		clear_boxes()
 		hide_boxes()
@@ -506,14 +497,6 @@ func screen_effects(ev: Dictionary):
 	if !vn.inLoading:
 		auto_load_next()
 
-func quick_menu(ev: Dictionary):
-	if ev['quick_menu']:
-		QM.visible = true
-		QM.hiding = false
-	else:
-		QM.visible = false
-		QM.hiding = true
-	auto_load_next()
 
 func fadein(time : float, auto_forw = true) -> void:
 	clear_boxes()
@@ -523,7 +506,7 @@ func fadein(time : float, auto_forw = true) -> void:
 		screenEffects.fadein(time)
 		yield(get_tree().create_timer(time), "timeout")
 	
-	QM.visible = true
+	if not QM.hiding: QM.visible = true
 	if auto_forw: auto_load_next()
 	
 func fadeout(time : float, auto_forw = true) -> void:
@@ -533,7 +516,7 @@ func fadeout(time : float, auto_forw = true) -> void:
 	if not vn.skipping:
 		screenEffects.fadeout(time)
 		yield(get_tree().create_timer(time), "timeout")
-	QM.visible = true
+	if not QM.hiding: QM.visible = true
 	if not self.nvl: show_boxes()
 	if auto_forw: auto_load_next()
 
@@ -549,7 +532,7 @@ func tint(ev : Dictionary) -> void:
 		vn.error("Tint or tintwave requires color and time keywords.", ev)
 
 # Scene animations...
-func anim_player(ev : Dictionary) -> void:
+func sfx_player(ev : Dictionary) -> void:
 	var target_scene = load(vn.ROOT_DIR + ev['sfx']).instance()
 	add_child(target_scene)
 	if ev.has('loc'): target_scene.position = ev['loc']
@@ -590,13 +573,17 @@ func camera_effect(ev : Dictionary) -> void:
 					screenEffects.camera_move(ev['loc'],ev['time'],ev['type'])
 				else:
 					screenEffects.camera_move(ev['loc'],ev['time'])
+				yield(get_tree().create_timer(ev['time']), 'timeout')
 			else:
 				vn.error("Camera move expects a loc and time, and type (optional)", ev)
 		"shake":
-			if ev.has("amount") and ev.has("time") and not vn.skipping:
-				screenEffects.shake(ev['amount'], ev['time'])
+			if vn.skipping:
+				pass
 			else:
-				vn.error("Shake expects an amount and time.", ev)
+				if ev.has("amount") and ev.has("time"):
+					screenEffects.shake(ev['amount'], ev['time'])
+				else:
+					vn.error("Shake expects an amount and time.", ev)
 		_:
 			vn.error("Camera effect not found.", ev)
 			
@@ -794,7 +781,7 @@ func has_dvar(key : String) -> bool:
 		return false
 
 func check_dialog():
-	QM.visible = true
+	if not QM.hiding: QM.visible = true
 	hide_vnui = false
 	if hide_vnui:
 		hide_vnui = false
@@ -814,14 +801,6 @@ func check_dialog():
 	else:
 		emit_signal("player_accept")
 
-func hide_boxes():
-	vnui.get_node('textBox').visible = false
-	vnui.get_node('nameBox').visible = false
-
-func show_boxes():
-	if not hide_all_boxes:
-		vnui.get_node('textBox').visible = true
-		vnui.get_node('nameBox').visible = true
 
 func clear_boxes():
 	speaker.bbcode_text = ''
@@ -911,12 +890,14 @@ func float_text(ev: Dictionary) -> void:
 	ev['float'] = preprocess(ev['float'])
 	var loc = Vector2(600,300)
 	if ev.has('loc'): loc = ev['loc']
+	var in_t = 1
+	if ev.has('fadein'): in_t = ev['fadein']
 	var f = flt.instance()
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:
-		f.display(ev['float'], ev['time'], loc)
+		f.display(ev['float'], ev['time'], in_t, loc)
 	else:
-		f.display(ev['float'], wt, loc)
+		f.display(ev['float'], wt, in_t, loc)
 	
 	if vn.FLOAT_HIS:
 		game.history.push_back(["", ev['float']])
@@ -954,7 +935,7 @@ func trigger_accept():
 	if not waiting_cho:
 		emit_signal("player_accept")
 		if hide_vnui:
-			QM.visible = true
+			if not QM.hiding: QM.visible = true
 			if self.nvl:
 				nvlBox.visible = true
 				if self.centered:
@@ -964,7 +945,38 @@ func trigger_accept():
 			else:
 				show_boxes()
 		
+func hide_UI(show=false):
+	if show:
+		hide_vnui = false
+	else:
+		hide_vnui = ! hide_vnui 
+	if hide_vnui:
+		QM.visible = false
+		hide_boxes()
+		nvlBox.visible = false
+		if self.nvl:
+			dimming(Color(1,1,1,1))
+	else:
+		if not QM.hiding: QM.visible = true
+		if self.nvl:
+			nvlBox.visible = true
+			if self.centered:
+				dimming(vn.CENTER_DIM)
+			else:
+				dimming(vn.NVL_DIM)
+		else:
+			show_boxes()
 
+
+func hide_boxes():
+	get_node('VNUI/textBox').visible = false
+	get_node('VNUI/nameBox').visible = false
+	
+func show_boxes():
+	if not hide_all_boxes:
+		get_node('VNUI/textBox').visible = true
+		get_node('VNUI/nameBox').visible = true
+		
 func bg_change(path: String):
 	var bg_path = vn.BG_DIR + path
 	bg.texture = load(bg_path)
@@ -994,11 +1006,13 @@ func system(ev : Dictionary):
 				QM.visible = false
 				QM.hiding = true
 		
-		"textbox":
+		"boxes":
 			if temp[1] == "on":
 				hide_all_boxes = false
+				show_boxes()
 			elif temp[1] == "off":
 				hide_all_boxes = true
+				hide_boxes()
 				
 		"scroll":
 			if temp[1] == "on":
@@ -1008,17 +1022,19 @@ func system(ev : Dictionary):
 				
 		"all":
 			if temp[1] == "on":
-				no_scroll = false
 				hide_all_boxes = false
+				no_scroll = false
 				QM.visible = true
 				QM.hiding = false
 				self.no_right_click = false
+				show_boxes()
 			elif temp[1] == "off":
-				no_scroll = true
 				hide_all_boxes = true
+				no_scroll = true
 				QM.visible = false
 				QM.hiding = true
 				no_right_click = true
+				hide_boxes()
 
 
 	auto_load_next()
@@ -1072,8 +1088,8 @@ func parse_true_false(truth, ev = {}) -> bool:
 
 func preprocess(words : String) -> String:
 	# preprocess the input to see if there are any special things
-	# I think this is a good idea because for dialog, the sentences
-	# won't be too long.
+	dialogbox.nw = false
+	nvlBox.nw = false
 	var leng = words.length()
 	var output = ''
 	var i = 0
@@ -1096,12 +1112,10 @@ func preprocess(words : String) -> String:
 							nvlBox.nw = true
 						else:
 							dialogbox.nw = true
-				
-				"nl":
-					output += "\n"
+				"sm": output += ";"
+				"dc": output += "::"
+				"nl": output += "\n"
 				_: 
-					dialogbox.nw = false
-					nvlBox.nw = false
 					if has_dvar(inner):
 						output += str(vn.dvar[inner])
 					else:

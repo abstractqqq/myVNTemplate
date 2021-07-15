@@ -1,7 +1,5 @@
 extends CanvasLayer
 
-
-
 var slot = preload("res://scenes/fundamentals/details/saveSlot.tscn")
 onready var container = $ScrollContainer/allSaves
 

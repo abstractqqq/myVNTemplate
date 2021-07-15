@@ -4,6 +4,7 @@ var settingsScene = preload("res://scenes/fundamentals/settings.tscn")
 var historyScene = preload("res://scenes/fundamentals/historyScreen.tscn")
 var saveScene = preload("res://scenes/fundamentals/saveScreen.tscn")
 var loadScene = preload("res://scenes/fundamentals/loadScreen.tscn")
+var quickSave = preload("res://scenes/fundamentals/details/saveSlot.tscn")
 
 var hiding = false
 
@@ -66,23 +67,7 @@ func _on_historyButton_pressed():
 func _on_SaveButton_pressed():
 	reset_auto()
 	reset_skip()
-	var thumbnail = get_viewport().get_texture().get_data()
-	thumbnail.flip_y()
-	thumbnail.resize(vn.THUMBNAIL_WIDTH, vn.THUMBNAIL_HEIGHT, Image.INTERPOLATE_LANCZOS)
-	game.currentFormat = thumbnail.get_format()
-	
-	var dir = Directory.new()
-	if !dir.dir_exists(vn.THUMBNAIL_DIR):
-		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
-		
-	var file = File.new()
-	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
-	var error = file.open(save_path, File.WRITE)
-	if error == OK:
-		# store raw image data
-		file.store_var(thumbnail.get_data())
-		file.close()
-	
+	_create_screenshot()
 	get_parent().add_child(saveScene.instance())
 
 
@@ -164,3 +149,40 @@ func disable_skip_auto():
 func enable_skip_auto():
 	get_node("autoButton").disabled = false
 	get_node("skipButton").disabled = false
+
+
+func _on_QsaveButton_mouse_entered():
+	vn.noMouse = true
+
+func _on_QsaveButton_mouse_exited():
+	vn.noMouse = false
+
+func _on_QsaveButton_pressed():
+	_create_screenshot()
+	var sl = quickSave.instance()
+	var temp = game.currentSaveDesc
+	game.currentSaveDesc = "[Quick Save]" + temp
+	sl.make_save(sl.path)
+	sl.queue_free()
+	game.currentSaveDesc = temp
+
+
+
+
+func _create_screenshot():
+	var thumbnail = get_viewport().get_texture().get_data()
+	thumbnail.flip_y()
+	thumbnail.resize(vn.THUMBNAIL_WIDTH, vn.THUMBNAIL_HEIGHT, Image.INTERPOLATE_LANCZOS)
+	game.currentFormat = thumbnail.get_format()
+	
+	var dir = Directory.new()
+	if !dir.dir_exists(vn.THUMBNAIL_DIR):
+		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
+		
+	var file = File.new()
+	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
+	var error = file.open(save_path, File.WRITE)
+	if error == OK:
+		# store raw image data
+		file.store_var(thumbnail.get_data())
+		file.close()

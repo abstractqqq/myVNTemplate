@@ -14,7 +14,6 @@ var main_block = [
 	{"bg": "condo.jpg"},
 	{"fadein": 2},
 	{'chara': "female join", "loc": "1600 600", "expression":""},
-	{"female smile1": "Hello. Alas, my friend disappeared."},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
 	{"female": "What should I eat today?", 'choice' : 'food', 'id':0},
 	{"female": "When your game ends, do the following."},
@@ -47,7 +46,7 @@ var choice_blocks = {'food': food_choices}
 
 #---------------------------------------------------------------------
 func _ready():
-	
+	game.currentSaveDesc = "Introduction to System 2"
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
 	start_scene(conversation_blocks, choice_blocks, game.load_instruction)

@@ -17,6 +17,7 @@ func _on_Button_pressed():
 			var override_choice = notif.get_current_notif()
 			override_choice.connect("decision", self, "override_save")
 		else:
+			# self.path == ""
 			make_save(self.path)
 			emit_signal("save_made")
 	

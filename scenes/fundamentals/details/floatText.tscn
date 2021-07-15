@@ -4,13 +4,12 @@
 [ext_resource path="res://scenes/fundamentals/details/floatText.gd" type="Script" id=2]
 
 [node name="float" type="RichTextLabel"]
+modulate = Color( 1, 1, 1, 0 )
 margin_right = 800.0
 margin_bottom = 200.0
 rect_min_size = Vector2( 800, 200 )
 custom_fonts/normal_font = ExtResource( 1 )
 bbcode_enabled = true
-bbcode_text = "Hello World."
-text = "Hello World."
 scroll_active = false
 script = ExtResource( 2 )
 __meta__ = {

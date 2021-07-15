@@ -53,7 +53,7 @@ func stop_bgm():
 func pause_bgm():
 	bgm1.set_stream_paused(true)
 	
-func unpause_bgm():
+func resume_bgm():
 	bgm1.set_stream_paused(false)
 
 func _on_tween1_tween_completed(object,_key):
