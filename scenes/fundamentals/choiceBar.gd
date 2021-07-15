@@ -10,3 +10,5 @@ func setup_choice_event(t: String, ev: Dictionary):
 
 func _on_choiceBar_pressed():
 	emit_signal("choice_made", choice_action)
+
+

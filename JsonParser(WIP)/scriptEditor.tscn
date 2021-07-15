@@ -2,9 +2,9 @@
 
 [ext_resource path="res://fonts/EBGaramond-Regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
-[ext_resource path="res://scriptEditor(WIP)/scriptEditor.gd" type="Script" id=3]
-[ext_resource path="res://scriptEditor(WIP)/TextEdit.gd" type="Script" id=4]
-[ext_resource path="res://scriptEditor(WIP)/popupTheme.tres" type="Theme" id=5]
+[ext_resource path="res://JsonParser(WIP)/scriptEditor.gd" type="Script" id=3]
+[ext_resource path="res://JsonParser(WIP)/TextEdit.gd" type="Script" id=4]
+[ext_resource path="res://JsonParser(WIP)/popupTheme.tres" type="Theme" id=5]
 
 [sub_resource type="DynamicFont" id=1]
 size = 48
@@ -29,7 +29,7 @@ margin_right = 442.303
 margin_bottom = 122.62
 rect_min_size = Vector2( 120, 120 )
 custom_fonts/font = SubResource( 1 )
-text = "Dedicated Script Editor"
+text = "JSON PARSER"
 align = 1
 valign = 1
 __meta__ = {
@@ -95,17 +95,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="saveButton" type="Button" parent="."]
-margin_left = 1589.31
-margin_top = 48.2182
-margin_right = 1689.31
-margin_bottom = 98.2182
-custom_fonts/font = ExtResource( 2 )
-text = "Save"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="jsonButton" type="Button" parent="."]
 margin_left = 1645.41
 margin_top = 134.09
@@ -113,39 +102,6 @@ margin_right = 1776.41
 margin_bottom = 184.09
 custom_fonts/font = ExtResource( 2 )
 text = "to .json"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="createTLButton" type="Button" parent="."]
-margin_left = 1569.77
-margin_top = 210.955
-margin_right = 1877.77
-margin_bottom = 260.955
-custom_fonts/font = ExtResource( 2 )
-text = "(UNAVAILABLE)"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="testButton" type="Button" parent="."]
-margin_left = 1574.82
-margin_top = 883.672
-margin_right = 1882.82
-margin_bottom = 933.672
-custom_fonts/font = ExtResource( 2 )
-text = "(UNAVAILABLE)"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="dvarButton" type="Button" parent="."]
-margin_left = 1570.33
-margin_top = 282.032
-margin_right = 1878.33
-margin_bottom = 332.032
-custom_fonts/font = ExtResource( 2 )
-text = "(UNAVAILABLE)"
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -167,6 +123,9 @@ margin_top = 50.0
 margin_right = 1000.0
 margin_bottom = 100.0
 custom_fonts/font = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [node name="FileDialog" type="FileDialog" parent="."]
 margin_right = 953.0
@@ -178,7 +137,18 @@ window_title = "Open a File"
 mode = 0
 filters = PoolStringArray( "*.txt", "*.json" )
 
-[connection signal="pressed" from="saveButton" to="." method="_on_saveButton_pressed"]
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+margin_right = 491.0
+margin_bottom = 249.0
+theme = ExtResource( 5 )
+window_title = "Success!"
+dialog_text = "
+To Json success! You can find it in the VNScript folder."
+dialog_autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="pressed" from="jsonButton" to="." method="_on_jsonButton_pressed"]
 [connection signal="pressed" from="loadButton" to="." method="_on_loadButton_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

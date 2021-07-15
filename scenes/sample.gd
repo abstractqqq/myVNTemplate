@@ -46,6 +46,8 @@ var main_block = [
 	{'weather': 'rain'},
 	{'female': 'This is how you play your custom Godot special effect scenes.'},
 	{'sfx': '/scenes/sfx_scenes/flash.tscn'},
+	{"chara": "female jump", 'dir': 'up', 'time': 0.3, 'amount': 80},
+	{'female': "That scared me."},
 	{'chara' : 'test2 fadein', 'time':2, 'loc': Vector2(200,600), 'expression':''},
 	{'test2' : "Hey."},
 	{'female': 'Let us try out the NVL mode.'},

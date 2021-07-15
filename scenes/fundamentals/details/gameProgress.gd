@@ -66,20 +66,16 @@ var currentFormat = null # save current format. Used for thumbnail creation
 
 
 #-------------Important--------------------------------
-# The max length of historyDialog is controlled by
-# globalSettings.max_dialog_display, which is not a constant.
-# However, I also set an absolute max, which is
-# globalSettings.max_dialog. The reason for the absolute max 
-# is that the current implementation will be slow when there 
-# are a lot of dialogs. (See Godot documentation of arrays for
-# detials. Also the absolute max is probably more than anyone 
-# would ever go back and reread in history). However, there 
-# might be a case in your game that you wish to display 2000+ 
-# lines of history... In that case, you might wish to re-implement 
-# the historyDialog functionality using other data structure
+# I am still debating whether to remove the max dialog variable
 #------------------------------------------------------
 var history = []
 
+
+#-------------Rollback Helper---------------------------
+var roll_back_records = {'bg':[], 'bgm':[], 'blocks':[]} 
+
+
+#------------------------------------------------------
 # Utility functions
 
 # remember the input is not just a line, it is an array [unique id, text]
@@ -89,4 +85,5 @@ func updateHistory(textbox):
 		history.pop_front()
 		# will be slow if this array gets too long
 		
-	
+func roll_back_helper():
+	pass

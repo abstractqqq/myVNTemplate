@@ -30,7 +30,9 @@ female:: Let it rain.
 weather:: rain
 female:: This is how you play your custom Godot special effect scenes.
 sfx:: /scenes/sfx_scenes/flash.tscn
-chara :: test2 fadei;, time::2; loc:: 200 600; expression::
+chara:: female jump; dir:: up; time:: 0.3; amount:: 80
+female:: That scared me.
+chara :: test2 fadein; time::2; loc:: 200 600; expression::
 test2 :: Hey.
 female:: Let us try out the NVL mode.
 nvl:: true

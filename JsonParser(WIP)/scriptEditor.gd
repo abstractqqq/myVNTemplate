@@ -16,6 +16,7 @@ func script_to_json():
 		if error == OK:
 			print("TO JSON SUCCESS.")
 			file.store_line(JSON.print(all_events, '\t'))
+			$AcceptDialog.popup_centered()
 			file.close()
 		else:
 			vn.error('Error when saving script files. (Unknown reason.)')
@@ -34,8 +35,6 @@ func to_txt():
 	else:
 		vn.error('Error when saving script files. (Unknown reason.)')
 
-func _on_saveButton_pressed():
-	to_txt()
 
 func _on_loadButton_pressed():
 	$FileDialog.popup_centered()
