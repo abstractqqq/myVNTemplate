@@ -71,7 +71,6 @@ var main_block = [
 	{'female smile2': "Now let's move."},
 	{'female': "This is how you switch to another Godot scene."},
 	{'GDscene' : '/scenes/sampleScene2.tscn'}
-	
 ]
 
 var b_leave = [

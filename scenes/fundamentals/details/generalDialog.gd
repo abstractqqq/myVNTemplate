@@ -992,6 +992,11 @@ func system(ev : Dictionary):
 	var k = ev.keys()[0]
 	var temp = ev[k].split(" ")
 	match temp[0]:
+		"auto": # is not included in 'all on/off' , doesn't have on.
+			# Simply turns off dialog auto forward.
+			if temp[1] == "off":
+				QM.reset_auto()
+			
 		"right_click":
 			if temp[1] == "on":
 				self.no_right_click = false
