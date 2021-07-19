@@ -9,3 +9,7 @@ alternative if your game doesn't include advanced features or complicated miniga
 
 A link to the detailed documentation
 https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing
+
+Projects done with this template:
+My O2A2 entry:
+https://qtren2015.itch.io/o2a2-elegy-of-a-songbird
