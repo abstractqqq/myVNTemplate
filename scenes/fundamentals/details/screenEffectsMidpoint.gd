@@ -1,6 +1,6 @@
 extends Node2D
 
-# this simply serves as a midpoint between calls
+# This simply serves as a midpoint between calls
 # Simple functions will be written here,
 # Longer ones will be in the script in the subnodes
 
@@ -8,10 +8,10 @@ func helloWorld():
 	print("Hello World")
 
 func pixel_in(time):
-	get_node("aboveScreen").pixellate_in(time)
+	get_node("aboveScreen").pixelate_in(time)
 
 func pixel_out(time):
-	get_node("aboveScreen").pixellate_out(time)
+	get_node("aboveScreen").pixelate_out(time)
 
 func fadein(time):
 	get_node("aboveScreen").fadein(time)
@@ -22,8 +22,8 @@ func fadeout(time):
 func tint(c: Color,time : float):
 	get_node("aboveScreen").tint(c,time)
 	
-func removeTint():
-	get_node("aboveScreen").removeTint()
+func removeLasting():
+	get_node("aboveScreen").removeLasting()
 	
 func tintWave(c: Color, time : float):
 	get_node("aboveScreen").tintWave(c,time)
@@ -37,7 +37,8 @@ func vpunch():
 func hpunch():
 	get_node("camera").hpunch()
 
-#-------------------------- WIP START -------------------------------
+# --------------Could have moved all these methods into camera's script
+# But I am being lazy... 
 func correct_zm(v:Vector2) -> Vector2:
 	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
 
@@ -91,10 +92,10 @@ func get_camera_data() -> Dictionary:
 	
 func set_camera(d: Dictionary):
 	zoom(d['zoom'], d['offset'])
-	
-#---------------------------- WIP END -------------------------------
 
-func _ready():
+# -----------------------------------------------------------------
+
+func _ready(): # turn off all weather on ready
 	var w = get_node("aboveScreen").get_node("weather")
 	for n in w.get_children():
 		n.visible = false

@@ -1,8 +1,9 @@
 extends Node2D
 class_name generalDialog
 export(bool) var debug_mode
+export(PackedScene) var choiceBar = preload("res://scenes/fundamentals/choiceBar.tscn")
 # preloading
-var choiceBar = preload("res://scenes/fundamentals/choiceBar.tscn")
+
 var bottomLayer = preload("res://scenes/fundamentals/details/bottomLayerRect.tscn")
 var flt = preload("res://scenes/fundamentals/details/floatText.tscn")
 
@@ -488,7 +489,7 @@ func screen_effects(ev: Dictionary):
 	var ef = ev['screen']
 	match ef:
 		"": 
-			screenEffects.removeTint()
+			screenEffects.removeLasting()
 			game.playback_events['screen'] = {}
 		"tint": tint(ev)
 		"tintwave": tint(ev)

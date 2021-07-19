@@ -30,4 +30,4 @@ void fragment()
 
 [resource]
 shader = SubResource( 1 )
-shader_param/time = 0.0
+shader_param/time = 0.747

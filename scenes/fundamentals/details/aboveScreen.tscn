@@ -7,28 +7,11 @@
 layer = 2
 script = ExtResource( 3 )
 
-[node name="ColorRect" type="ColorRect" parent="."]
-visible = false
+[node name="lasting" type="Control" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-mouse_filter = 2
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="tintRect" type="ColorRect" parent="."]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="transitionPlayer" type="AnimationPlayer" parent="."]
-
-[node name="tintPlayer" type="AnimationPlayer" parent="."]
 
 [node name="weather" parent="." instance=ExtResource( 1 )]
-
-[connection signal="animation_finished" from="transitionPlayer" to="." method="_on_transitionPlayer_animation_finished"]
