@@ -3,7 +3,6 @@ extends CanvasLayer
 
 var rect = preload("res://scenes/fundamentals/details/transitionRect.tscn")
 var tintRect = preload("res://scenes/fundamentals/details/tintRect.tscn")
-var tintOn = false
 
 
 func fadeout(time:float):
@@ -20,13 +19,10 @@ func fadein(time:float):
 
 func tint(c: Color, time: float):
 	
-	if tintOn: # if tint is already on, overwrite old tint
-		removeLasting()
 	var tint = tintRect.instance()
 	get_node('lasting').add_child(tint)
 	tint.set_tint(c, time)
-	tintOn = true
-	
+
 	
 func removeLasting():
 	var lasting = get_node('lasting')
@@ -36,13 +32,10 @@ func removeLasting():
 	
 func tintWave(c:Color,time:float):
 	
-	if tintOn: # overwrite old tint
-		removeLasting()
-	
 	var tint = tintRect.instance()
 	get_node('lasting').add_child(tint)
 	tint.set_tintwave(c, time)
-	tintOn = true
+
 
 
 func pixelate_out(t:float):

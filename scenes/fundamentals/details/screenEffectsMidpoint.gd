@@ -11,6 +11,9 @@ const all_weathers = {
 # Simple functions will be written here,
 # Longer ones will be in the script in the subnodes
 
+# Before calling a lasting screen effect, first do removeLasting()
+# Because by default lasting screen effect should be exclusive.
+
 func helloWorld():
 	print("Hello World")
 
@@ -27,12 +30,14 @@ func fadeout(time):
 	get_node("aboveScreen").fadeout(time)
 	
 func tint(c: Color,time : float):
+	removeLasting()
 	get_node("aboveScreen").tint(c,time)
 	
 func removeLasting():
 	get_node("aboveScreen").removeLasting()
 	
 func tintWave(c: Color, time : float):
+	removeLasting()
 	get_node("aboveScreen").tintWave(c,time)
 	
 func shake(shake_amount, shake_timer):
