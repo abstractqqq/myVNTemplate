@@ -4,7 +4,8 @@ export(bool) var debug_mode
 export(PackedScene) var choiceBar = preload("res://scenes/fundamentals/choiceBar.tscn")
 # preloading
 
-var bottomLayer = preload("res://scenes/fundamentals/details/bottomLayerRect.tscn")
+
+
 var flt = preload("res://scenes/fundamentals/details/floatText.tscn")
 
 var current_dialog = ""
@@ -47,11 +48,15 @@ func intepret_events(event):
 	if debug_mode: print("Debug :" + str(event))
 	
 	# Pre-parse, keep this at minimum
-	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
-	elif event.has('color'): event['color'] = parse_color(event['color'], event)
-	elif event.has('nvl'):
+	if event.has('loc'): 
+		event['loc'] = parse_loc(event['loc'], event)
+	if event.has('color'): 
+		event['color'] = parse_color(event['color'], event)
+	if event.has('nvl'):
 		if (typeof(event['nvl'])!=1) and event['nvl'] != 'clear': 
 			event['nvl'] = parse_true_false(event['nvl'], event)
+	if event.has('scale'):
+		event['scale'] = parse_loc(event['scale'], event)
 
 	# End of pre-parse. Actual match event
 	match event:
@@ -493,11 +498,17 @@ func screen_effects(ev: Dictionary):
 			game.playback_events['screen'] = {}
 		"tint": tint(ev)
 		"tintwave": tint(ev)
+		"flashlight": flashlight(ev)
 		_: vn.error('Unknown screen effect.' , ev)
 	
 	if !vn.inLoading:
 		auto_load_next()
 
+func flashlight(ev:Dictionary):
+	var sc = Vector2(1,1) # Default value
+	if ev.has('scale'): sc = ev['scale']
+	screenEffects.flashlight(sc)
+	game.playback_events['screen'] = ev
 
 func fadein(time : float, auto_forw = true) -> void:
 	clear_boxes()
@@ -555,7 +566,6 @@ func camera_effect(ev : Dictionary) -> void:
 		"reset": screenEffects.reset_zoom()
 		"zoom":
 			if ev.has('scale'):
-				ev['scale'] = parse_loc(ev['scale'],ev)
 				var offset = Vector2(0,0)
 				var mode = 'linear'
 				if ev.has('type'): mode = ev['type']
@@ -829,6 +839,7 @@ func on_choice_made(ev : Dictionary) -> void:
 	else:
 		intepret_events(ev)
 
+
 func load_playback(play_back):
 	vn.inLoading = true
 	if play_back['bg'].size() > 0:
@@ -839,6 +850,8 @@ func load_playback(play_back):
 		intepret_events(play_back['screen'])
 	if play_back['camera'].size() > 0:
 		screenEffects.set_camera(play_back['camera'])
+	if play_back['weather'].size() > 0:
+		intepret_events(play_back['weather'])
 	
 	for d in play_back['charas']:
 		var dkeys = d.keys()

@@ -21,7 +21,7 @@ func _on_noButton_pressed():
 func _on_yesButton_pressed():
 	# It is possible that the player clicks return to main during some screen effects
 	# that has not been removed yet. So here we remove those.
-	screenEffects.removeTint()
+	screenEffects.removeLasting()
 	screenEffects.weather_off()
 	music.stop_bgm()
 	stage.remove_chara('absolute_all')

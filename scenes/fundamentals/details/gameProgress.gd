@@ -33,14 +33,13 @@ var nvl_text = ''
 # Last lasting screen effects (currently all lasting screen effects are
 # exclusive, meaning if one is on, the other will override the previous one.)
 # Only two lasting screen effects now: tint, and tintWave
-# Notice: effects that will expire after a few seconds should not be considered
-# as lasting effects
+
 
 # Current characters on stage together w/ their expressions 
 
 
-var playback_events = {'bg':{}, 'bgm':{}, 'camera':{}, 'screen':{}, 'charas':[], 'weather': {}, 'nvl': ''}
-# specific to one scene in godot
+var playback_events = {'bg':{}, 'bgm':{}, 'camera':{}, 'screen':{}, 'charas':[],\
+ 'weather': {}, 'nvl': ''}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()
@@ -50,7 +49,7 @@ func get_latest_nvl():
 
 func get_camera():
 	playback_events['camera'] = screenEffects.get_camera_data()
-
+	
 #-------------------------------------------------------------------------------
 # "new_game" = start from new
 # "load_game" = start from time line and index
@@ -72,6 +71,7 @@ var history = []
 
 
 #-------------Rollback Helper---------------------------
+# Unused now.
 var roll_back_records = {'bg':[], 'bgm':[], 'blocks':[]} 
 
 

@@ -1,5 +1,12 @@
 extends Node2D
 
+const all_weathers = {
+	'rain': "res://scenes/fundamentals/details/rain.tscn",
+	'snow': "res://scenes/fundamentals/details/snow.tscn",
+	'light': "res://scenes/fundamentals/details/light.tscn",
+	'dust': "res://scenes/fundamentals/details/dust.tscn"
+}
+
 # This simply serves as a midpoint between calls
 # Simple functions will be written here,
 # Longer ones will be in the script in the subnodes
@@ -95,20 +102,29 @@ func set_camera(d: Dictionary):
 
 # -----------------------------------------------------------------
 
-func _ready(): # turn off all weather on ready
-	var w = get_node("aboveScreen").get_node("weather")
-	for n in w.get_children():
-		n.visible = false
+func _ready(): # turn off everything on ready
+	removeLasting()
+	weather_off()
 
 func weather_off():
 	var w = get_node("aboveScreen").get_node("weather")
 	for n in w.get_children():
-		n.visible = false
+		n.queue_free()
 	
 func show_weather(w_name:String):
+	weather_off() # Weather is exclusive
 	var w = get_node("aboveScreen").get_node("weather")
-	for n in w.get_children():
-		if n.name == w_name:
-			n.visible = true
-		else:
-			n.visible = false
+	if all_weathers.has(w_name):
+		var weather = load(all_weathers[w_name])
+		w.add_child(weather.instance())
+	else:
+		print('Weather not found. Nothing is done.')
+	
+# ---------------------------Flashlight-----------------------------
+
+func flashlight(scale : Vector2):
+	removeLasting()
+	var lasting = get_node("aboveScreen/lasting")
+	var fl_scene = (load("res://scenes/fundamentals/details/flashLightScreen.tscn")).instance()
+	lasting.add_child(fl_scene)
+	fl_scene.scale = scale

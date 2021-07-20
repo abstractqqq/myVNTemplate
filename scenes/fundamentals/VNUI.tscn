@@ -25,7 +25,7 @@ size = 26
 font_data = ExtResource( 3 )
 
 [node name="VNUI" type="CanvasLayer"]
-layer = 2
+layer = 3
 
 [node name="textBox" type="ColorRect" parent="."]
 margin_left = 510.0

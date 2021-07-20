@@ -6,6 +6,7 @@ func _ready():
 	OS.set_window_title("Script Editor")
 	OS.set_window_size(Vector2(1280,720))
 
+
 func script_to_json():
 	var all_events = t.get_events()
 	var file = File.new()
