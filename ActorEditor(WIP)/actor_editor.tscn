@@ -1,26 +1,104 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://fonts/EBGregular.tres" type="DynamicFont" id=1]
 [ext_resource path="res://ActorEditor(WIP)/actor_editor.gd" type="Script" id=2]
+[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=3]
+[ext_resource path="res://JsonParser(WIP)/popupTheme.tres" type="Theme" id=4]
 
-[node name="control" type="Node2D"]
+[node name="editor" type="Node2D"]
 script = ExtResource( 2 )
 
-[node name="UID" type="Control" parent="."]
-margin_left = 19.9252
-margin_top = 190.749
-margin_right = 457.925
-margin_bottom = 415.749
+[node name="bg" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Label" type="Label" parent="UID"]
-margin_left = 10.2379
-margin_top = 5.0
-margin_right = 189.238
-margin_bottom = 67.0
-custom_fonts/font = ExtResource( 1 )
+[node name="msg" type="Label" parent="."]
+margin_left = 12.0
+margin_top = 11.0
+margin_right = 518.0
+margin_bottom = 139.0
+custom_fonts/font = ExtResource( 3 )
+text = "Use arror keys to move.
+Press G to hide all edit options,
+and press G again to restore."
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="editOptions" type="Node2D" parent="."]
+
+[node name="main" type="Control" parent="editOptions"]
+margin_left = 20.0
+margin_top = 191.0
+margin_right = 675.0
+margin_bottom = 416.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="xLabel" type="Label" parent="editOptions/main"]
+margin_left = 267.561
+margin_top = 8.19687
+margin_right = 446.561
+margin_bottom = 70.1969
+custom_fonts/font = ExtResource( 3 )
+text = "x scale:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="xScale" type="HSlider" parent="editOptions/main/xLabel"]
+margin_left = 32.439
+margin_top = 71.8031
+margin_right = 192.439
+margin_bottom = 111.803
+max_value = 1.0
+step = 0.1
+value = 1.0
+tick_count = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="yLabel" type="Label" parent="editOptions/main"]
+margin_left = 468.053
+margin_top = 7.00766
+margin_right = 647.054
+margin_bottom = 69.0077
+custom_fonts/font = ExtResource( 3 )
+text = "y scale:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="yScale" type="HSlider" parent="editOptions/main/yLabel"]
+margin_left = 31.9467
+margin_top = 72.9923
+margin_right = 191.947
+margin_bottom = 112.992
+max_value = 1.0
+step = 0.1
+value = 1.0
+tick_count = 5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="enterUID" type="Label" parent="editOptions/main"]
+margin_left = 39.9364
+margin_top = 7.82843
+margin_right = 223.936
+margin_bottom = 69.8284
+custom_fonts/font = ExtResource( 3 )
 text = "Enter UID:"
 align = 1
 valign = 1
@@ -28,79 +106,42 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="scaleLabelx" type="Label" parent="UID"]
-margin_left = 178.048
-margin_top = 4.25085
-margin_right = 357.048
-margin_bottom = 66.2509
-custom_fonts/font = ExtResource( 1 )
-text = "Scale:x"
-align = 1
-valign = 1
+[node name="LineEdit" type="LineEdit" parent="editOptions/main"]
+margin_left = 26.0034
+margin_top = 79.0
+margin_right = 229.003
+margin_bottom = 137.0
+custom_fonts/font = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="scaleLabely" type="Label" parent="UID"]
-margin_left = 266.448
-margin_top = 4.25085
-margin_right = 445.449
-margin_bottom = 66.2509
-custom_fonts/font = ExtResource( 1 )
-text = "Scale:y"
-align = 1
-valign = 1
+[node name="Button" type="Button" parent="editOptions/main"]
+margin_left = 67.0969
+margin_top = 152.232
+margin_right = 184.097
+margin_bottom = 214.232
+custom_fonts/font = ExtResource( 3 )
+text = "Find"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LineEdit" type="LineEdit" parent="UID"]
-margin_left = 48.1135
-margin_top = 76.4736
-margin_right = 148.113
-margin_bottom = 106.474
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Button" type="Button" parent="UID"]
-margin_left = 48.7962
-margin_top = 127.514
-margin_right = 148.796
-margin_bottom = 147.514
-custom_fonts/font = ExtResource( 1 )
-text = "Check"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="LineEditx" type="LineEdit" parent="UID"]
-margin_left = 235.983
-margin_top = 76.4137
-margin_right = 295.983
-margin_bottom = 106.414
-
-[node name="LineEdity" type="LineEdit" parent="UID"]
-margin_left = 324.384
-margin_top = 77.1628
-margin_right = 384.384
-margin_bottom = 107.163
-
-[node name="spriteInfo" type="Control" parent="."]
+[node name="spriteInfo" type="Control" parent="editOptions"]
 margin_left = 26.0
 margin_top = 440.0
 margin_right = 326.0
-margin_bottom = 640.0
+margin_bottom = 596.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="spriteName" type="Label" parent="spriteInfo"]
-margin_left = 33.8745
-margin_top = -28.1843
-margin_right = 212.874
-margin_bottom = 33.8157
-custom_fonts/font = ExtResource( 1 )
+[node name="spriteName" type="Label" parent="editOptions/spriteInfo"]
+margin_left = 31.2048
+margin_top = 2.51699
+margin_right = 307.205
+margin_bottom = 64.517
+custom_fonts/font = ExtResource( 3 )
 text = "Available Sprites:"
 align = 1
 valign = 1
@@ -108,26 +149,140 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="OptionButton" type="OptionButton" parent="spriteInfo"]
-margin_left = 39.8282
-margin_top = 35.0124
-margin_right = 239.828
-margin_bottom = 76.0128
-custom_fonts/font = ExtResource( 1 )
+[node name="spriteOptions" type="OptionButton" parent="editOptions/spriteInfo"]
+margin_left = 35.678
+margin_top = 75.0093
+margin_right = 235.678
+margin_bottom = 125.009
+custom_fonts/font = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Animations" type="Control" parent="."]
-margin_right = 40.0
-margin_bottom = 40.0
+[node name="animInfo" type="Control" parent="editOptions"]
+margin_left = 366.0
+margin_top = 438.0
+margin_right = 666.0
+margin_bottom = 579.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="animName" type="Label" parent="editOptions/animInfo"]
+margin_left = 1.00082
+margin_top = 4.40475
+margin_right = 277.001
+margin_bottom = 66.4048
+custom_fonts/font = ExtResource( 3 )
+text = "Available Anims:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="animOptions" type="OptionButton" parent="editOptions/animInfo"]
+margin_left = 3.09561
+margin_top = 74.5187
+margin_right = 203.096
+margin_bottom = 124.519
+custom_fonts/font = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bgInfo" type="Control" parent="editOptions"]
+margin_left = 24.0
+margin_top = 610.0
+margin_right = 324.0
+margin_bottom = 731.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bgName" type="Label" parent="editOptions/bgInfo"]
+margin_left = 3.8667
+margin_top = -15.3211
+margin_right = 279.867
+margin_bottom = 46.6789
+custom_fonts/font = ExtResource( 3 )
+text = "BG Choices:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="bgOptions" type="OptionButton" parent="editOptions/bgInfo"]
+margin_left = 38.0564
+margin_top = 58.3605
+margin_right = 238.056
+margin_bottom = 108.36
+custom_fonts/font = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="generateButton" type="Button" parent="editOptions"]
+margin_left = 61.1122
+margin_top = 935.898
+margin_right = 541.112
+margin_bottom = 997.898
+custom_fonts/font = ExtResource( 1 )
+text = "Save Sprite to Scene (.tscn)"
+clip_text = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="displayName" type="Control" parent="editOptions"]
+margin_left = 44.6516
+margin_top = 754.638
+margin_right = 525.652
+margin_bottom = 877.638
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="displayName" type="LineEdit" parent="editOptions/displayName"]
+margin_left = 15.3636
+margin_top = 55.3182
+margin_right = 504.364
+margin_bottom = 108.318
+custom_fonts/font = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="displayLabel" type="Label" parent="editOptions/displayName"]
+margin_left = -17.6697
+margin_top = -4.00452
+margin_right = 258.33
+margin_bottom = 39.9955
+custom_fonts/font = ExtResource( 3 )
+text = "Display Name:"
+align = 1
+valign = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="sprite" type="Sprite" parent="."]
-centered = false
-offset = Vector2( 1000, 0 )
 
-[connection signal="pressed" from="UID/Button" to="." method="_on_Button_pressed"]
-[connection signal="item_selected" from="spriteInfo/OptionButton" to="." method="_on_OptionButton_item_selected"]
+[node name="charaGenPopup" type="AcceptDialog" parent="."]
+margin_right = 746.0
+margin_bottom = 396.0
+theme = ExtResource( 4 )
+window_title = ""
+dialog_autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="value_changed" from="editOptions/main/xLabel/xScale" to="." method="_on_xScale_value_changed"]
+[connection signal="value_changed" from="editOptions/main/yLabel/yScale" to="." method="_on_yScale_value_changed"]
+[connection signal="pressed" from="editOptions/main/Button" to="." method="_on_Button_pressed"]
+[connection signal="item_selected" from="editOptions/spriteInfo/spriteOptions" to="." method="_on_spriteOptions_item_selected"]
+[connection signal="item_selected" from="editOptions/bgInfo/bgOptions" to="." method="_on_bgOptions_item_selected"]
+[connection signal="pressed" from="editOptions/generateButton" to="." method="_on_generateButton_pressed"]
+[connection signal="confirmed" from="charaGenPopup" to="." method="_on_charaGenPopup_confirmed"]

@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://assets/actors/female_default.png" type="Texture" id=1]
+[ext_resource path="res://GodetteVN/Characters/characterTemplate.gd" type="Script" id=2]
+
+[node name="character" type="Sprite"]
+modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
+texture = ExtResource( 1 )
+script = ExtResource( 2 )
+display_name = "A"
+unique_id = "female"
+name_color = Color( 0.768627, 0, 0, 1 )
+expression_list = {
+"default": "female_default.png",
+"smile1": "female_smile1.png",
+"smile2": "female_smile2.png",
+"surprised": "female_surprised.png",
+"wink": "female_wink.png",
+"worried": "female_worried.png"
+}
+anim_list = {
+}

@@ -12,42 +12,48 @@ _global_script_classes=[ {
 "base": "Sprite",
 "class": "character",
 "language": "GDScript",
-"path": "res://scenes/fundamentals/characterTemplate.gd"
+"path": "res://GodetteVN/Characters/characterClass.gd"
 }, {
 "base": "Node2D",
 "class": "generalDialog",
 "language": "GDScript",
-"path": "res://scenes/fundamentals/details/generalDialog.gd"
+"path": "res://GodetteVN/fundamentals/details/generalDialog.gd"
 }, {
 "base": "Control",
 "class": "saveSlot",
 "language": "GDScript",
-"path": "res://scenes/fundamentals/details/saveSlot.gd"
+"path": "res://GodetteVN/fundamentals/details/saveSlot.gd"
+}, {
+"base": "Node",
+"class": "spriteless_chara",
+"language": "GDScript",
+"path": "res://GodetteVN/Characters/spriteless_chara.gd"
 } ]
 _global_script_class_icons={
 "character": "",
 "generalDialog": "",
-"saveSlot": ""
+"saveSlot": "",
+"spriteless_chara": ""
 }
 
 [application]
 
-config/name="VNTemplate"
-run/main_scene="res://scenes/mainMenu.tscn"
+config/name="GodetteVN"
+run/main_scene="res://GodetteVN/mainMenu.tscn"
 config/use_custom_user_dir=true
 config/icon="res://icon.png"
 
 [autoload]
 
-vn="*res://scenes/fundamentals/details/globalSettings.gd"
-game="*res://scenes/fundamentals/details/gameProgress.gd"
-fun="*res://scenes/fundamentals/details/globalFunctions.gd"
-chara="*res://scenes/fundamentals/details/gameCharacters.gd"
-stage="*res://scenes/fundamentals/charaStage.tscn"
-fileRelated="*res://scenes/fundamentals/details/fileRelated.gd"
-notif="*res://scenes/fundamentals/notification.tscn"
-music="*res://scenes/fundamentals/musicController.tscn"
-screenEffects="*res://scenes/fundamentals/details/ScreenEffects.tscn"
+vn="*res://GodetteVN/fundamentals/details/globalSettings.gd"
+game="*res://GodetteVN/fundamentals/details/gameProgress.gd"
+fun="*res://GodetteVN/fundamentals/details/globalFunctions.gd"
+chara="*res://GodetteVN/fundamentals/details/gameCharacters.gd"
+stage="*res://GodetteVN/Characters/charaStage.tscn"
+fileRelated="*res://GodetteVN/fundamentals/details/fileRelated.gd"
+notif="*res://GodetteVN/fundamentals/notification.tscn"
+music="*res://GodetteVN/fundamentals/musicController.tscn"
+screenEffects="*res://GodetteVN/fundamentals/details/ScreenEffects.tscn"
 
 [display]
 
