@@ -10,6 +10,8 @@ export(bool) var in_all = true
 export(bool) var apply_highlight = true
 export(Dictionary) var expression_list = {}
 export(Dictionary) var anim_list = {}
+export(bool) var fade_on_change = false
+export(float, 0.1, 1) var fade_time = 0.4
 #
 
 var rng = RandomNumberGenerator.new()
@@ -25,7 +27,7 @@ var loc = Vector2()
 var in_action = false
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
-var current_expression = ""
+var current_expression : String
 
 
 
@@ -35,8 +37,23 @@ func change_expression(e : String) -> bool:
 	if e == "": e = 'default'
 	
 	if expression_list.has(e):
+		var prev_exp = current_expression
 		self.texture = load(vn.CHARA_DIR + expression_list[e])
 		current_expression = e
+		if fade_on_change and prev_exp != "":
+			var dummy = Sprite.new()
+			dummy.name = "_dummy"
+			dummy.position = self.position
+			dummy.texture = load(vn.CHARA_DIR + expression_list[prev_exp])
+			stage.add_child(dummy)
+			var tween = Tween.new()
+			tween.connect("tween_completed", self, "clear_dummy")
+			dummy.add_child(tween)
+			var m = self.modulate
+			tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
+				Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+			tween.start()
+		
 		return true
 	else:
 		print("Warning: " + e + ' not found for character with uid ' + unique_id)
@@ -150,3 +167,9 @@ func change_pos_2(loca:Vector2, time:float, mode = "linear"):
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
+
+func clear_dummy(_ob:Object, _k: NodePath):
+	for n in get_children():
+		if n.name == "_dummy":
+			n.call_deferred("free")
+

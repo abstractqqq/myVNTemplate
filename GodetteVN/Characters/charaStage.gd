@@ -1,9 +1,20 @@
 extends CanvasLayer
 
+# What is the point of making this a singleton instead of a node
+# inside a scene?
+
+# 1. It separates characters from VNs, in case you want to use your 
+# character sprites elsewhere, outside of VNs, e.g. you can call them
+# in a custom movie scene via code. 
+# 2. It makes each part of VN more independent, since
+# characters are so important, they deserve their own stage.
+
+# If character's fade_on_change is turned on, then there will be
+# dummies named _dummy on stage. So exclude them in children.
 
 func get_character_info(uid:String):
 	for n in get_children():
-		if n.unique_id == uid:
+		if n.name != "_dummy" and n.unique_id == uid:
 			return {"uid":uid, "display_name":n.display_name, "name_color":n.name_color}
 			
 	# If for loop didn't return anything, then character must be spriteless
@@ -16,7 +27,7 @@ func get_character_info(uid:String):
 func shake_chara(uid : String, amount: float, time: float):
 	if uid == 'all':
 		for n in get_children():
-			if n.in_all:
+			if n.name != "_dummy" and n.in_all:
 				n.shake(amount, time)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -26,7 +37,7 @@ func shake_chara(uid : String, amount: float, time: float):
 func jump(uid : String, dir: String, amount: float, time : float):
 	if uid == 'all':
 		for n in get_children():
-			if n.in_all:
+			if n.name != "_dummy" and n.in_all:
 				n.jump(dir, amount, time)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -69,7 +80,7 @@ func fadein(uid: String, time: float, loc: Vector2, expression:String) -> void:
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
 		for n in get_children():
-			if n.in_all:
+			if n.name != "_dummy" and n.in_all:
 				n.fadeout(time)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -99,7 +110,7 @@ func set_highlight(uid : String) -> void:
 
 func remove_highlight() -> void:
 	for n in get_children():
-		if n.apply_highlight:
+		if n.name != "_dummy" and n.apply_highlight:
 			n.modulate = vn.DIM
 
 func remove_chara(uid : String):
@@ -109,7 +120,7 @@ func remove_chara(uid : String):
 			
 	elif uid == 'all':
 		for n in get_children():
-			if n.in_all:
+			if n.name != "_dummy" and n.in_all:
 				n.call_deferred("free")
 	else:
 		var c = find_chara_on_stage(uid)
@@ -123,7 +134,7 @@ func set_modulate_4_all(c : Color):
 
 func find_chara_on_stage(uid:String):
 	for n in get_children():
-		if n.unique_id == uid:
+		if n.name != "_dummy" and n.unique_id == uid:
 			return n
 			
 	print('Warning: the character with uid {0} cannot be found.'.format({0:uid}))
@@ -132,7 +143,7 @@ func find_chara_on_stage(uid:String):
 
 func is_on_stage(uid : String) -> bool:
 	for n in get_children():
-		if n.unique_id == uid:
+		if n.name != "_dummy" and n.unique_id == uid:
 			return true
 			
 	return false
@@ -140,7 +151,8 @@ func is_on_stage(uid : String) -> bool:
 func all_on_stage():
 	var output = []
 	for n in get_children():
-		var temp = {n.unique_id: n.current_expression, 'loc': n.position}
-		output.append(temp)
+		if n.name != "_dummy":
+			var temp = {n.unique_id: n.current_expression, 'loc': n.position}
+			output.append(temp)
 			
 	return output

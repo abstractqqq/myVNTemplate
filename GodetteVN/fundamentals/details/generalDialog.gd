@@ -180,6 +180,9 @@ func generate_choices(event: Dictionary):
 	# make a say event
 	if self.nvl:
 		nvl_off()
+	else:
+		dialogbox.text = ""
+		speaker.text = ""
 	if vn.auto_on or vn.skipping:
 		QM.disable_skip_auto()
 	waiting_cho = true
@@ -845,8 +848,6 @@ func load_playback(play_back):
 	if play_back['weather'].size() > 0:
 		intepret_events(play_back['weather'])
 	
-	print("All on stage")
-	print(stage.all_on_stage())
 	for d in play_back['charas']:
 		var dkeys = d.keys()
 		var loc = d['loc']

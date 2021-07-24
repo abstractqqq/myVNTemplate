@@ -20,3 +20,4 @@ expression_list = {
 }
 anim_list = {
 }
+fade_on_change = true

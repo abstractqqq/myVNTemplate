@@ -19,7 +19,7 @@ var main_block = [
 	{'female': 'Hello there. Let me introduce you to the system.', 'voice': '001.wav'},
 	{'bgm':'myuu-angels.mp3', 'fadein': 3},
 	{'female': 'Music start'},
-	{'female': "Let me hide the quick menu for a second"},
+	{'female smile1': "Let me hide the quick menu for a second"},
 	{'system': 'quick_menu off'},
 	{'female': 'It is gone. Now let me make it visible again.'},
 	{'system': 'quick_menu on'},

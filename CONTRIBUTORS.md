@@ -1,5 +1,7 @@
 ### Those contributing to Godette VN Template
-* [qtren](https://github.com/qtren)
+* [T.Q](https://github.com/qtren)
   - Project Head, Links: [itch](https://qtren2015.itch.io/)
 * [KaizNike](https://github.com/KaizNike)
   - Links: [itch](https://kaizarnike.itch.io/)
+* [Pneuma]
+  - Links: [itch](https://pneumavoid.itch.io/)
