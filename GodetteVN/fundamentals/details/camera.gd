@@ -1,11 +1,10 @@
 extends Camera2D
 
 onready var shakeTimer = $Timer
-onready var tween = $Tween
 
 var shake_amount = 200
 var rng = RandomNumberGenerator.new()
-var type = ""
+var type : int
 const default_offset = Vector2(0,0)
 
 
@@ -14,14 +13,14 @@ func _ready():
 	
 func _process(delta):
 	var shake_vec = Vector2()
-	if type == "regular":
+	if type == 0: # regular
 		shake_vec = Vector2(rng.randf_range(-shake_amount, shake_amount),\
 		rng.randf_range(-shake_amount, shake_amount))
-	elif type == "vpunch":
+	elif type == 1: #vpunch
 		shake_vec = Vector2(0, rng.randf_range(-shake_amount, shake_amount))
-	elif type == "hpunch":
+	elif type == 2: # hpunch
 		shake_vec = Vector2(rng.randf_range(-shake_amount, shake_amount), 0)
-	else:
+	else: # currently, else means nothing
 		shake_vec = Vector2(0,0)
 	
 	self.offset = shake_vec * delta + default_offset
@@ -35,8 +34,7 @@ func shake(amount, time):
 	else:
 		shakeTimer.wait_time = time
 		 
-	type = "regular"	
-	tween.stop_all()
+	type = 0
 	set_process(true)
 	shakeTimer.start()
 	
@@ -44,30 +42,73 @@ func shake(amount, time):
 func vpunch():
 		
 	shake_amount = 600
-	#shake_limit = 300		
 	shakeTimer.wait_time = 0.9
-	type = "vpunch"
-	tween.stop_all()
+	type = 1
 	set_process(true)
 	shakeTimer.start()
 	
 func hpunch():
 	
-		
 	shake_amount = 600
 	#shake_limit = 300	
 	shakeTimer.wait_time = 0.9
-	type = "hpunch"
-	tween.stop_all()
+	type = 2
 	set_process(true)
 	shakeTimer.start()
 	
 
 func _on_Timer_timeout():
-
 	shake_amount = 200
-	type = ""
+	type = 0
 	set_process(false)
-	tween.interpolate_property(self, "offset", offset, default_offset, 0.1, Tween.TRANS_QUAD, Tween.EASE_IN_OUT)
-	tween.start()
+	self.offset = default_offset
 	
+func _correct_zm(v:Vector2) -> Vector2:
+	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
+	
+	
+func camera_move(v:Vector2, t:float, mode = 'linear'):
+	if t <= 0.05:
+		self.offset = v
+	else:
+		var m = fun.movement_type(mode)
+		var tween = Tween.new()
+		add_child(tween)
+		tween.interpolate_property(self, "offset", self.offset, v, t,
+			m, Tween.EASE_IN_OUT)
+		tween.start()
+		yield(get_tree().create_timer(t), "timeout")
+		tween.queue_free()
+		
+func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
+	zm = _correct_zm(zm)
+	var m = fun.movement_type(mode)
+	var tween1 = Tween.new()
+	var tween2 = Tween.new()
+	add_child(tween1)
+	add_child(tween2)
+	tween1.interpolate_property(self, "offset", self.offset, off, t,
+		m, Tween.EASE_IN_OUT)
+	tween2.interpolate_property(self, "zoom", self.zoom, zm, t,
+		m, Tween.EASE_IN_OUT)
+	tween1.start()
+	tween2.start()
+	yield(get_tree().create_timer(t), "timeout")
+	tween1.queue_free()
+	tween2.queue_free()
+
+func zoom(zm:Vector2, off = Vector2(1,1)):
+	zm = _correct_zm(zm)
+	# by default, zoom is instant
+	self.offset = off
+	self.zoom = zm
+	
+func reset_zoom():
+	self.offset = self.default_offset
+	self.zoom = Vector2(1,1)
+
+func get_camera_data() -> Dictionary:
+	return {'offset': self.offset, 'zoom': self.zoom}
+	
+func set_camera(d: Dictionary):
+	zoom(d['zoom'], d['offset'])

@@ -1,21 +1,17 @@
 extends CanvasLayer
 
-var settingsScreen = preload("res://GodetteVN/fundamentals/settings.tscn")
-var loadScreen = preload("res://GodetteVN/fundamentals/loadScreen.tscn")
-
-
 #------------------------------------------------------------------------------
 func _ready():
 	# no need to read quit message to quit the game in main menu
 	get_tree().set_auto_accept_quit(true)
 	OS.set_window_maximized(true)
 
-
 func _on_exitButton_pressed():
 	get_tree().quit()
 
 func _on_settingsButton_pressed():
-	self.add_child(settingsScreen.instance())
+	var setting = load(vn.SETTING_PATH)
+	self.add_child(setting.instance())
 
 func _on_newGameButton_pressed():
 	game.load_instruction = "new_game"
@@ -23,7 +19,7 @@ func _on_newGameButton_pressed():
 	if error == OK:
 		self.queue_free()
 
-
 func _on_loadButton_pressed():
-	self.add_child(loadScreen.instance())
+	var loading = load(vn.LOAD_PATH)
+	self.add_child(loading.instance())
 

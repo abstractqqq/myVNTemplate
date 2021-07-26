@@ -1,23 +1,14 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://gui/default_slot_hover.png" type="Texture" id=2]
 [ext_resource path="res://gui/default_save_thumbnail.png" type="Texture" id=3]
 [ext_resource path="res://GodetteVN/fundamentals/details/saveSlot.gd" type="Script" id=4]
-
-[sub_resource type="DynamicFont" id=1]
-resource_local_to_scene = true
-size = 30
-font_data = ExtResource( 1 )
-
-[sub_resource type="DynamicFont" id=2]
-size = 20
-font_data = ExtResource( 1 )
+[ext_resource path="res://fonts/EBGregular.tres" type="DynamicFont" id=5]
 
 [node name="saveSlot" type="Control"]
 margin_right = 1600.0
 margin_bottom = 120.0
-rect_min_size = Vector2( 1600, 120 )
+rect_min_size = Vector2( 1600, 140 )
 script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -25,7 +16,7 @@ __meta__ = {
 
 [node name="Button" type="TextureButton" parent="."]
 margin_right = 1600.0
-margin_bottom = 120.0
+margin_bottom = 140.0
 texture_hover = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -48,10 +39,10 @@ mouse_filter = 2
 
 [node name="saveThumbnail" type="TextureRect" parent="Button/HBoxContainer"]
 margin_left = 19.0
-margin_top = 10.0
+margin_top = 5.0
 margin_right = 194.0
-margin_bottom = 110.0
-rect_min_size = Vector2( 175, 100 )
+margin_bottom = 115.0
+rect_min_size = Vector2( 175, 110 )
 mouse_filter = 2
 size_flags_vertical = 4
 texture = ExtResource( 3 )
@@ -86,22 +77,20 @@ margin_right = 1348.0
 margin_bottom = 65.0
 mouse_filter = 2
 size_flags_vertical = 3
-custom_fonts/normal_font = SubResource( 1 )
+custom_fonts/normal_font = ExtResource( 5 )
 custom_colors/default_color = Color( 0, 0, 0, 1 )
 bbcode_enabled = true
 scroll_active = false
 
-[node name="saveTime" type="RichTextLabel" parent="Button/HBoxContainer/VBoxContainer"]
+[node name="saveTime" type="Label" parent="Button/HBoxContainer/VBoxContainer"]
 margin_top = 75.0
 margin_right = 1348.0
 margin_bottom = 120.0
-mouse_filter = 2
 size_flags_vertical = 3
-custom_fonts/normal_font = SubResource( 2 )
-custom_colors/default_color = Color( 0.301961, 0.301961, 0.305882, 1 )
-bbcode_enabled = true
-bbcode_text = "[center]??/??/???? ??:??:??[/center]"
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color = Color( 0.294118, 0.290196, 0.290196, 1 )
 text = "??/??/???? ??:??:??"
-scroll_active = false
+align = 1
+valign = 1
 
 [connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

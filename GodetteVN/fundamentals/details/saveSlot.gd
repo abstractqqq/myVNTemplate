@@ -58,7 +58,6 @@ func make_save(save_path):
 	# actual saving process
 		
 	# Actual save
-	game.get_camera() # get latest camera data
 	game.get_latest_nvl() # get current nvl text.
 	game.get_latest_onstage() # get current on stage characters.
 	var data = {'currentNodePath':game.currentNodePath, 'currentBlock': game.currentBlock,\
@@ -90,7 +89,7 @@ func set_description(text):
 	get_node("Button/HBoxContainer/VBoxContainer/saveInfo").bbcode_text = "[center]"+ text +"[/center]"
 
 func set_datetime(dt):
-	get_node("Button/HBoxContainer/VBoxContainer/saveTime").bbcode_text = "[center]"+ dt +"[/center]"
+	get_node("Button/HBoxContainer/VBoxContainer/saveTime").text = dt
 	
 func get_datetime():
 	return get_node("Button/HBoxContainer/VBoxContainer/saveTime").text

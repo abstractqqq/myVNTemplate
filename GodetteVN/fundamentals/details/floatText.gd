@@ -1,5 +1,7 @@
 extends RichTextLabel
 
+func set_font(font_path:String):
+	self.add_font_override("normal_font", load(font_path))
 
 func display(tx:String, t:float, in_t:float, loc: Vector2):
 	self.rect_position = loc

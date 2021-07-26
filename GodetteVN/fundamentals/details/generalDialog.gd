@@ -20,13 +20,14 @@ var hide_vnui = false
 var no_scroll = false
 var no_right_click = false
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
-const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/', '%']
+const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/']
 onready var bg = $background
 onready var vnui = $VNUI
 onready var QM = vnui.get_node('quickMenu')
 onready var nvlBox = vnui.get_node('nvlBox')
 onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
+onready var camera = get_node('camera')
 # signals
 signal player_accept
 
@@ -442,26 +443,15 @@ func change_scene_to(path : String):
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
-	var parsed = split_condition(ev['dvar'])
-	var front_var = parsed[0]
-	var arith = parsed[1]
-	var back_var = parsed[2]
+	var splitted = fun.break_line(ev['dvar'], '=')
+	var left = splitted[0]
+	left = left.replace(" ","")
+	var right = splitted[1]
+	if has_dvar(left):
+		vn.dvar[left] = fun.calculate(right)
+	else:
+		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
-	# Takes the value of a dvar if back_var corresponds to a dvar
-	# Or if it is a float, then parse it to a float
-	back_var = dvar_or_float(back_var)
-	if not has_dvar(front_var) and arith != "=":
-		vn.error('The variable at front must be a dvar.', ev)
-	
-	match arith:
-		"=": vn.dvar[front_var] = back_var
-		"+=": vn.dvar[front_var] += back_var
-		"-=": vn.dvar[front_var] -= back_var
-		"*=": vn.dvar[front_var] *= back_var
-		"/=": vn.dvar[front_var] /= back_var
-		"%=": vn.dvar[front_var] %= back_var
-		_: vn.error("Unknown arithmetic symbol " + arith, ev)
-		
 	auto_load_next()
 	
 
@@ -560,9 +550,11 @@ func sfx_player(ev : Dictionary) -> void:
 func camera_effect(ev : Dictionary) -> void:
 	var ef_name = ev['camera']
 	match ef_name:
-		"vpunch": if not vn.skipping: screenEffects.vpunch()
-		"hpunch": if not vn.skipping: screenEffects.hpunch()
-		"reset": screenEffects.reset_zoom()
+		"vpunch": if not vn.skipping: camera.vpunch()
+		"hpunch": if not vn.skipping: camera.hpunch()
+		"reset": 
+			camera.reset_zoom()
+			game.playback_events['camera'] = {}
 		"zoom":
 			QM.reset_skip()
 			if ev.has('scale'):
@@ -571,9 +563,11 @@ func camera_effect(ev : Dictionary) -> void:
 				if ev.has('type'): mode = ev['type']
 				if ev.has('loc'): offset = ev['loc']
 				if ev.has('time') and mode != 'instant':
-					screenEffects.zoom_timed(ev['scale'], ev['time'],mode,offset)
+					camera.zoom_timed(ev['scale'], ev['time'],mode,offset)
 				else:
-					screenEffects.zoom(ev['scale'], offset)
+					camera.zoom(ev['scale'], offset)
+				
+				game.playback_events['camera'] = {'zoom':ev['scale'], 'offset':offset}
 			else:
 				vn.error('Camera zoom expects a scale.', ev)
 		"move":
@@ -582,16 +576,18 @@ func camera_effect(ev : Dictionary) -> void:
 				if vn.skipping: ev['time'] = 0
 				if ev.has('type'):
 					if ev['type'] == 'instant': ev['time'] = 0
-					screenEffects.camera_move(ev['loc'],ev['time'],ev['type'])
+					camera.camera_move(ev['loc'],ev['time'],ev['type'])
 				else:
-					screenEffects.camera_move(ev['loc'],ev['time'])
+					camera.camera_move(ev['loc'],ev['time'])
+				
+				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc']}
 				yield(get_tree().create_timer(ev['time']), 'timeout')
 			else:
 				vn.error("Camera move expects a loc and time, and type (optional)", ev)
 		"shake":
 			if not vn.skipping:
 				if ev.has("amount") and ev.has("time"):
-					screenEffects.shake(ev['amount'], ev['time'])
+					camera.shake(ev['amount'], ev['time'])
 				else:
 					vn.error("Shake expects an amount and time.", ev)
 		_:
@@ -844,7 +840,7 @@ func load_playback(play_back):
 	if play_back['screen'].size() > 0:
 		intepret_events(play_back['screen'])
 	if play_back['camera'].size() > 0:
-		screenEffects.set_camera(play_back['camera'])
+		camera.set_camera(play_back['camera'])
 	if play_back['weather'].size() > 0:
 		intepret_events(play_back['weather'])
 	
@@ -902,6 +898,8 @@ func float_text(ev: Dictionary) -> void:
 	var in_t = 1
 	if ev.has('fadein'): in_t = ev['fadein']
 	var f = floatText.instance()
+	if ev.has('font'):
+		f.set_font(ev['font'])
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:
 		f.display(ev['float'], ev['time'], in_t, loc)

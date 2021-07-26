@@ -46,7 +46,6 @@ func _ready():
 	
 	
 	
-	
 #----------------------------------------------------------------------------
 
 # Keep a record of the path to the scene of the stage character

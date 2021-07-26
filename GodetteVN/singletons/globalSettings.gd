@@ -32,9 +32,17 @@ const SAVE_DIR = "user://save/"
 const SCRIPT_DIR = "res://VNScript/"
 const THUMBNAIL_DIR = "user://temp/"
 const FONT_DIR = "res://fonts/"
+# Import screen paths
+const SETTING_PATH = "res://GodetteVN/fundamentals/settings.tscn"
+const LOAD_PATH = "res://GodetteVN/fundamentals/loadScreen.tscn"
+const SAVE_PATH = "res://GodetteVN/fundamentals/saveScreen.tscn"
+const SAVESLOT = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
+const HIST_PATH = "res://GodetteVN/fundamentals/historyScreen.tscn"
+
+
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
 const THUMBNAIL_WIDTH = 175
-const THUMBNAIL_HEIGHT = 100
+const THUMBNAIL_HEIGHT = 110
 # Encryption password used for saves
 const PASSWORD = "nanithefuck"
 
@@ -67,7 +75,7 @@ var cps : int = 50 # either 50 or 25
 # PLEASE DO NOT NAME A DVAR THE SAME AS THE NAME OF ANY BBCODE!
 # Also not "nw"
 
-var dvar = {}
+var dvar = {'money':50, 'leave':0}
 
 # ------------------------- Game State Variables--------------------------------
 
@@ -95,8 +103,6 @@ func error(message, ev = {}):
 	if ev.size() != 0:
 		message += "\n Possible error at event: " + str(ev)
 			
-	#message += "\n Index is " + str(game.currentIndex) +\
-	#" in block " + game.currentBlock
-	
+
 	push_error(message)
 	get_tree().quit()

@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "saveSlot",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/saveSlot.gd"
+}, {
+"base": "Node",
+"class": "stringCalculator",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/stringCalculator.gd"
 } ]
 _global_script_class_icons={
 "character": "",
 "generalDialog": "",
-"saveSlot": ""
+"saveSlot": "",
+"stringCalculator": ""
 }
 
 [application]
@@ -39,15 +45,15 @@ config/icon="res://icon.png"
 
 [autoload]
 
-vn="*res://GodetteVN/fundamentals/details/globalSettings.gd"
-game="*res://GodetteVN/fundamentals/details/gameProgress.gd"
-fun="*res://GodetteVN/fundamentals/details/globalFunctions.gd"
-chara="*res://GodetteVN/fundamentals/details/gameCharacters.gd"
+vn="*res://GodetteVN/singletons/globalSettings.gd"
+game="*res://GodetteVN/singletons/gameProgress.gd"
+fun="*res://GodetteVN/singletons/globalFunctions.gd"
+chara="*res://GodetteVN/singletons/gameCharacters.gd"
 stage="*res://GodetteVN/Characters/charaStage.tscn"
-fileRelated="*res://GodetteVN/fundamentals/details/fileRelated.gd"
-notif="*res://GodetteVN/fundamentals/notification.tscn"
-music="*res://GodetteVN/fundamentals/musicController.tscn"
-screenEffects="*res://GodetteVN/fundamentals/details/ScreenEffects.tscn"
+fileRelated="*res://GodetteVN/singletons/fileRelated.gd"
+notif="*res://GodetteVN/singletons/notification.tscn"
+music="*res://GodetteVN/singletons/musicController.tscn"
+screenEffects="*res://GodetteVN/singletons/ScreenEffects.tscn"
 
 [display]
 

@@ -47,9 +47,7 @@ func get_latest_onstage():
 func get_latest_nvl():
 	playback_events['nvl'] = nvl_text
 
-func get_camera():
-	playback_events['camera'] = screenEffects.get_camera_data()
-	
+
 #-------------------------------------------------------------------------------
 # "new_game" = start from new
 # "load_game" = start from time line and index

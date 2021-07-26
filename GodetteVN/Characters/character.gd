@@ -11,7 +11,7 @@ export(bool) var apply_highlight = true
 export(Dictionary) var expression_list = {}
 export(Dictionary) var anim_list = {}
 export(bool) var fade_on_change = false
-export(float, 0.1, 1) var fade_time = 0.4
+export(float, 0.1, 1) var fade_time = 0.5
 #
 
 var rng = RandomNumberGenerator.new()
@@ -168,8 +168,6 @@ func change_pos_2(loca:Vector2, time:float, mode = "linear"):
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
 
-func clear_dummy(_ob:Object, _k: NodePath):
-	for n in get_children():
-		if n.name == "_dummy":
-			n.call_deferred("free")
+func clear_dummy(ob:Object, _k: NodePath):
+	ob.call_deferred('free')
 

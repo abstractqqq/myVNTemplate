@@ -3,5 +3,6 @@
 [ext_resource path="res://fonts/EBGaramond-Regular.ttf" type="DynamicFontData" id=1]
 
 [resource]
-size = 42
+resource_local_to_scene = true
+size = 32
 font_data = ExtResource( 1 )

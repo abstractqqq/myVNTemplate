@@ -6,7 +6,6 @@ extends generalDialog
 var c1 = [
 	{"Yes": {'then': 'b_leave'} },
 	{"No": {'dvar': "leave=0"}}
-	
 ]
 
 
@@ -14,7 +13,7 @@ var c1 = [
 # This is called a dialog block/conversation block
 var main_block = [
 	{'bg': 'busstop.jpg', 'pixelate': 2},
-	{'dvar': 'money = 50'},
+	{'dvar': 'money = (money+50)*2'},
 	{'chara': 'female join', 'loc': "1600 600", 'expression':''},
 	{'female': 'Hello there. Let me introduce you to the system.', 'voice': '001.wav'},
 	{'bgm':'myuu-angels.mp3', 'fadein': 3},
@@ -27,7 +26,8 @@ var main_block = [
 	"globalFunctions.gd."},
 	{'premade': "EXAMPLE"},
 	{'female': 'This is how you show basic floating text.'},
-	{'float': '[color=#ff0000]Hello World1[/color]', 'wait': 1, 'time': 4, 'loc': '600 300', 'fadein': 0.5},
+	{'float': '[color=#ff0000]Hello World1[/color]', 'wait': 1, 'time': 4, 'loc': '600 300', 'fadein': 0.5,\
+	"font": "res://fonts/ARegular.tres"},
 	{'float': '[color=#ff0000]Hello World2[/color]', 'wait': 1, 'time': 4, 'loc': '600 400', 'fadein': 1},
 	{'female': "Let me tint the screen."},
 	{'screen': 'tint', 'color': Color(0,1,0,0.5), 'time':2},

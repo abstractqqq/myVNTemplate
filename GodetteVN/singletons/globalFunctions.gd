@@ -47,6 +47,7 @@ func movement_type(type:String)-> int:
 		
 	return m
 
+# Working
 
 # Used in rollback
 # Classifying events and what types of actions should be followed
@@ -87,3 +88,23 @@ func event_match(ev:Dictionary) -> int:
 		_: m = -1 # This signifies speech event
 		
 	return m
+
+#----------------------------------------------------------------
+
+func break_line(line:String , s:String):
+	# breaks the line according to the letter s
+	# For instance, if line = 'x = (a+b)^2', it returns [x, (a+b)^2] 
+
+	if s in line:
+		return line.split(s)
+	else:
+		vn.error("Cannot break {0} by {1}".format({0:line,1:s}))
+		
+
+func calculate(what:String):
+	# what means what to calculate, should be an algebraic expression
+	var calculator = stringCalculator.new()
+	var result =  calculator.calculate(what)
+	calculator.call_deferred('free')
+	return result
+	

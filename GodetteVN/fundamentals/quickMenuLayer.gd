@@ -1,11 +1,5 @@
 extends Node2D
 
-var settingsScene = preload("res://GodetteVN/fundamentals/settings.tscn")
-var historyScene = preload("res://GodetteVN/fundamentals/historyScreen.tscn")
-var saveScene = preload("res://GodetteVN/fundamentals/saveScreen.tscn")
-var loadScene = preload("res://GodetteVN/fundamentals/loadScreen.tscn")
-var quickSave = preload("res://GodetteVN/fundamentals/details/saveSlot.tscn")
-
 var hiding = false
 
 
@@ -19,7 +13,8 @@ func _notification(what):
 func _on_SettingButton_pressed():
 	reset_auto()
 	reset_skip()
-	get_parent().add_child(settingsScene.instance())
+	var setting = load(vn.SETTING_PATH)
+	get_parent().add_child(setting.instance())
 
 
 func _on_saveButton_mouse_entered():
@@ -61,14 +56,16 @@ func _on_mainButton_mouse_exited():
 func _on_historyButton_pressed():
 	reset_auto()
 	reset_skip()
-	get_parent().add_child(historyScene.instance())
+	var hist = load(vn.HIST_PATH)
+	get_parent().add_child(hist.instance())
 
 
 func _on_saveButton_pressed():
 	reset_auto()
 	reset_skip()
 	_create_screenshot()
-	get_parent().add_child(saveScene.instance())
+	var save = load(vn.SAVE_PATH)
+	get_parent().add_child(save.instance())
 
 
 func _on_quitButton_pressed():
@@ -137,7 +134,8 @@ func _on_loadButton_mouse_exited():
 func _on_loadButton_pressed():
 	reset_auto()
 	reset_skip()
-	get_parent().add_child(loadScene.instance())
+	var loading = load(vn.LOAD_PATH)
+	get_parent().add_child(loading.instance())
 
 
 func disable_skip_auto():
@@ -159,7 +157,8 @@ func _on_QsaveButton_mouse_exited():
 
 func _on_QsaveButton_pressed():
 	_create_screenshot()
-	var sl = quickSave.instance()
+	var slot = load(vn.SAVESLOT)
+	var sl = slot.instance()
 	var temp = game.currentSaveDesc
 	game.currentSaveDesc = "[Quick Save]" + temp
 	sl.make_save(sl.path)
