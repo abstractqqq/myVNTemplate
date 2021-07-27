@@ -25,8 +25,8 @@ var dir = null
 #
 var loc = Vector2()
 var in_action = false
-const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
+var jump_direc : Vector2
 var current_expression : String
 
 
@@ -95,13 +95,13 @@ func on_shake_timer_timeout():
 		rng.randf_range(-shake_amount, shake_amount))
 
 # Jump and shake require refactor
-func jump(direc : String, amount : float, time : float) -> void:
+func jump(direc : Vector2, amount : float, time : float) -> void:
 	if in_action:
 		timer.stop()
 		timer.queue_free()
 		reset()
 	
-	dir = direc.to_lower()
+	jump_direc = direc
 	in_action = true
 	time = stepify(time, 0.1)
 	counter_bound = time/0.02
@@ -119,14 +119,15 @@ func on_jump_timeout():
 	counter += 1
 	if counter >= counter_bound:
 		in_action = false
+		jump_direc = Vector2()
 		timer.stop()
 		timer.queue_free()
 		reset()
 	
 	if counter >= counter_bound/2:
-		self.position -= step_size * direction[dir]
+		self.position -= step_size * jump_direc
 	else:
-		self.position += step_size * direction[dir]
+		self.position += step_size * jump_direc
 
 # Reset is done this way because currently shake and jump are
 # exclusive to each other
@@ -136,6 +137,7 @@ func reset():
 	counter = 0
 	counter_bound = 0
 	self.position = loc
+	jump_direc = Vector2()
 
 func fadein(time : float):
 	var tween = Tween.new()
@@ -169,5 +171,6 @@ func change_pos_2(loca:Vector2, time:float, mode = "linear"):
 	tween.queue_free()
 
 func clear_dummy(ob:Object, _k: NodePath):
+	# This ob is the dummy sprite
 	ob.call_deferred('free')
 

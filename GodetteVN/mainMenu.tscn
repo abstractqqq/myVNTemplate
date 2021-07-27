@@ -35,13 +35,13 @@ __meta__ = {
 }
 
 [node name="gameTitle" type="RichTextLabel" parent="."]
-margin_left = 34.686
-margin_top = 22.9439
-margin_right = 484.685
-margin_bottom = 165.944
+margin_left = 35.0
+margin_top = 23.0
+margin_right = 718.0
+margin_bottom = 166.0
 custom_fonts/normal_font = SubResource( 2 )
 custom_colors/default_color = Color( 0.141176, 0.0784314, 0.0784314, 1 )
-text = "Game Title"
+text = "Example Project"
 __meta__ = {
 "_edit_use_anchors_": false
 }

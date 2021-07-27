@@ -1,5 +1,10 @@
 extends CanvasLayer
 
+const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
+
+# Because uid is supposed to be unique, we can simply overwrite when character
+# joins the stage again... 
+
 # What is the point of making this a singleton instead of a node
 # inside a scene?
 
@@ -13,11 +18,6 @@ extends CanvasLayer
 # dummies named _dummy on stage. So exclude them in children.
 
 func get_character_info(uid:String):
-	for n in get_children():
-		if n.name != "_dummy" and n.unique_id == uid:
-			return {"uid":uid, "display_name":n.display_name, "name_color":n.name_color}
-			
-	# If for loop didn't return anything, then character must be spriteless
 	if chara.all_chara.has(uid):
 		return chara.all_chara[uid]
 	else:
@@ -34,7 +34,8 @@ func shake_chara(uid : String, amount: float, time: float):
 		c.shake(amount, time)
 
 
-func jump(uid : String, dir: String, amount: float, time : float):
+func jump(uid : String, dir:Vector2, amount: float, time : float):
+	dir = dir.normalized()
 	if uid == 'all':
 		for n in get_children():
 			if n.name != "_dummy" and n.in_all:
@@ -61,20 +62,19 @@ func change_expression(uid:String, expression:String):
 
 func fadein(uid: String, time: float, loc: Vector2, expression:String) -> void:
 	# Ignore accidental spriteless character fadein
-	if typeof(chara.all_chara[uid]) != 4:
-		return
-	
-	if vn.skipping:
-		join(uid,loc,expression)
-	else:
-		var ch_scene = load(chara.all_chara[uid])
-		# If load fails, there will be a bug pointing to this line
-		var c = ch_scene.instance()
-		c.modulate = Color(0.86,0.86,0.86,0)
-		add_child(c)
-		c.position = loc
-		c.fadein(time)
-		c.change_expression(expression)
+	var info = get_character_info(uid)
+	if info.has('path'):
+		if vn.skipping:
+			join(uid,loc,expression)
+		else:
+			var ch_scene = load(info['path'])
+			# If load fails, there will be a bug pointing to this line
+			var c = ch_scene.instance()
+			c.modulate = Color(0.86,0.86,0.86,0)
+			add_child(c)
+			c.position = loc
+			c.fadein(time)
+			c.change_expression(expression)
 	
 
 func fadeout(uid: String, time: float) -> void:
@@ -85,22 +85,18 @@ func fadeout(uid: String, time: float) -> void:
 	else:
 		var c = find_chara_on_stage(uid)
 		c.fadeout(time)
-	
 
 func join(uid: String, loc: Vector2, expression:String) -> void:
-	if typeof(chara.all_chara[uid]) == 4:
-		# This is a string, that means it is not spriteless
-		# because for spriteless, this is a dictionary
-		var ch_scene = load(chara.all_chara[uid])
+	var info = get_character_info(uid)
+	if info.has('path'):
+		var ch_scene = load(info['path'])
 		# If load fails, there will be a bug pointing to this line
-		
-		var join_chara = ch_scene.instance()
-		add_child(join_chara)
-		if join_chara.change_expression(expression):
-			join_chara.position = loc
-			join_chara.loc = loc
-			join_chara.modulate = vn.DIM
-
+		var c = ch_scene.instance()
+		add_child(c)
+		if c.change_expression(expression):
+			c.position = loc
+			c.loc = loc
+			c.modulate = vn.DIM
 
 
 func set_highlight(uid : String) -> void:
@@ -156,3 +152,4 @@ func all_on_stage():
 			output.append(temp)
 			
 	return output
+

@@ -10,6 +10,8 @@ var current_index = 0
 var current_block = null
 var all_blocks = null
 var all_choices = null
+
+# State controls
 var hide_all_boxes = false
 var nvl = false
 var centered = false
@@ -19,8 +21,10 @@ var just_loaded = false
 var hide_vnui = false
 var no_scroll = false
 var no_right_click = false
+#----------------------
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/']
+# Important components
 onready var bg = $background
 onready var vnui = $VNUI
 onready var QM = vnui.get_node('quickMenu')
@@ -28,6 +32,7 @@ onready var nvlBox = vnui.get_node('nvlBox')
 onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var camera = get_node('camera')
+#-----------------------
 # signals
 signal player_accept
 
@@ -35,7 +40,7 @@ signal player_accept
 
 func load_event_at_index(ind : int) -> void:
 	if ind >= current_block.size():
-		print("IMPORTANT: THERE IS NO PROPER END OF BLOCK EVENT. GOING BACK TO MAIN MENU.")
+		print("IMPORTANT: THERE IS NO PROPER ENDING. GOING BACK TO MAIN MENU.")
 		change_scene_to(vn.ending_scene_path)
 	else:
 		intepret_events(current_block[ind])
@@ -59,6 +64,8 @@ func intepret_events(event):
 			event['nvl'] = parse_true_false(event['nvl'], event)
 	if event.has('scale'):
 		event['scale'] = parse_loc(event['scale'], event)
+	if event.has('dir'):
+		event['dir'] = parse_dir(event['dir'], event)
 
 	# End of pre-parse. Actual match event
 	match event:
@@ -88,12 +95,14 @@ func intepret_events(event):
 				print("PREMADE EVENT:")
 			intepret_events(fun.call_premade_events(event['premade']))
 		{"system"}: system(event)
+		{"sys"}: system(event)
 		{'choice',..}: generate_choices(event)
 		{'wait'}: wait(event['wait'])
 		{'nvl'}: set_nvl(event)
 		{'GDscene'}: change_scene_to(event['GDscene'])
 		{'history', ..}: history_manipulation(event)
 		{'float', 'wait',..}: float_text(event)
+		{'voice'}:voice(event['voice'])
 		{'center'}:
 			self.centered = true
 			set_nvl({'nvl': true}, false)
@@ -157,7 +166,7 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 	
 func speech_parse(ev : Dictionary) -> void:
 	var combine = "NANITHEFUCK"
-	for k in ev.keys(): # None voice, none speed, means it has to be "uid expression"
+	for k in ev.keys(): # Not voice, not speed, means it has to be "uid expression"
 		if k != 'voice' and k != 'speed':
 			combine = k # combine=unique_id and expression combined
 			break
@@ -174,7 +183,7 @@ func speech_parse(ev : Dictionary) -> void:
 		say(combine, ev[combine])
 				
 	if ev.has('voice') and not vn.skipping:
-		voice(ev['voice'])
+		voice(ev['voice'], false)
 
 
 func generate_choices(event: Dictionary):
@@ -188,7 +197,7 @@ func generate_choices(event: Dictionary):
 		QM.disable_skip_auto()
 	waiting_cho = true
 	if event.has('voice'):
-		voice(event['voice'])
+		voice(event['voice'], false)
 	var combine = ""
 	for k in event.keys():
 		if k != 'id' and k != 'choice' and k != 'voice':
@@ -388,14 +397,14 @@ func play_sound(ev :Dictionary) -> void:
 	auto_load_next()
 	
 		
-func voice(path:String) -> void:
+func voice(path:String, auto_forw = true) -> void:
 	var voice_path = vn.VOICE_DIR + path
 	music.play_voice(voice_path)
-	# DO NOT AUTO LOAD FOR VOICE BECAUSE VOICE ONLY COMES
-	# FROM SPEECH EVENT OR CHOICE EVENT
-	
+	if auto_forw:
+		auto_load_next()
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
+# I will need to refactor this...
 func change_background(ev : Dictionary) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
@@ -482,7 +491,7 @@ func check_condition(cond : String) -> bool:
 func screen_effects(ev: Dictionary):
 	var ef = ev['screen']
 	match ef:
-		"": 
+		"", "off": 
 			screenEffects.removeLasting()
 			game.playback_events['screen'] = {}
 		"tint": tint(ev)
@@ -522,15 +531,17 @@ func fadeout(time : float, auto_forw = true) -> void:
 	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
-	if ev.has('time') and ev.has('color'):
+	var time = 1
+	if ev.has('time'): time = ev['time']
+	if ev.has('color'):
 		if ev['screen'] == 'tintwave':
-			screenEffects.tintWave(ev['color'], ev['time'])
+			screenEffects.tintWave(ev['color'], time)
 		elif ev['screen'] == 'tint':
-			screenEffects.tint(ev['color'], ev['time'])
+			screenEffects.tint(ev['color'], time)
 			
 		game.playback_events['screen'] = ev
 	else:
-		vn.error("Tint or tintwave requires color and time keywords.", ev)
+		vn.error("Tint or tintwave requires the color field.", ev)
 
 # Scene animations...
 func sfx_player(ev : Dictionary) -> void:
@@ -558,38 +569,44 @@ func camera_effect(ev : Dictionary) -> void:
 		"zoom":
 			QM.reset_skip()
 			if ev.has('scale'):
+				var time = 1
 				var offset = Vector2(0,0)
-				var mode = 'linear'
-				if ev.has('type'): mode = ev['type']
+				var type = 'linear'
+				if ev.has('time'): time = ev['time']
+				if ev.has('type'): type = ev['type']
 				if ev.has('loc'): offset = ev['loc']
-				if ev.has('time') and mode != 'instant':
-					camera.zoom_timed(ev['scale'], ev['time'],mode,offset)
-				else:
+				if type == 'instant':
 					camera.zoom(ev['scale'], offset)
-				
+				else:
+					camera.zoom_timed(ev['scale'], time, type,offset)
 				game.playback_events['camera'] = {'zoom':ev['scale'], 'offset':offset}
 			else:
 				vn.error('Camera zoom expects a scale.', ev)
 		"move":
 			QM.reset_skip()
-			if ev.has('time') and ev.has('loc'):
-				if vn.skipping: ev['time'] = 0
+			var time = 1
+			var type = "linear"
+			if ev.has('time'): time = ev['time']
+			if ev.has('type'): type = ev['type']
+			if ev.has('loc'):
+				if vn.skipping: time = 0
 				if ev.has('type'):
-					if ev['type'] == 'instant': ev['time'] = 0
-					camera.camera_move(ev['loc'],ev['time'],ev['type'])
+					if type == 'instant': ev['time'] = 0
+					camera.camera_move(ev['loc'],time, type)
 				else:
-					camera.camera_move(ev['loc'],ev['time'])
+					camera.camera_move(ev['loc'], time)
 				
 				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc']}
-				yield(get_tree().create_timer(ev['time']), 'timeout')
+				yield(get_tree().create_timer(time), 'timeout')
 			else:
 				vn.error("Camera move expects a loc and time, and type (optional)", ev)
 		"shake":
 			if not vn.skipping:
-				if ev.has("amount") and ev.has("time"):
-					camera.shake(ev['amount'], ev['time'])
-				else:
-					vn.error("Shake expects an amount and time.", ev)
+				var amount = 250
+				var time = 2
+				if ev.has('amount'): amount = ev['amount']
+				if ev.has('time'): time = ev['time']
+				camera.shake(amount, time)
 		_:
 			vn.error("Camera effect not found.", ev)
 			
@@ -606,7 +623,6 @@ func character_event(ev : Dictionary) -> void:
 	var uid = temp[0] # uid of the character
 	var ef = temp[1] # what character effect
 	if uid == 'all' or stage.is_on_stage(uid):
-		print(stage.is_on_stage(uid))
 		match ef: # jump and shake will be ignored during skipping
 			"shake": 
 				if vn.skipping : 
@@ -637,16 +653,20 @@ func character_event(ev : Dictionary) -> void:
 			_: vn.error('Unknown character event/action.', ev)
 		
 	else: # uid is not all, and character not on stage
+		var expression = ""
+		if ev.has('expression'): expression = ev['expression'] 
 		if ef == 'join':
-			if ev.has('loc') and ev.has('expression'):
-				stage.join(uid,ev['loc'],ev['expression'])
+			if ev.has('loc'):
+				stage.join(uid,ev['loc'], expression)
 			else:
-				vn.error('Character join expects a loc and an expression.', ev)
+				vn.error('Character join expects a loc.', ev)
 		elif ef == 'fadein':
-			if ev.has('loc') and ev.has('expression') and ev.has('time'): 
-				stage.fadein(uid,ev['time'], ev['loc'], ev['expression'])
+			var time = 1
+			if ev.has('time'): time = ev['time']
+			if ev.has('loc'): 
+				stage.fadein(uid,time, ev['loc'], expression)
 			else:
-				vn.error('Character fadein expects a time, a loc and an expression.', ev)
+				vn.error('Character fadein expects a time and a loc.', ev)
 		else:
 			vn.error('Unknown character event/action.', ev)	
 			
@@ -655,57 +675,57 @@ func character_event(ev : Dictionary) -> void:
 
 # Maybe we can refactor all these character functions below to stage?
 func character_shake(uid:String, ev:Dictionary) -> void:
-	if ev.has('amount') and ev.has('time'):
-		stage.shake_chara(uid, ev['amount'], ev['time'])
-		auto_load_next()
-	else:
-		vn.error('Character shake effect expects an amount and a time.', ev)
+	var amount = 250
+	var time = 2
+	if ev.has('amount'): amount = ev['amount']
+	if ev.has('time'): time = ev['time']
+	stage.shake_chara(uid, amount, time)
+	auto_load_next()
+	
 
 func express(combine : String) -> void:
+
 	var temp = combine.split(" ")
-	if temp.size() != 2:
+	if temp.size() > 2 or temp.size() == 0:
 		vn.error("Wrong express format.")
+	elif temp.size() == 1:
+		temp.push_back("")
+	
 	# express only works for on stage charas
 	stage.change_expression(temp[0],temp[1])
 	auto_load_next()
 
 func character_jump(uid : String, ev : Dictionary) -> void:
-	if ev.has('amount') and ev.has('time') and ev.has('dir'):
-		stage.jump(uid, ev['dir'], ev['amount'], ev['time'])
-		auto_load_next()
-	else:
-		vn.error('Character jump expects an amount, a time and a dir (up, down, right, left).', ev)
-
-func character_fadein(uid: String, ev:Dictionary):
-	if ev.has('time') and ev.has('loc') and ev.has('expression'):
-		stage.fadein(uid, ev['time'], ev['loc'], ev['expression'])
-		yield(get_tree().create_timer(ev['time']), 'timeout')
-		auto_load_next()
-	else:
-		vn.error('Character fadein expects a time, a loc, and an expression.', ev)
+	var amount = 80
+	var time = 0.25
+	var dir = "up"
+	if ev.has('amount'): amount = ev['amount']
+	if ev.has('time'): time = ev['time']
+	if ev.has('dir'): dir = ev['dir']
+	stage.jump(uid, dir, amount, time)
+	auto_load_next()
+	
 
 func character_fadeout(uid: String, ev:Dictionary):
-	if ev.has('time'):
-		stage.fadeout(uid, ev['time'])
-		yield(get_tree().create_timer(ev['time']), 'timeout')
-		auto_load_next()
-	else:
-		vn.error('Character fadeout expects a time.', ev)
+	var time = 1
+	if ev.has('time'): time = ev['time']
+	stage.fadeout(uid, time)
+	yield(get_tree().create_timer(time), 'timeout')
+	auto_load_next()
 
 func character_move(uid:String, ev:Dictionary):
-	if ev.has('loc') and ev.has('type'):
+	var type = "linear"
+	if ev.has('type'): type = ev['type']
+	if ev.has('loc'):
 		if ev['type'] == 'instant' or vn.skipping:
 			stage.change_pos(uid, ev['loc'])
 		else:
-			if ev.has('time'):
-				stage.change_pos_2(uid, ev['loc'], ev['time'], ev['type'])
-			else:
-				vn.error('Non-instant type movement expects a time.', ev)
-				
+			var time = 1
+			if ev.has('time'):time = ev['time']
+			stage.change_pos_2(uid, ev['loc'], time, type)
 		auto_load_next()
 	else:
-		vn.error("Character move expects a loc and a type. If type is linear, a time "+\
-		"should be supplied.", ev)
+		vn.error("Character move expects a loc.", ev)
 
 
 #--------------------------------- Weather -------------------------------------
@@ -1009,7 +1029,7 @@ func system(ev : Dictionary):
 			if temp[1] == "off":
 				QM.reset_skip()
 		
-		"save_load":
+		"save_load", "SL":
 			if temp[1] == "on":
 				QM.get_node("saveButton").disabled = false
 				QM.get_node("QsaveButton").disabled = false
@@ -1021,13 +1041,13 @@ func system(ev : Dictionary):
 				
 		# The above 3 are not included in all.
 		
-		"right_click":
+		"right_click", "RC":
 			if temp[1] == "on":
 				self.no_right_click = false
 			elif temp[1] == "off":
 				self.no_right_click = true
 				
-		"quick_menu":
+		"quick_menu", "QM":
 			if temp[1] == "on":
 				QM.visible = true
 				QM.hiding = false
@@ -1065,7 +1085,6 @@ func system(ev : Dictionary):
 				no_right_click = true
 				hide_boxes()
 
-
 	auto_load_next()
 	
 #-------------------- Extra Preprocessing ----------------------
@@ -1078,6 +1097,12 @@ func parse_loc(loc, ev = {}) -> Vector2:
 		vn.error("Expecting value of the form \"float1 float2\" after loc.", ev)
 	
 	return Vector2(float(vec[0]), float(vec[1]))
+	
+func parse_dir(dir, ev = {}) -> Vector2:
+	if dir in vn.DIRECTION:
+		return vn.DIRECTION[dir]
+	else:
+		return parse_loc(dir, ev)
 
 func parse_color(color, ev = {}) -> Color:
 	if typeof(color) == 14: # 14 = color

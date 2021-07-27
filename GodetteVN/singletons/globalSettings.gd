@@ -54,6 +54,9 @@ const DIM = Color(0.86,0.86,0.86,1)
 const CENTER_DIM = Color(0.7,0.7,0.7,1)
 const NVL_DIM = Color(0.2,0.2,0.2,1)
 
+# Other constants used throught the engine
+const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
+
 # --------------------------- Game Experience Variables ------------------------
 # can be changed in game
 var music_volume : float = 0 # the default initial value on the BGM audio bus

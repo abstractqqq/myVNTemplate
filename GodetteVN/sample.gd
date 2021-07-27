@@ -22,9 +22,6 @@ var main_block = [
 	{'system': 'quick_menu off'},
 	{'female': 'It is gone. Now let me make it visible again.'},
 	{'system': 'quick_menu on'},
-	{'female': 'You can call a premade event like this. To see a list of premade events, go to '+\
-	"globalFunctions.gd."},
-	{'premade': "EXAMPLE"},
 	{'female': 'This is how you show basic floating text.'},
 	{'float': '[color=#ff0000]Hello World1[/color]', 'wait': 1, 'time': 4, 'loc': '600 300', 'fadein': 0.5,\
 	"font": "res://fonts/ARegular.tres"},
@@ -54,7 +51,7 @@ var main_block = [
 	{"screen": "flashlight", 'scale': Vector2(1.5,1.5)},
 	{"female": "Cool?"},
 	{"female": "You can turn this off just like how you turn off tint."},
-	{"screen": ""},
+	{"screen": "off"},
 	{'female': 'This is how you play your custom Godot special effect scenes.'},
 	{'sfx': '/GodetteVN/sfx_scenes/flash.tscn'},
 	{"chara": "female jump", 'dir': 'up', 'time': 0.3, 'amount': 80},
