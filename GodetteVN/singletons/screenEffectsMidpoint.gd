@@ -69,6 +69,6 @@ func show_weather(w_name:String):
 func flashlight(scale : Vector2):
 	removeLasting()
 	var lasting = get_node("aboveScreen/lasting")
-	var fl_scene = (load("res://GodetteVN/fundamentals/details/flashLightScreen.tscn")).instance()
+	var fl_scene = (load("res://GodetteVN/sfxScenes/flashLightScreen.tscn")).instance()
 	lasting.add_child(fl_scene)
 	fl_scene.scale = scale

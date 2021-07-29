@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://GodetteVN/fundamentals/historyScreen.gd" type="Script" id=2]
+[ext_resource path="res://GodetteVN/fundamentals/details/historyMainBox.tscn" type="PackedScene" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 size = 40
@@ -60,21 +61,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-margin_left = 250.0
-margin_top = 120.0
-margin_right = 1850.0
-margin_bottom = 1020.0
-scroll_horizontal_enabled = false
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="textContainer" type="VBoxContainer" parent="ScrollContainer"]
-margin_right = 1600.0
-margin_bottom = 900.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_constants/separation = 10
+[node name="historyMainBox" parent="." instance=ExtResource( 3 )]
 
 [connection signal="pressed" from="returnButton" to="." method="_on_returnButton_pressed"]

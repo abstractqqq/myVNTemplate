@@ -1,10 +1,7 @@
 extends CanvasLayer
 
-var quit = preload("res://GodetteVN/fundamentals/details/notificationBox.tscn")
-var override = preload("res://GodetteVN/fundamentals/details/overrideNotifBox.tscn")
-var back2Main = preload("res://GodetteVN/fundamentals/details/back2MainBox.tscn")
-
-
+var general = preload("res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.tscn")
+const notifList = ["quit", "main", "override"]
 
 
 func clear():
@@ -19,14 +16,11 @@ func hide():
 func show(which : String) -> void:
 	vn.inNotif = true
 	get_node("backgroundColor").visible = true
-	if which == "quit" :
-		get_node("currentNotif").add_child(quit.instance())
-	elif which == "override" :
-		get_node("currentNotif").add_child(override.instance())
-	elif which == "main":
-		get_node("currentNotif").add_child(back2Main.instance())
-	else:
-		pass
+	if which in notifList:
+		var n = general.instance()
+		n.set_text(which)
+		get_node("currentNotif").add_child(n)
+
 
 func get_current_notif():
 	return get_node("currentNotif").get_child(0)

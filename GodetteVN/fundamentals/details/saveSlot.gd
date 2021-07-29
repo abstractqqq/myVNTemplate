@@ -34,11 +34,10 @@ func _on_Button_pressed():
 
 #---------------------Functionalities Related to Save--------------------------
 
-func override_save(yes):
+func override_save(yes: bool):
 	if yes:
 		make_save(self.path)
-	else:
-		pass
+
 
 func make_save(save_path):
 	

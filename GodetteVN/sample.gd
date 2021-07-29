@@ -53,7 +53,7 @@ var main_block = [
 	{"female": "You can turn this off just like how you turn off tint."},
 	{"screen": "off"},
 	{'female': 'This is how you play your custom Godot special effect scenes.'},
-	{'sfx': '/GodetteVN/sfx_scenes/flash.tscn'},
+	{'sfx': '/GodetteVN/sfxScenes/flash.tscn'},
 	{"chara": "female jump", 'dir': 'up', 'time': 0.3, 'amount': 80},
 	{'female': "That scared me."},
 	{'chara' : 'test2 fadein', 'time':2, 'loc': Vector2(200,600), 'expression':''},

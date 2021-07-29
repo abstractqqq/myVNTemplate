@@ -340,7 +340,7 @@ func change_font(ev : Dictionary):
 #------------------------ Related to Music and Sound ---------------------------
 func play_bgm(ev : Dictionary) -> void:
 	var path = ev['bgm']
-	if path == "" and ev.size() == 1:
+	if (path == "" or path == "off") and ev.size() == 1:
 		music.stop_bgm()
 		game.playback_events['bgm'] = {}
 		auto_load_next()
@@ -768,7 +768,7 @@ func conditional_branch(ev : Dictionary) -> void:
 		change_block_to(ev['else'],0)
 
 func then(ev : Dictionary) -> void:
-	if ev.has('target id'):
+	if ev.has('target id') and ev['target id'] != -1:
 		change_block_to(ev['then'], 1 + get_target_index(ev['then'], ev['target id']))
 	else:
 		change_block_to(ev['then'], 0)
@@ -918,7 +918,7 @@ func float_text(ev: Dictionary) -> void:
 	var in_t = 1
 	if ev.has('fadein'): in_t = ev['fadein']
 	var f = floatText.instance()
-	if ev.has('font'):
+	if ev.has('font') and ev['font'] != "" and ev['font'] != "default":
 		f.set_font(ev['font'])
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:

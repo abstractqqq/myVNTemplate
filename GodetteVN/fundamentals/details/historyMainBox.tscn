@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://GodetteVN/fundamentals/historyScroll.gd" type="Script" id=1]
+
+[node name="historyMainBox" type="ScrollContainer"]
+margin_left = 250.0
+margin_top = 120.0
+margin_right = 1850.0
+margin_bottom = 1020.0
+scroll_horizontal_enabled = false
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="textContainer" type="VBoxContainer" parent="."]
+margin_right = 1600.0
+margin_bottom = 900.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_constants/separation = 10

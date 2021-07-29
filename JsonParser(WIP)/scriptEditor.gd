@@ -1,6 +1,7 @@
 extends ColorRect
+
 onready var t = $TextEdit
-onready var na = $dialogName
+var fname = "test"
 
 func _ready():
 	OS.set_window_title("Script Editor")
@@ -10,26 +11,24 @@ func _ready():
 func script_to_json():
 	var all_events = t.get_events()
 	var file = File.new()
-	if na.text == "":
-		vn.error('Please enter a dialog name.')
+	
+	var error = file.open(vn.SCRIPT_DIR + fname + '.json', File.WRITE)
+	if error == OK:
+		print("TO JSON SUCCESS.")
+		file.store_line(JSON.print(all_events, '\t'))
+		$AcceptDialog.popup_centered()
+		file.close()
 	else:
-		var error = file.open(vn.SCRIPT_DIR + na.text + '.json', File.WRITE)
-		if error == OK:
-			print("TO JSON SUCCESS.")
-			file.store_line(JSON.print(all_events, '\t'))
-			$AcceptDialog.popup_centered()
-			file.close()
-		else:
-			vn.error('Error when saving script files. (Unknown reason.)')
+		vn.error('Error when saving script files. (Unknown reason.)')
 
 func to_txt():
 	var file = File.new()
-	if na.text == "":
+	if fname == "":
 		# should give user a warning instead of assigning a random name
 		# but this is ok for test purpose
-		na.text = "temp"
+		fname = "temp"
 	
-	var error = file.open(vn.SCRIPT_DIR + na.text + '.txt', File.WRITE)
+	var error = file.open(vn.SCRIPT_DIR + fname + '.txt', File.WRITE)
 	if error == OK:
 		file.store_line(t.text)
 		file.close()
@@ -53,8 +52,8 @@ func _on_FileDialog_file_selected(path):
 	if error == OK:
 		t.text = f.get_as_text()
 		path = path.split('/')
-		var fname = path[path.size()-1]
-		na.text = fname.split('.')[0]
+		var fname2 = path[path.size()-1]
+		fname = fname2
 		f.close()
 	else:
 		vn.error('Unknown error when opening script.')
