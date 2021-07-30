@@ -13,7 +13,7 @@ var main_block = [
 	# start of content
 	{"bg": "condo.jpg"},
 	{"fadein": 2},
-	{'chara': "female join", "loc": "1600 600", "expression":""},
+	{'chara': "gt join", "loc": "1600 650", "expression":""},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
 	{"female": "What should I eat today?", 'choice' : 'food', 'id':0},
 	{"female": "When your game ends, do the following."},

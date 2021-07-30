@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/gt_wave.png-715b4d10378b3d2d3b0aba3e691587c4.stex"
+path="res://.import/gt_crya.png-25ad6dd98c7cfeecfed1c9fbedd8957d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/actors/spritesheet/gt_wave.png"
-dest_files=[ "res://.import/gt_wave.png-715b4d10378b3d2d3b0aba3e691587c4.stex" ]
+source_file="res://assets/actors/spritesheet/gt_crya.png"
+dest_files=[ "res://.import/gt_crya.png-25ad6dd98c7cfeecfed1c9fbedd8957d.stex" ]
 
 [params]
 

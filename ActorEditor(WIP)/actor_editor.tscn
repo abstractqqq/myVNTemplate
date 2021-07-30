@@ -22,8 +22,8 @@ margin_right = 518.0
 margin_bottom = 139.0
 custom_fonts/font = ExtResource( 3 )
 text = "Use arror keys to move.
-Press G to hide all edit options,
-and press G again to restore."
+Press Tab to hide all edit options,
+and press Tab again to restore."
 align = 1
 valign = 1
 __meta__ = {

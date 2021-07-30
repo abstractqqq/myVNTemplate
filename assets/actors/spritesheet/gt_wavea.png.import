@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/gt_cry.png-397806b6bc39c8c55dbc4f7afb5b8724.stex"
+path="res://.import/gt_wavea.png-cc50cc66b0af514f6f338534821373b4.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/actors/spritesheet/gt_cry.png"
-dest_files=[ "res://.import/gt_cry.png-397806b6bc39c8c55dbc4f7afb5b8724.stex" ]
+source_file="res://assets/actors/spritesheet/gt_wavea.png"
+dest_files=[ "res://.import/gt_wavea.png-cc50cc66b0af514f6f338534821373b4.stex" ]
 
 [params]
 

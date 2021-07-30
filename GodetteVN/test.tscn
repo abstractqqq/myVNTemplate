@@ -1,0 +1,4 @@
+[gd_scene format=2]
+
+[node name="animatedSprite" type="Sprite"]
+position = Vector2( 709.841, 561.516 )

@@ -1,4 +1,4 @@
-extends Sprite
+extends AnimatedSprite
 class_name character
 
 
@@ -8,13 +8,12 @@ export(String) var unique_id = "UID"
 export(Color) var name_color = null
 export(bool) var in_all = true
 export(bool) var apply_highlight = true
-export(Dictionary) var expression_list = {}
-export(Dictionary) var anim_list = {}
 export(bool) var fade_on_change = false
 export(float, 0.1, 1) var fade_time = 0.5
 #
 
 var rng = RandomNumberGenerator.new()
+
 # These variables should not really be here...
 var timer = null
 var counter = 0
@@ -35,16 +34,16 @@ var current_expression : String
 
 func change_expression(e : String) -> bool:
 	if e == "": e = 'default'
-	
-	if expression_list.has(e):
+	var expFrames = self.get_sprite_frames()
+	if expFrames.has_animation(e):
 		var prev_exp = current_expression
-		self.texture = load(vn.CHARA_DIR + expression_list[e])
+		play(e)
 		current_expression = e
 		if fade_on_change and prev_exp != "":
 			var dummy = Sprite.new()
 			dummy.name = "_dummy"
 			dummy.position = self.position
-			dummy.texture = load(vn.CHARA_DIR + expression_list[prev_exp])
+			dummy.texture = expFrames.get_frame(prev_exp,0)
 			stage.add_child(dummy)
 			var tween = Tween.new()
 			tween.connect("tween_completed", self, "clear_dummy")

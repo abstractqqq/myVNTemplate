@@ -698,7 +698,7 @@ func express(combine : String) -> void:
 func character_jump(uid : String, ev : Dictionary) -> void:
 	var amount = 80
 	var time = 0.25
-	var dir = "up"
+	var dir = vn.DIRECTION['up']
 	if ev.has('amount'): amount = ev['amount']
 	if ev.has('time'): time = ev['time']
 	if ev.has('dir'): dir = ev['dir']
@@ -717,7 +717,7 @@ func character_move(uid:String, ev:Dictionary):
 	var type = "linear"
 	if ev.has('type'): type = ev['type']
 	if ev.has('loc'):
-		if ev['type'] == 'instant' or vn.skipping:
+		if type == 'instant' or vn.skipping:
 			stage.change_pos(uid, ev['loc'])
 		else:
 			var time = 1

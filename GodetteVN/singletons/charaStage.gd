@@ -54,15 +54,14 @@ func change_pos_2(uid:String, loca:Vector2, time:float, mode):
 	c.change_pos_2(loca, time, mode)
 	
 func change_expression(uid:String, expression:String):
-	if typeof(chara.all_chara[uid]) != 4:
-		return
-	else:
+	var info = chara.all_chara[uid]
+	if info.has('path'):
 		var c = find_chara_on_stage(uid)
 		c.change_expression(expression)
 
 func fadein(uid: String, time: float, loc: Vector2, expression:String) -> void:
 	# Ignore accidental spriteless character fadein
-	var info = get_character_info(uid)
+	var info = chara.all_chara[uid]
 	if info.has('path'):
 		if vn.skipping:
 			join(uid,loc,expression)
@@ -87,7 +86,7 @@ func fadeout(uid: String, time: float) -> void:
 		c.fadeout(time)
 
 func join(uid: String, loc: Vector2, expression:String) -> void:
-	var info = get_character_info(uid)
+	var info = chara.all_chara[uid]
 	if info.has('path'):
 		var ch_scene = load(info['path'])
 		# If load fails, there will be a bug pointing to this line
@@ -100,9 +99,17 @@ func join(uid: String, loc: Vector2, expression:String) -> void:
 
 
 func set_highlight(uid : String) -> void:
-	if typeof(chara.all_chara[uid]) == 4:
-		var c = find_chara_on_stage(uid)
-		c.modulate = Color(1,1,1,1)
+	# I didn't use find_chara_on_stage only for this function because
+	# it might be the case that the speaking character hasn't joined
+	# the stage yet. In that case, find character will give me null
+	# and print the error message. I do not want that to happen because
+	# this might happen pretty often.
+	var info = chara.all_chara[uid]
+	if info.has('path'):
+		for n in get_children():
+			if n.name != "_dummy" and n.unique_id == uid:
+				n.modulate = Color(1,1,1,1)
+				break
 
 func remove_highlight() -> void:
 	for n in get_children():
@@ -133,7 +140,7 @@ func find_chara_on_stage(uid:String):
 		if n.name != "_dummy" and n.unique_id == uid:
 			return n
 			
-	print('Warning: the character with uid {0} cannot be found.'.format({0:uid}))
+	print('Warning: the character with uid {0} cannot be found or has not joined the stage.'.format({0:uid}))
 	print("Depending on your event, you will get a bug or nothing will be done.")
 
 

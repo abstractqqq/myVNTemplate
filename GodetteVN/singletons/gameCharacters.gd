@@ -26,6 +26,7 @@ func _ready():
 	# uid.tscn 
 	stage_character("female")
 	stage_character("test2")
+	stage_character("gt")
 	
 	
 	
