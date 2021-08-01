@@ -155,16 +155,15 @@ func _on_QsaveButton_mouse_entered():
 func _on_QsaveButton_mouse_exited():
 	vn.noMouse = false
 
-func _on_QsaveButton_pressed():
+func _on_QsaveButton_pressed(msg = "[Quick Save] "):
 	_create_screenshot()
 	var slot = load(vn.SAVESLOT)
 	var sl = slot.instance()
 	var temp = game.currentSaveDesc
-	game.currentSaveDesc = "[Quick Save]" + temp
+	game.currentSaveDesc = msg + temp
 	sl.make_save(sl.path)
 	sl.queue_free()
 	game.currentSaveDesc = temp
-
 
 
 

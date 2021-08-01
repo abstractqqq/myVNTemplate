@@ -21,7 +21,7 @@ margin_top = 11.0
 margin_right = 518.0
 margin_bottom = 139.0
 custom_fonts/font = ExtResource( 3 )
-text = "Use arror keys to move.
+text = "Use arrow keys to move.
 Press Tab to hide all edit options,
 and press Tab again to restore."
 align = 1

@@ -10,6 +10,7 @@ var main_block = [
 	{"fadein": 1},
 	{'chara': "gt join", "loc": "1600 650", "expression":""},
 	{"gt": "Here we demonstrate how to do animations (spritesheet)."},
+	{"gt": "As long as you have the spritesheet ready, animation is as easy as drag and drop."},
 	{"gt": "You can look at the top left corner to see the events controlling everything."},
 	{"express": "gt crya"},
 	{"gt": "This baka is making me cry... ..."},
@@ -27,7 +28,6 @@ var main_block = [
 	{'gt': "My favorite... ..."},
 	{'fadeout':1},
 	{"GDscene": vn.ending_scene_path}
-	
 	# end of content
 ]
 
@@ -44,6 +44,7 @@ var choice_blocks = {}
 
 #---------------------------------------------------------------------
 func _ready():
+	OS.set_window_maximized(true)
 	game.currentSaveDesc = "Animation Test"
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)

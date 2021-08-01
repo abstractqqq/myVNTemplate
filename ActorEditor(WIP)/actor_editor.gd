@@ -133,7 +133,7 @@ func _on_generateButton_pressed():
 		$charaGenPopup.dialog_text = ("You are about to generate a character scene with uid: {0}" +\
 		" display name: {1}, which will have the path: {2}.").format({0:cur_uid,1:dname,2:(vn.CHARA_SCDIR+cur_uid+".tscn")})
 		$charaGenPopup.dialog_text += "\n You can pick a name color for the character in the generated scene."
-		$charaGenPopup.dialog_text += "\n Currently the you cannot edit character animation in the editor " +\
+		$charaGenPopup.dialog_text += "\n Currently you cannot edit character animation in the editor " +\
 		"and you will have to go to the character scene to add your animations."
 		$charaGenPopup.popup_centered()
 

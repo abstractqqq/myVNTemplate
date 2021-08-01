@@ -26,7 +26,7 @@ func _ready():
 	# uid.tscn 
 	stage_character("female")
 	stage_character("test2")
-	stage_character("gt")
+	#stage_character("gt")
 	
 	
 	
@@ -53,7 +53,8 @@ func _ready():
 func stage_character(uid:String) -> void:
 	var path = vn.CHARA_SCDIR+uid+".tscn"
 	var ch_scene = load(path)
-	# If load fails, there will be a bug pointing to this line
+	if ch_scene == null:
+		vn.error("The character scene cannot be found.")
 	var c = ch_scene.instance()
 	var info = {"uid":c.unique_id,"display_name":c.display_name,"name_color":c.name_color,"path":path}
 	all_chara[uid] = info

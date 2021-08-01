@@ -457,7 +457,15 @@ func set_dvar(ev : Dictionary) -> void:
 	left = left.replace(" ","")
 	var right = splitted[1]
 	if has_dvar(left):
-		vn.dvar[left] = fun.calculate(right)
+		if typeof(vn.dvar[left])== 4:
+			# If we get string, just set it to RHS
+			vn.dvar[left] = right
+		elif right == "true":
+			vn.dvar[left] = true
+		elif right == "false":
+			vn.dvar[left] = false
+		else:
+			vn.dvar[left] = fun.calculate(right)
 	else:
 		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
@@ -1029,6 +1037,9 @@ func system(ev : Dictionary):
 			if temp[1] == "off":
 				QM.reset_skip()
 		
+		"make_save", "MS":
+			QM._on_QsaveButton_pressed("[Auto Save] ")
+		
 		"save_load", "SL":
 			if temp[1] == "on":
 				QM.get_node("saveButton").disabled = false
@@ -1039,7 +1050,7 @@ func system(ev : Dictionary):
 				QM.get_node("QsaveButton").disabled = true
 				QM.get_node("loadButton").disabled = true
 				
-		# The above 3 are not included in all.
+		# The above 4 are not included in all.
 		
 		"right_click", "RC":
 			if temp[1] == "on":
