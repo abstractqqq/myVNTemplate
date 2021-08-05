@@ -475,7 +475,6 @@ func set_dvar(ev : Dictionary) -> void:
 	
 	auto_load_next()
 	
-
 func check_condition(cond_list) -> bool:
 	if typeof(cond_list) == 4: # if this is a string, not a list
 		cond_list = [cond_list]
@@ -485,12 +484,12 @@ func check_condition(cond_list) -> bool:
 	while cond_list.size() > 0:
 		var result = false
 		var cond = cond_list.pop_front()
+		if all_conditions.has(cond):
+			cond = all_conditions[cond]
 		if typeof(cond) == 4: # string, so do the regular thing
 			if cond == "or" or cond == "||":
 				is_or = true
 				continue
-			elif all_conditions.has(cond):
-				cond = all_conditions[cond]
 			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == 1: # 1 for bool
 				result = vn.dvar[cond]
 				final_result = _a_or_b(is_or, final_result, result)
