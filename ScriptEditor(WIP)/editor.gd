@@ -1,10 +1,21 @@
 extends TextEdit
 
+export(Color) var label_color = Color(0.492188, 0.196501, 0.286593)
+export(Color) var field_val_color = Color(0, 0.574219, 0.426178)
+export(Color) var line_comment_color = Color(0.445313, 0.445313, 0.445313)
+
+
 var lineNum : int
 
 func _ready():
-	add_color_region("#", '', Color(0.445313, 0.445313, 0.445313), true)
-	add_color_region("::", ";", Color(0, 0.574219, 0.426178))
+	add_color_region("#", '', line_comment_color, true)
+	add_color_region("::", ";", field_val_color)
+	add_color_region("--DIALOG", "", label_color, true)
+	add_color_region("--CONDITIONS", "", label_color, true)
+	add_color_region("--CHOICES", "", label_color, true)
+	add_color_region("--END", "", label_color, true)
+	self.text = "--DIALOG starter\n\n\n--END\n\n\n--CHOICES\n\n\n--END\n\n\n--CONDITIONS \n\n\n--END"
+	
 	cursor_set_line(1)
 
 
@@ -34,7 +45,6 @@ func detail_to_event(arr: Array) -> Dictionary:
 		
 
 		ev[left] = right
-		
 
 	return ev
 	

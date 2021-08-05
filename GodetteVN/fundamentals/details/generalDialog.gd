@@ -10,6 +10,7 @@ var current_index = 0
 var current_block = null
 var all_blocks = null
 var all_choices = null
+var all_conditions = null
 
 # State controls
 var hide_all_boxes = false
@@ -114,9 +115,10 @@ func intepret_events(event):
 				
 			
 #----------------------- on ready, new game, load, set up, end -----------------
-func start_scene(blocks : Dictionary, choices: Dictionary, load_instruction : String) -> void:
+func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String) -> void:
 	all_blocks = blocks
 	all_choices = choices
+	all_conditions = conditions
 	dialogbox.connect('load_next', self, 'trigger_accept')
 	nvlBox.connect('load_next', self, 'trigger_accept')
 	if load_instruction == "new_game":
@@ -455,8 +457,8 @@ func set_dvar(ev : Dictionary) -> void:
 	var splitted = fun.break_line(ev['dvar'], '=')
 	var left = splitted[0]
 	left = left.replace(" ","")
-	var right = splitted[1]
-	if has_dvar(left):
+	var right = splitted[1].lstrip(" ").rstrip(" ")
+	if vn.dvar.has(left):
 		if typeof(vn.dvar[left])== 4:
 			# If we get string, just set it to RHS
 			vn.dvar[left] = right
@@ -466,35 +468,74 @@ func set_dvar(ev : Dictionary) -> void:
 			vn.dvar[left] = false
 		else:
 			vn.dvar[left] = fun.calculate(right)
+			
+		print(vn.dvar[left])
 	else:
 		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
 	auto_load_next()
 	
 
-func check_condition(cond : String) -> bool:
-	var parsed = split_condition(cond)
-	var front_var = parsed[0]
-	var rel = parsed[1]
-	var back_var = parsed[2]
+func check_condition(cond_list) -> bool:
+	if typeof(cond_list) == 4: # if this is a string, not a list
+		cond_list = [cond_list]
 	
-	front_var = dvar_or_float(front_var)
-	back_var = dvar_or_float(back_var)
+	var final_result = true # start by assuming final_result is true
+	var is_or = false
+	while cond_list.size() > 0:
+		var result = false
+		var cond = cond_list.pop_front()
+		if typeof(cond) == 4: # string, so do the regular thing
+			if cond == "or" or cond == "||":
+				is_or = true
+				continue
+			elif all_conditions.has(cond):
+				cond = all_conditions[cond]
+			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == 1: # 1 for bool
+				result = vn.dvar[cond]
+				final_result = _a_or_b(is_or, final_result, result)
+				is_or = false
+				continue
 
-	var result = false
-	
-	match rel:
-		"=": result = (front_var == back_var)
-		"==": result = (front_var <= back_var)
-		"<=": result = (front_var <= back_var)
-		">=": result = (front_var >= back_var)
-		"<": result = (front_var < back_var)
-		">": result = (front_var > back_var)
-		"!=": result = (front_var != back_var)
-		_: vn.error('Relation ' + rel + ' invalid.')
-	
-	return result
+			var parsed = split_condition(cond)
+			var front_var = parsed[0]
+			var rel = parsed[1]
+			var back_var = parsed[2]
+			front_var = _parse_var(front_var)
+			back_var = _parse_var(back_var)
+			match rel:
+				"=": result = (front_var == back_var)
+				"==": result = (front_var <= back_var)
+				"<=": result = (front_var <= back_var)
+				">=": result = (front_var >= back_var)
+				"<": result = (front_var < back_var)
+				">": result = (front_var > back_var)
+				"!=": result = (front_var != back_var)
+				_: vn.error('Relation ' + rel + ' invalid.')
+			
+			final_result = _a_or_b(is_or, final_result, result)
+		elif typeof(cond) == 19: # array type
+			final_result = _a_or_b(is_or, final_result, check_condition(cond))
+		else:
+			vn.error("Unknown entry in a condition array.")
 
+		is_or = false
+	# If for loop ends, then all conditions must be passed. 
+	return final_result
+
+func _parse_var(st:String):
+	if st == "true":
+		return true
+	elif st == "false":
+		return false
+	else:
+		return dvar_or_float(st)
+		
+func _a_or_b(is_or:bool, a:bool, b:bool)->bool:
+	if is_or:
+		return (a or b)
+	else:
+		return (a and b)
 #--------------- Related to transition and other screen effects-----------------
 func screen_effects(ev: Dictionary):
 	var ef = ev['screen']
@@ -804,11 +845,6 @@ func get_target_index(bname : String, target_id):
 			return i
 	vn.error('Cannot find event with id ' + target_id + ' in ' + bname)
 	
-func has_dvar(key : String) -> bool:
-	if vn.dvar.has(key):
-		return true
-	else:
-		return false
 
 func check_dialog():
 	if not QM.hiding: QM.visible = true
@@ -910,7 +946,7 @@ func split_condition(line:String):
 
 func dvar_or_float(dvar:String):
 	var output = 0
-	if has_dvar(dvar):
+	if vn.dvar.has(dvar):
 		output = vn.dvar[dvar]
 	elif dvar.is_valid_float():
 		output = dvar.to_float()
@@ -1181,7 +1217,7 @@ func preprocess(words : String) -> String:
 				"dc": output += "::"
 				"nl": output += "\n"
 				_: 
-					if has_dvar(inner):
+					if vn.dvar.has(inner):
 						output += str(vn.dvar[inner])
 					else:
 						output += '[' + inner + ']'

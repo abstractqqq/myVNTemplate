@@ -1,20 +1,27 @@
 extends generalDialog
-
+#---------------------------------- Conditions ---------------------------------------
+var conditions = {
+	"money1": "mo > 50",
+	"money2": "mo < 1000",
+	"money3": "mo > 2000"
+}
 
 #---------------------------------- Choices ---------------------------------------
 # This is called a choice block
 var c1 = [
 	{"Yes": {'then': 'b_leave'} },
-	{"No": {'dvar': "leave=0"}}
+	{"No": {'dvar': "le=0"}}
 ]
 
 
 #---------------------------------- Core Dialog ---------------------------------------
 # This is called a dialog block/conversation block
+# Read the documentation to understand how the new condition field works.
 var main_block = [
 	{'bg': 'busstop.jpg', 'pixelate': 2},
-	{'dvar': 'money = (money+50)*2'},
+	{'dvar': 'mo = (mo+50)*2'},
 	{'chara': "female join", "loc": "1600 600"},
+	{'female': "EEEEE", 'condition':[['money1', 'money2'], 'tt']},
 	{'female': 'Hello there. Let me introduce you to the system.', 'voice': '001.wav'},
 	{'bgm':'myuu-angels.mp3', 'fadein': 3},
 	{'female smile1': 'Music start'},
@@ -68,7 +75,7 @@ var main_block = [
 	{"test2 angry": "This gal is not letting me speak..."},
 	{'': 'This is the narrator speaking.'},
 	{'': 'More more more more.'},
-	{'': 'I know you have [money] much money.'},
+	{'': 'I know you have [mo] much money.'},
 	{'nvl': false},
 	{'female': 'Ok, enough of that nvl nonsense.'},
 	{"test2 smile1" : "But NVL is good for long narration or setting the mood imo."},
@@ -81,8 +88,8 @@ var main_block = [
 	{"test2" : "Let's shake."},
 	{"chara": "all shake", "amount": 200, "time" : 1},
 	{'female': "Let's make a choice. Should B leave?", 'choice': "choice_1", 'id':0},
-	{'female': "You chose Yes right? (You're seeing this because you chose A.)", 'condition': "leave=1"},
-	{'female': "You chose No right? (You're seeing this because you chose No.)", 'condition': "leave=0"},
+	{'female': "You chose Yes right? (You're seeing this because you chose A.)", 'condition': ['leave=1']},
+	{'female': "You chose No right? (You're seeing this because you chose No.)", 'condition': ['leave=0']},
 	{'female smile2': "Now let's try switching (Godot) scenes."},
 	{'female': "This is how you switch to another Godot scene."},
 	{'GDscene' : '/GodetteVN/sampleScene2.tscn'}
@@ -90,13 +97,13 @@ var main_block = [
 
 var test_block = [
 	{'bg': 'busstop.jpg', 'pixelate': 2},
-	{'dvar': 'money = 50'},
+	{'dvar': 'mo = 50'},
 	{'chara': 'female join', 'loc': "1600 600", 'expression':''},
 	{"female": "Hello World."}
 ]
 
 var b_leave = [
-	{'dvar': 'leave=1'},
+	{'dvar': 'le=1'},
 	{'test2': "Fine, I will leave."},
 	{"chara": "test2 fadeout", 'time':2},
 	{'then': "starter", 'target id': 0}
@@ -116,5 +123,5 @@ func _ready():
 	game.currentSaveDesc = "Introduction to System 1"
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
-	start_scene(conversation_blocks, choice_blocks, game.load_instruction)
+	start_scene(conversation_blocks, choice_blocks, conditions, game.load_instruction)
 	

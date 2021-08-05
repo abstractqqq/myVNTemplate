@@ -6,6 +6,8 @@ class_name stringCalculator
 const p = ["(", ")"]
 const prec = {"(":0 , "+":1, "-": 1, "*":2, "/":2, "^":3}
 const operators = ["+", "-", "*", "^", "/", "("]
+const bool_prec = {"==":1, ">=":1, "<=":1, "<":1, ">":1, 'and': 0, 'or': 0}
+const bool_operators = ["==",'>=','<=','!=','<','>', 'and', 'or']
 const left = "("
 const right = ")"
 
@@ -123,4 +125,3 @@ func _eval_a(ex_arr) -> float:
 		
 		
 	return stack.pop_back()
-

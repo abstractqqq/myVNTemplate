@@ -78,7 +78,7 @@ var cps : int = 50 # either 50 or 25
 # PLEASE DO NOT NAME A DVAR THE SAME AS THE NAME OF ANY BBCODE!
 # Also not "nw"
 
-var dvar = {'money':50, 'leave':0}
+var dvar = {'mo':50, 'le':0, 'tt': true}
 
 # ------------------------- Game State Variables--------------------------------
 
