@@ -15,9 +15,19 @@ _global_script_classes=[ {
 "path": "res://GodetteVN/Characters/character.gd"
 }, {
 "base": "Node2D",
+"class": "fakeWalker",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/fakeWalker.gd"
+}, {
+"base": "Node2D",
 "class": "generalDialog",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/generalDialog.gd"
+}, {
+"base": "Timer",
+"class": "objectTimer",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/objectTimer.gd"
 }, {
 "base": "Control",
 "class": "saveSlot",
@@ -31,7 +41,9 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "character": "",
+"fakeWalker": "",
 "generalDialog": "",
+"objectTimer": "",
 "saveSlot": "",
 "stringCalculator": ""
 }

@@ -109,42 +109,43 @@ func cursor_action():
 func character_action(sub:String):
 
 	match sub:
-		"move": set_line(lineNum, "chara :: uid move ; loc :: ; type :: linear  ; time :: 1")
-		"jump": set_line(lineNum, "chara :: uid jump ; amount :: 80 ; time :: 0.25 ; dir :: up")
-		"join": set_line(lineNum, "chara :: uid join ; loc :: ; expression :: default")
-		"fadein": set_line(lineNum, "chara :: uid fadein ; loc :: ; expression :: default ; time :: 1")
-		"shake": set_line(lineNum, "chara :: uid shake ; amount :: 250 ; time :: 2")
-		"fadeout": set_line(lineNum, "chara :: uid fadeout ; time :: 1")
-		"leave": set_line(lineNum, "chara :: uid leave")
+		"move": set_line(lineNum, "chara :: uid move ; loc :: ; type :: linear  ; time :: 1 ;")
+		"jump": set_line(lineNum, "chara :: uid jump ; amount :: 80 ; time :: 0.25 ; dir :: up ;")
+		"join": set_line(lineNum, "chara :: uid join ; loc :: ; expression :: default ;")
+		"fadein": set_line(lineNum, "chara :: uid fadein ; loc :: ; expression :: default ; time :: 1 ;")
+		"shake": set_line(lineNum, "chara :: uid shake ; amount :: 250 ; time :: 2 ;")
+		"fadeout": set_line(lineNum, "chara :: uid fadeout ; time :: 1 ;")
+		"spin": set_line(lineNum, "chara :: uid spin ; deg :: 360 ; time :: 1 ; type :: linear ; sdir : 1 ;")
+		"leave": set_line(lineNum, "chara :: uid leave ;")
 		_: return
 
 func camera_action(sub:String):
 	
 	match sub:
-		"shake": set_line(lineNum, "camera :: shake ; amount :: 250 ; time :: 2")
-		"zoom": set_line(lineNum, "camera :: zoom ; scale :: ; loc :: 0 0 ; time :: 1, type :: linear")
-		"move": set_line(lineNum, "camera :: move ; loc :: ; time :: 1 ; type :: linear")
+		"shake": set_line(lineNum, "camera :: shake ; amount :: 250 ; time :: 2 ;")
+		"zoom": set_line(lineNum, "camera :: zoom ; scale :: ; loc :: 0 0 ; time :: 1, type :: linear ;")
+		"move": set_line(lineNum, "camera :: move ; loc :: ; time :: 1 ; type :: linear ;")
 		_: return
 
 func screen_action(sub:String):
 	
 	match sub:
-		"tint": set_line(lineNum, "screen :: tint ; color ::  ; time :: 1")
-		"tintwave": set_line(lineNum, "screen :: tintwave ; color :: ; time :: 1")
-		"flashlight": set_line(lineNum, "screen :: flashlight ; scale :: 1 1")
+		"tint": set_line(lineNum, "screen :: tint ; color ::  ; time :: 1 ;")
+		"tintwave": set_line(lineNum, "screen :: tintwave ; color :: ; time :: 1 ;")
+		"flashlight": set_line(lineNum, "screen :: flashlight ; scale :: 1 1 ;")
 
 func bgm_action(sub:String):
 	
 	match sub:
-		"fadein": set_line(lineNum, "bgm :: ; fadein :: ; vol :: 0")
-		"fadeout": set_line(lineNum, "bgm :: off ; fadeout :: ; vol :: 0")
+		"fadein": set_line(lineNum, "bgm :: ; fadein :: ; vol :: 0 ;")
+		"fadeout": set_line(lineNum, "bgm :: off ; fadeout :: ; vol :: 0 ;")
 
 func float_action():
-	set_line(lineNum, "float :: placeholder_text ; wait :: ; loc :: 400 400 ; fadein :: 1 ; font :: default")
+	set_line(lineNum, "float :: placeholder_text ; wait :: ; loc :: 400 400 ; fadein :: 1 ; font :: default ;")
 
 func font_action():
-	set_line(lineNum, "font :: normal ; path :: your_font_resource.tres")
+	set_line(lineNum, "font :: normal ; path :: your_font_resource.tres ;")
 	
 func then_action():
-	set_line(lineNum, "then :: target_block_name ; target id :: -1")
+	set_line(lineNum, "then :: target_block_name ; target id :: -1 ;")
 

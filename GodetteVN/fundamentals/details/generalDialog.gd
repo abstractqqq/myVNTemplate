@@ -13,12 +13,12 @@ var all_choices = null
 var all_conditions = null
 
 # State controls
-var hide_all_boxes = false
 var nvl = false
 var centered = false
 var waiting_acc = false
 var waiting_cho = false
 var just_loaded = false
+var hide_all_boxes = false
 var hide_vnui = false
 var no_scroll = false
 var no_right_click = false
@@ -37,7 +37,7 @@ onready var camera = get_node('camera')
 # signals
 signal player_accept
 
-#--------------------------------- Intepretor ----------------------------------
+#--------------------------------- Interpretor ----------------------------------
 
 func load_event_at_index(ind : int) -> void:
 	if ind >= current_block.size():
@@ -56,18 +56,13 @@ func intepret_events(event):
 		print(msg)
 	
 	# Pre-parse, keep this at minimum
-	if event.has('loc'): 
-		event['loc'] = parse_loc(event['loc'], event)
-	if event.has('color'): 
-		event['color'] = parse_color(event['color'], event)
+	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
+	if event.has('color'): event['color'] = parse_color(event['color'], event)
 	if event.has('nvl'):
 		if (typeof(event['nvl'])!=1) and event['nvl'] != 'clear': 
 			event['nvl'] = parse_true_false(event['nvl'], event)
-	if event.has('scale'):
-		event['scale'] = parse_loc(event['scale'], event)
-	if event.has('dir'):
-		event['dir'] = parse_dir(event['dir'], event)
-
+	if event.has('scale'): event['scale'] = parse_loc(event['scale'], event)
+	if event.has('dir'): event['dir'] = parse_dir(event['dir'], event)
 	# End of pre-parse. Actual match event
 	match event:
 		{"condition", "then", "else",..}: conditional_branch(event)
@@ -186,7 +181,6 @@ func speech_parse(ev : Dictionary) -> void:
 				
 	if ev.has('voice') and not vn.skipping:
 		voice(ev['voice'], false)
-
 
 func generate_choices(event: Dictionary):
 	# make a say event
@@ -492,7 +486,7 @@ func check_condition(cond_list) -> bool:
 				continue
 			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == 1: # 1 for bool
 				result = vn.dvar[cond]
-				final_result = _a_or_b(is_or, final_result, result)
+				final_result = _a_what_b(is_or, final_result, result)
 				is_or = false
 				continue
 
@@ -512,9 +506,9 @@ func check_condition(cond_list) -> bool:
 				"!=": result = (front_var != back_var)
 				_: vn.error('Relation ' + rel + ' invalid.')
 			
-			final_result = _a_or_b(is_or, final_result, result)
+			final_result = _a_what_b(is_or, final_result, result)
 		elif typeof(cond) == 19: # array type
-			final_result = _a_or_b(is_or, final_result, check_condition(cond))
+			final_result = _a_what_b(is_or, final_result, check_condition(cond))
 		else:
 			vn.error("Unknown entry in a condition array.")
 
@@ -530,7 +524,7 @@ func _parse_var(st:String):
 	else:
 		return dvar_or_float(st)
 		
-func _a_or_b(is_or:bool, a:bool, b:bool)->bool:
+func _a_what_b(is_or:bool, a:bool, b:bool)->bool:
 	if is_or:
 		return (a or b)
 	else:
@@ -591,7 +585,7 @@ func tint(ev : Dictionary) -> void:
 	else:
 		vn.error("Tint or tintwave requires the color field.", ev)
 
-# Scene animations...
+# Scene animations/special effects
 func sfx_player(ev : Dictionary) -> void:
 	var target_scene = load(vn.ROOT_DIR + ev['sfx']).instance()
 	add_child(target_scene)
@@ -661,9 +655,8 @@ func camera_effect(ev : Dictionary) -> void:
 	auto_load_next()
 #----------------------------- Related to Character ----------------------------
 func character_event(ev : Dictionary) -> void:
-	# For character event, auto_load_next should be consider within
-	# each individual method. Because some methods requires a yield
-	# before auto_load_next.
+	# For character event, auto_load_next should be considered within
+	# each individual method.
 	
 	var temp = ev['chara'].split(" ")
 	if temp.size() != 2:
@@ -672,11 +665,21 @@ func character_event(ev : Dictionary) -> void:
 	var ef = temp[1] # what character effect
 	if uid == 'all' or stage.is_on_stage(uid):
 		match ef: # jump and shake will be ignored during skipping
-			"shake": 
+			"shake", "vpunch", "hpunch": 
 				if vn.skipping : 
 					auto_load_next()
 				else:
-					character_shake(uid, ev)
+					if ef == "vpunch":
+						character_shake(uid, ev, 1)
+					elif ef == "hpunch":
+						character_shake(uid, ev, 2)
+					else:
+						character_shake(uid, ev, 0)
+			"spin":
+				if vn.skipping:
+					auto_load_next()
+				else:
+					character_spin(uid,ev)
 			"jump": 
 				if vn.skipping : 
 					auto_load_next()
@@ -685,7 +688,7 @@ func character_event(ev : Dictionary) -> void:
 			'move': 
 				if uid == 'all': 
 					print("Warning: Attempting to move all character at once.")
-					print("This cannot be done and this event is ignored.")
+					print("This is currently not allowed and this event is ignored.")
 					auto_load_next()
 				else:
 					character_move(uid, ev)
@@ -721,28 +724,27 @@ func character_event(ev : Dictionary) -> void:
 		if !vn.inLoading:
 			auto_load_next()
 
-# Maybe we can refactor all these character functions below to stage?
-func character_shake(uid:String, ev:Dictionary) -> void:
+# This method is here to fill in default values
+func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
 	var amount = 250
 	var time = 2
 	if ev.has('amount'): amount = ev['amount']
 	if ev.has('time'): time = ev['time']
-	stage.shake_chara(uid, amount, time)
+	stage.shake_chara(uid, amount, time, mode)
 	auto_load_next()
 	
 
 func express(combine : String) -> void:
-
 	var temp = combine.split(" ")
 	if temp.size() > 2 or temp.size() == 0:
 		vn.error("Wrong express format.")
 	elif temp.size() == 1:
 		temp.push_back("")
 	
-	# express only works for on stage charas
 	stage.change_expression(temp[0],temp[1])
 	auto_load_next()
 
+# This method is here to fill in default values
 func character_jump(uid : String, ev : Dictionary) -> void:
 	var amount = 80
 	var time = 0.25
@@ -753,7 +755,7 @@ func character_jump(uid : String, ev : Dictionary) -> void:
 	stage.jump(uid, dir, amount, time)
 	auto_load_next()
 	
-
+# This method is here to fill in default values
 func character_fadeout(uid: String, ev:Dictionary):
 	var time = 1
 	if ev.has('time'): time = ev['time']
@@ -761,6 +763,7 @@ func character_fadeout(uid: String, ev:Dictionary):
 	yield(get_tree().create_timer(time), 'timeout')
 	auto_load_next()
 
+# This method is here to fill in default values
 func character_move(uid:String, ev:Dictionary):
 	var type = "linear"
 	if ev.has('type'): type = ev['type']
@@ -775,7 +778,18 @@ func character_move(uid:String, ev:Dictionary):
 	else:
 		vn.error("Character move expects a loc.", ev)
 
-
+# This method is here to fill in default values
+func character_spin(uid:String, ev:Dictionary):
+	var sdir : int = 1
+	var deg = 360.0
+	var time = 1
+	var type = "linear"
+	if ev.has('type'): type = ev['type']
+	if ev.has('sdir'): time = int(ev['sdir'])
+	if ev.has('deg'): deg = ev['deg']
+	if ev.has('time'): time = ev['time']
+	stage.spin(sdir, uid, deg, time, type)
+	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(ev:Dictionary):
 	var we = ev['weather']
@@ -880,7 +894,8 @@ func wait(time : float) -> void:
 		yield(get_tree().create_timer(time), "timeout")
 		auto_load_next()
 	else:
-		vn.error('Wait time has to be 0.1s or longer.')
+		print("Warning: wait time < 0.1s is ignored.")
+		auto_load_next()
 
 func on_choice_made(ev : Dictionary) -> void:
 	QM.enable_skip_auto()

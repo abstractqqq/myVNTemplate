@@ -3,6 +3,7 @@ class_name character
 
 
 # Exports
+# Character metadata
 export(String) var display_name = "Character Name"
 export(String) var unique_id = "UID"
 export(Color) var name_color = null
@@ -14,21 +15,10 @@ export(float, 0.1, 1) var fade_time = 0.5
 
 var rng = RandomNumberGenerator.new()
 
-# These variables should not really be here...
-var timer = null
-var counter = 0
-var counter_bound = 0
-var shake_amount = 0
-var step_size = 0
-var dir = null
-#
+#-----------------------------------------------------
+# Character attributes
 var loc = Vector2()
-var in_action = false
-
-var jump_direc : Vector2
 var current_expression : String
-
-
 
 #-------------------------------------------------------------------------------
 
@@ -59,84 +49,34 @@ func change_expression(e : String) -> bool:
 		print("Nothing is done.")
 		return false
 
-# Jump and shake require refactor
-func shake(amount: float, time : float):
-	if in_action:
-		timer.stop()
-		timer.queue_free()
-		reset()
-
-	in_action = true
-	shake_amount = amount
-	time = stepify(time,0.1)
-	counter_bound = time/0.02
-	loc = self.position
+func shake(amount: float, time : float, mode = 0):
+	# 0 : regular shake
+	# 1 : vpunch
+	# 2 : hpunch
+	var _objTimer = objectTimer.new(self,time,0.02,"_shake_action", [mode,amount])
+	add_child(_objTimer)
 	
-	timer = Timer.new()
-	add_child(timer)
-	timer.wait_time = 0.02
-	timer.connect('timeout', self, 'on_shake_timer_timeout')
-	timer.start()
-	
-	# Another way to handle to timer is to use yield(,). But I don't
-	# want to define too many signals. So it's like this currently.
+func _shake_action(params):
+	rng.randomize()
+	# params[0] = mode, params[1] = amount
+	match params[0]:
+		0:self.position = loc + 0.02*Vector2(rng.randf_range(-params[1], params[1]), rng.randf_range(-params[1], params[1]))
+		1:self.position = loc + 0.02*Vector2(loc.x, rng.randf_range(-params[1], params[1]))
+		2:self.position = loc + 0.02*Vector2(rng.randf_range(-params[1], params[1]), loc.y)
+		
+func jump(direc:Vector2, amount:float, time:float):
+	var step : float = amount/(time/0.04)
+	var _objTimer = objectTimer.new(self,time,0.02,"_jump_action", [direc,step], true)
+	add_child(_objTimer)
 
-# Jump and shake require refactor
-func on_shake_timer_timeout():
-	counter += 1
-	if counter >= counter_bound:
-		in_action = false
-		timer.stop()
-		timer.queue_free()
-		reset()
+func _jump_action(params):
+	# params[0] = jump_dir, params[1] = step_size, params[-1] = total_counts, params[-2] = counter
+	var size = params.size()
+	if params[size-2] >= params[size-1]/2:
+		self.position -= params[1] * params[0]
 	else:
-		self.position = loc + 0.02*Vector2(rng.randf_range(-shake_amount, shake_amount),\
-		rng.randf_range(-shake_amount, shake_amount))
+		self.position += params[1] * params[0]
 
-# Jump and shake require refactor
-func jump(direc : Vector2, amount : float, time : float) -> void:
-	if in_action:
-		timer.stop()
-		timer.queue_free()
-		reset()
-	
-	jump_direc = direc
-	in_action = true
-	time = stepify(time, 0.1)
-	counter_bound = time/0.02
-	step_size = amount/(counter_bound/2)
-	loc = self.position
-	
-	timer = Timer.new()
-	self.add_child(timer)
-	timer.wait_time = 0.02
-	timer.connect('timeout', self, 'on_jump_timeout')
-	timer.start()
-
-# Jump and shake require refactor
-func on_jump_timeout():
-	counter += 1
-	if counter >= counter_bound:
-		in_action = false
-		jump_direc = Vector2()
-		timer.stop()
-		timer.queue_free()
-		reset()
-	
-	if counter >= counter_bound/2:
-		self.position -= step_size * jump_direc
-	else:
-		self.position += step_size * jump_direc
-
-# Reset is done this way because currently shake and jump are
-# exclusive to each other
-func reset():
-	shake_amount = 0
-	step_size = 0
-	counter = 0
-	counter_bound = 0
-	self.position = loc
-	jump_direc = Vector2()
 
 func fadein(time : float):
 	var tween = Tween.new()
@@ -157,19 +97,66 @@ func fadeout(time : float):
 	tween.queue_free()
 	self.queue_free()
 	
-	
-func change_pos_2(loca:Vector2, time:float, mode = "linear"):
-	self.loc = loca
-	var m = fun.movement_type(mode)
+func spin(sdir:int,degrees:float,time:float,type:String="linear"):
+	if sdir > 0:
+		sdir = 1
+	else:
+		sdir = -1
+	var m = fun.movement_type(type)
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "position", self.position, loca, time,
-		m, Tween.EASE_IN_OUT)
+	tween.interpolate_property(self,'rotation_degrees',0,sdir*degrees,time,m,Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
+	rotation_degrees = 0
+
+#----------------------------------------------------------------------------
+# Explanation on this somewhat awkward character movement code
+#
+# Q: Why are you using a dummy? You can directly use a tween to change your position.
+# A: Of course, that is a solution. However, that's imperfect for the following reason:
+# Suppose you want to jump your character and move along x-axis at the same time,
+# then if you do move first, then jump, then jump will not happen. Why?
+# tween.interpolate_property(self,"position",position,loca,time,m,Tween.EASE_IN_OUT)
+# Will move the character from position to loca, but what happens if during the tween,
+# the character's position get changed by another method? 
+# You should test it out. The answer is one of the method will be nullified somehow.
+# So to make jump and move compatible, I cannot use just a tween here.
+#
+# Q: Well, you can use your objectTimer to move the character, and update displacement
+# when timer times out. That's easy, right?
+# A: But then how are you going to implement a movement type? Movement is used so commonly
+# that we should expect the user to be creative and use different movement types than
+# linear. By following this fakeWalker, we can create a fake quadratic movement type
+# if type = quad. 
+#
+# Extra comment: jump, on the other hand, is not often used, and when used, often
+# involves a small amount of jump, like being shocked. So I think it's ok to not
+# implement a movement type for jump.
+
+func change_pos_2(loca:Vector2, time:float, type = "linear"):
+	self.loc = loca
+	var m = fun.movement_type(type)
+	var fake = fakeWalker.new()
+	fake.name = "_dummy"
+	fake.position = position
+	stage.add_child(fake)
+	var fake_tween = Tween.new()
+	fake.add_child(fake_tween)
+	fake_tween.interpolate_property(fake,"position",position,loca,time,m,Tween.EASE_IN_OUT)
+	var _objTimer = objectTimer.new(self,time,0.01,"_follow_fake",[fake])
+	add_child(_objTimer)
+	fake_tween.start()
+	fake_tween.connect("tween_completed", self, "clear_dummy")
+
+func _follow_fake(params):
+	var fake = params[0]
+	if is_instance_valid(fake):
+		position += fake.get_disp()
+#----------------------------------------------------------------------------
 
 func clear_dummy(ob:Object, _k: NodePath):
-	# This ob is the dummy sprite
+	# This ob will be the dummy created by some method above
 	ob.call_deferred('free')
 

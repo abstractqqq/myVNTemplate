@@ -2,9 +2,6 @@ extends CanvasLayer
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
-# Because uid is supposed to be unique, we can simply overwrite when character
-# joins the stage again... 
-
 # What is the point of making this a singleton instead of a node
 # inside a scene?
 
@@ -14,9 +11,20 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 # 2. It makes each part of VN more independent, since
 # characters are so important, they deserve their own stage.
 
-# If character's fade_on_change is turned on, then there will be
+# Some recurring code comments:
+# 1. If character's fade_on_change is turned on, then there will be
 # dummies named _dummy on stage. So exclude them in children.
+# 2. You might see this multiple times
+# var c = find_chara_on_stage(uid)
+#	  c.class_methods...
+# It is not gauranteed that find_chara_on_stage will find the chara.
+# If uid hasn't joined, then this method will return null
+# The reason I didn't put an error report like vn.error("...") is that
+# This null error, imo, is more obvious to debug than getting an error
+# as reported by vn.error("")
 
+
+# A duplicate method only for convenience.
 func get_character_info(uid:String):
 	if chara.all_chara.has(uid):
 		return chara.all_chara[uid]
@@ -24,17 +32,17 @@ func get_character_info(uid:String):
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
 
-func shake_chara(uid : String, amount: float, time: float):
+func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
 	if uid == 'all':
 		for n in get_children():
 			if n.name != "_dummy" and n.in_all:
-				n.shake(amount, time)
+				n.shake(amount, time, mode)
 	else:
 		var c = find_chara_on_stage(uid)
-		c.shake(amount, time)
+		c.shake(amount, time, mode)
 
 
-func jump(uid : String, dir:Vector2, amount: float, time : float):
+func jump(uid:String, dir:Vector2, amount:float, time:float):
 	dir = dir.normalized()
 	if uid == 'all':
 		for n in get_children():
@@ -43,11 +51,20 @@ func jump(uid : String, dir:Vector2, amount: float, time : float):
 	else:
 		var c = find_chara_on_stage(uid)
 		c.jump(dir, amount, time)
+		
+func spin(sdir:int,uid:String, degrees:float, time:float, type:String="linear"):
+	if uid == 'all':
+		for n in get_children():
+			if n.name != "_dummy" and n.in_all:
+				n.spin(sdir,degrees, time, type)
+	else:
+		var c = find_chara_on_stage(uid)
+		c.spin(sdir,degrees,time, type)
 
-func change_pos(uid:String, loca:Vector2): # instant position change.
+func change_pos(uid:String, loc:Vector2): # instant position change.
 	var c = find_chara_on_stage(uid)
-	c.position = loca
-	c.loc = loca
+	c.position = loc
+	c.loc = loc
 
 func change_pos_2(uid:String, loca:Vector2, time:float, mode):
 	var c = find_chara_on_stage(uid)
@@ -59,19 +76,23 @@ func change_expression(uid:String, expression:String):
 		var c = find_chara_on_stage(uid)
 		c.change_expression(expression)
 
-func fadein(uid: String, time: float, loc: Vector2, expression:String) -> void:
+func fadein(uid: String, time: float, location: Vector2, expression:String) -> void:
 	# Ignore accidental spriteless character fadein
 	var info = chara.all_chara[uid]
 	if info.has('path'):
 		if vn.skipping:
-			join(uid,loc,expression)
+			join(uid,location,expression)
 		else:
 			var ch_scene = load(info['path'])
 			# If load fails, there will be a bug pointing to this line
 			var c = ch_scene.instance()
-			c.modulate = Color(0.86,0.86,0.86,0)
+			if c.apply_highlight:
+				c.modulate = Color(0.86,0.86,0.86,0)
+			else:
+				c.modulate = Color(1,1,1,0)
 			add_child(c)
-			c.position = loc
+			c.loc = location
+			c.position = location
 			c.fadein(time)
 			c.change_expression(expression)
 	
@@ -85,7 +106,7 @@ func fadeout(uid: String, time: float) -> void:
 		var c = find_chara_on_stage(uid)
 		c.fadeout(time)
 
-func join(uid: String, loc: Vector2, expression:String) -> void:
+func join(uid: String, loc: Vector2, expression:String="default"):
 	var info = chara.all_chara[uid]
 	if info.has('path'):
 		var ch_scene = load(info['path'])
@@ -103,11 +124,11 @@ func set_highlight(uid : String) -> void:
 	# it might be the case that the speaking character hasn't joined
 	# the stage yet. In that case, find character will give me null
 	# and print the error message. I do not want that to happen because
-	# this might happen pretty often.
+	# this might happen every once in a while.
 	var info = chara.all_chara[uid]
 	if info.has('path'):
 		for n in get_children():
-			if n.name != "_dummy" and n.unique_id == uid:
+			if n.name != "_dummy" and n.unique_id == uid and n.apply_highlight:
 				n.modulate = Color(1,1,1,1)
 				break
 
@@ -130,10 +151,10 @@ func remove_chara(uid : String):
 		c.call_deferred("free")
 
 
-# The methods below are only used internally, so no need to consider in_all
 func set_modulate_4_all(c : Color):
 	for n in get_children():
-		n.modulate = c
+		if n.apply_highlight:
+			n.modulate = c
 
 func find_chara_on_stage(uid:String):
 	for n in get_children():
