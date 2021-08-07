@@ -20,12 +20,16 @@ var main_block = [
 	{'gt default': "I see someone!"},
 	{"express": "gt wavea"},
 	{"chara": "gt jump"},
-	{"chara": "gt move", "loc": "400 650"},
+	{"chara": "gt move", "loc": "1000 650"},
 	{'gt': "So you see that some animations are repeating and some are not. This can be set in "+\
 	"the scene of this character (In my case gt.tscn)."},
 	{"gt": "Hey!"},
-	{"gt stara": "Ahha isn't that... ..."},
-	{'gt': "My favorite... ..."},
+	{"gt stara": "Ahha isn't that my favorite... ..."},
+	{'gt': "I want to try something fancy"},
+	{"chara": "gt jump", "amount":800, "time":2},
+	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
+	{"chara":"gt move", "loc": Vector2(200,650), "time":2, 'type': "expo"},
+	{'wait':3},
 	{'fadeout':1},
 	{"GDscene": vn.ending_scene_path}
 	# end of content
@@ -48,5 +52,5 @@ func _ready():
 	game.currentSaveDesc = "Animation Test"
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
-	start_scene(conversation_blocks, choice_blocks, game.load_instruction)
+	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)
 	

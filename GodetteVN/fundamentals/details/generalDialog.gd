@@ -278,6 +278,11 @@ func _input(ev):
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
 		QM._on_historyButton_pressed()
 		return
+		
+	#if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
+	#	var allInOne = vn.ALL_IN_ONE.instance()
+	#	add_child(allInOne)
+	#	return
 	
 	if waiting_cho:
 		# Waiting for a choice. Do nothing. Any input will be nullified.

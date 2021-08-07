@@ -10,7 +10,6 @@ func set_tint(c: Color, t: float):
 	animation.track_insert_key(track_index, t, c)
 	tint_player.add_animation("tint", animation)
 	tint_player.play("tint")
-	print("called")
 	
 func set_tintwave(c:Color, t: float):
 	var tint_player = get_node("AnimationPlayer")

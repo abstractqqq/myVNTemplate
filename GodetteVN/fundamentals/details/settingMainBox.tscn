@@ -29,7 +29,9 @@ size = 25
 font_data = ExtResource( 1 )
 
 [node name="settingMainBox" type="Control"]
-rect_min_size = Vector2( 1000, 800 )
+margin_right = 1000.0
+margin_bottom = 600.0
+rect_min_size = Vector2( 1000, 600 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -37,9 +39,9 @@ __meta__ = {
 
 [node name="effectBox" type="HBoxContainer" parent="."]
 margin_left = 135.0
-margin_top = 440.0
+margin_top = 400.0
 margin_right = 635.0
-margin_bottom = 525.0
+margin_bottom = 485.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -122,9 +124,9 @@ __meta__ = {
 
 [node name="musicBox" type="HBoxContainer" parent="."]
 margin_left = 134.579
-margin_top = 353.524
+margin_top = 320.0
 margin_right = 634.579
-margin_bottom = 438.524
+margin_bottom = 405.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -170,9 +172,9 @@ __meta__ = {
 
 [node name="voiceBox" type="HBoxContainer" parent="."]
 margin_left = 133.519
-margin_top = 523.038
+margin_top = 480.0
 margin_right = 633.519
-margin_bottom = 608.038
+margin_bottom = 565.0
 __meta__ = {
 "_edit_use_anchors_": false
 }

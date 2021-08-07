@@ -50,6 +50,7 @@ margin_left = 48.4853
 margin_top = 965.269
 margin_right = 189.485
 margin_bottom = 1028.27
+focus_mode = 0
 custom_fonts/font = SubResource( 2 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Return"
@@ -59,5 +60,9 @@ __meta__ = {
 }
 
 [node name="saveMainBox" parent="." instance=ExtResource( 3 )]
+margin_left = 250.0
+margin_top = 120.0
+margin_right = 1850.0
+margin_bottom = 1020.0
 
 [connection signal="pressed" from="returnButton" to="." method="_on_returnButton_pressed"]

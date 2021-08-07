@@ -57,6 +57,10 @@ const NVL_DIM = Color(0.2,0.2,0.2,1)
 # Other constants used throught the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
+# Preloaded Scenes (must be used often)
+# var ALL_IN_ONE = preload("res://GodetteVN/fundamentals/optionalScreens/allInOneScreen.tscn")
+
+
 # --------------------------- Game Experience Variables ------------------------
 # can be changed in game
 var music_volume : float = 0 # the default initial value on the BGM audio bus
