@@ -2,12 +2,9 @@ extends Node
 
 # Constants
 
-# dialog
-const max_dialog = 500 # might remove this constant later.
-var max_dialog_display = 300 # only display 300. 
-# If I allow user to change
-# the max number to display, change this number, and max_dialog will be the 
-# absolute max.
+# History and rollback
+const max_dialog_display = 300 # only display 300 history entries
+const max_rollback_steps = 100 # allow users to rollback at most this num of steps
 
 # Narrator
 const narrator_display_name = ''
@@ -16,7 +13,7 @@ const main_menu_path = "/GodetteVN/mainMenu.tscn"
 const start_scene_path = "/GodetteVN/sampleScene.tscn"
 const credit_scene_path = "" # if you have one
 const ending_scene_path = "/GodetteVN/mainMenu.tscn" # by default, ending scene = go back to main
-# 
+#
 
 # default directories
 const ROOT_DIR = "res:/"

@@ -53,7 +53,7 @@ func _ready(): # turn off everything on ready
 func weather_off():
 	var w = get_node("aboveScreen").get_node("weather")
 	for n in w.get_children():
-		n.queue_free()
+		n.call_deferred('free')
 	
 func show_weather(w_name:String):
 	weather_off() # Weather is exclusive

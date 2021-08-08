@@ -64,7 +64,7 @@ func make_save(save_path):
 	'currentSaveDesc': game.currentSaveDesc, 'history':game.history,\
 	'playback': game.playback_events, 'datetime': get_datetime(), 'format':game.currentFormat,\
 	'bgm_volume': vn.music_volume, 'eff_volume': vn.effect_volume, 'voice_volume': vn.voice_volume,\
-	'auto_speed':vn.auto_speed, 'dvar':vn.dvar}
+	'auto_speed':vn.auto_speed, 'dvar':vn.dvar, 'rollback':game.rollback_records}
 
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.SAVE_DIR):

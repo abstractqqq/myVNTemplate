@@ -50,5 +50,5 @@ func _ready():
 	game.currentSaveDesc = "Introduction to System 2"
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
-	start_scene(conversation_blocks, choice_blocks, game.load_instruction)
+	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)
 	

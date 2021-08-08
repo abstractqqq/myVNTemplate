@@ -29,6 +29,11 @@ func set_text(which:String):
 			tbox.bbcode_text = "Do you want to go back to main menu?"
 		"override":
 			tbox.bbcode_text = "Do you want to override the save?"
+		"rollback":
+			tbox.bbcode_text = "You cannot rollback anymore."
+			get_node("okButton").visible = true
+			get_node("noButton").visible = false
+			get_node("yesButton").visible = false
 		_:
 			notif.hide()
 
@@ -55,3 +60,5 @@ func _on_yesButton_pressed():
 	
 	notif.hide()
 
+func _on_okButton_pressed():
+	notif.hide()

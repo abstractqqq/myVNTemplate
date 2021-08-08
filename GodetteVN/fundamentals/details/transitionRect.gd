@@ -1,6 +1,5 @@
 extends ColorRect
 
-
 func fadeout(t:float):
 	var animation = Animation.new()
 	var transition_player = get_node("AnimationPlayer")
@@ -49,11 +48,12 @@ func pixelate_in(t:float):
 	
 
 func _on_AnimationPlayer_animation_finished(anim_name):
+	
 	if anim_name == "pixel":
 		self.material = null
 		
 	if anim_name == "self_destruct":
-		self.queue_free()
+		call_deferred('free')
 	else:
 		var c = self.color
 		var animation = Animation.new()

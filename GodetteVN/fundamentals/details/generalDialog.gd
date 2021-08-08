@@ -5,6 +5,7 @@ export(PackedScene) var choiceBar = preload("res://GodetteVN/fundamentals/choice
 
 var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
 
+# Core data
 var current_dialog = ""
 var current_index = 0
 var current_block = null
@@ -12,6 +13,9 @@ var all_blocks = null
 var all_choices = null
 var all_conditions = null
 
+# Only used in rollback
+var _cur_bgm = null
+var _rolling_back = false
 # State controls
 var nvl = false
 var centered = false
@@ -24,7 +28,6 @@ var no_scroll = false
 var no_right_click = false
 #----------------------
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
-const arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/']
 # Important components
 onready var bg = $background
 onready var vnui = $VNUI
@@ -32,11 +35,15 @@ onready var QM = vnui.get_node('quickMenu')
 onready var nvlBox = vnui.get_node('nvlBox')
 onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
+onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = get_node('camera')
 #-----------------------
 # signals
-signal player_accept
+signal player_accept(rb)
 
+#--------------------------------------------------------------------------------
+func _ready():
+	var _error = self.connect("player_accept",self, '_is_roll_back')
 #--------------------------------- Interpretor ----------------------------------
 
 func load_event_at_index(ind : int) -> void:
@@ -44,69 +51,71 @@ func load_event_at_index(ind : int) -> void:
 		print("IMPORTANT: THERE IS NO PROPER ENDING. GOING BACK TO MAIN MENU.")
 		change_scene_to(vn.ending_scene_path)
 	else:
+		if debug_mode:print("Debug: current event index is " + str(current_index))
 		intepret_events(current_block[ind])
 
 func intepret_events(event):
 	# Try to keep the code under each case <=3 lines
 	# Also keep the number of cases small. Try to repeat the use of key words.
+	var ev = event.duplicate(true)
 	if debug_mode: 
 		var debugger = vnui.get_node('debugger')
-		var msg = "Debug :" + str(event)
+		var msg = "Debug :" + str(ev)
 		debugger.text = msg 
 		print(msg)
 	
 	# Pre-parse, keep this at minimum
-	if event.has('loc'): event['loc'] = parse_loc(event['loc'], event)
-	if event.has('color'): event['color'] = parse_color(event['color'], event)
-	if event.has('nvl'):
-		if (typeof(event['nvl'])!=1) and event['nvl'] != 'clear': 
-			event['nvl'] = parse_true_false(event['nvl'], event)
-	if event.has('scale'): event['scale'] = parse_loc(event['scale'], event)
-	if event.has('dir'): event['dir'] = parse_dir(event['dir'], event)
+	if ev.has('loc'): ev['loc'] = parse_loc(ev['loc'], ev)
+	if ev.has('color'): ev['color'] = parse_color(ev['color'], ev)
+	if ev.has('nvl'):
+		if (typeof(ev['nvl'])!=1) and ev['nvl'] != 'clear': 
+			ev['nvl'] = parse_true_false(ev['nvl'], ev)
+	if ev.has('scale'): ev['scale'] = parse_loc(ev['scale'], ev)
+	if ev.has('dir'): ev['dir'] = parse_dir(ev['dir'], ev)
 	# End of pre-parse. Actual match event
-	match event:
-		{"condition", "then", "else",..}: conditional_branch(event)
+	match ev:
+		{"condition", "then", "else",..}: conditional_branch(ev)
 		{"condition",..}:
-			if check_condition(event['condition']):
-				event.erase('condition')
+			if check_condition(ev['condition']):
+				ev.erase('condition')
 				continue
 			else: # condition fails.
 				auto_load_next()
-		{"fadein"}: fadein(event["fadein"])
-		{"fadeout"}: fadeout(event["fadeout"])
-		{"screen",..}: screen_effects(event)
-		{"bg",..}: change_background(event)
-		{"chara",..}: character_event(event)
-		{"weather"}: change_weather(event)
-		{"camera", ..}: camera_effect(event)
-		{"express"}: express(event['express'])
-		{"bgm",..}: play_bgm(event)
-		{'audio',..}: play_sound(event)
-		{'dvar'}: set_dvar(event)
-		{'font', 'path'}: change_font(event)
-		{'sfx',..}: sfx_player(event)
-		{'then',..}: then(event)
+		{"fadein"}: fadein(ev["fadein"])
+		{"fadeout"}: fadeout(ev["fadeout"])
+		{"screen",..}: screen_effects(ev)
+		{"bg",..}: change_background(ev)
+		{"chara",..}: character_event(ev)
+		{"weather"}: change_weather(ev)
+		{"camera", ..}: camera_effect(ev)
+		{"express"}: express(ev['express'])
+		{"bgm",..}: play_bgm(ev)
+		{'audio',..}: play_sound(ev)
+		{'dvar'}: set_dvar(ev)
+		{'font', 'path'}: change_font(ev)
+		{'sfx',..}: sfx_player(ev)
+		{'then',..}: then(ev)
 		{'premade'}:
 			if debug_mode:
 				print("PREMADE EVENT:")
-			intepret_events(fun.call_premade_events(event['premade']))
-		{"system"}: system(event)
-		{"sys"}: system(event)
-		{'choice',..}: generate_choices(event)
-		{'wait'}: wait(event['wait'])
-		{'nvl'}: set_nvl(event)
-		{'GDscene'}: change_scene_to(event['GDscene'])
-		{'history', ..}: history_manipulation(event)
-		{'float', 'wait',..}: float_text(event)
-		{'voice'}:voice(event['voice'])
+			intepret_events(fun.call_premade_events(ev['premade']))
+		{"system"}: system(ev)
+		{"sys"}: system(ev)
+		{'choice',..}: generate_choices(ev)
+		{'wait'}: wait(ev['wait'])
+		{'nvl'}: set_nvl(ev)
+		{'GDscene'}: change_scene_to(ev['GDscene'])
+		{'history', ..}: history_manipulation(ev)
+		{'float', 'wait',..}: float_text(ev)
+		{'voice'}:voice(ev['voice'])
 		{'center'}:
 			self.centered = true
 			set_nvl({'nvl': true}, false)
-			if event.has('speed'):
-				say('', event['center'], event['speed'])
+			if ev.has('speed'):
+				say('', ev['center'], ev['speed'])
 			else:
-				say('', event['center'])
-		_: speech_parse(event)
+				say('', ev['center'])
+		_: speech_parse(ev)
 				
 			
 #----------------------- on ready, new game, load, set up, end -----------------
@@ -124,22 +133,18 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 	elif load_instruction == "load_game":
 		game.load_instruction = "new_game" # reset after loading
 		current_index = game.currentIndex
-		current_block = blocks[game.currentBlock]
+		current_block = all_blocks[game.currentBlock]
 		load_playback(game.playback_events)
 	else:
 		vn.error('Unknown loading instruction.')
 	
-	if debug_mode:
-		print("Debug: current block is " + game.currentBlock)
-		print("Debug: current index is " + str(current_index))
+	if debug_mode: print("Debug: current block is " + game.currentBlock)
 	load_event_at_index(current_index)
-	
+
 
 func auto_load_next():
 	current_index += 1
 	game.currentIndex = current_index
-	if debug_mode: 
-		print("Debug: current event index is " + str(current_index))
 	load_event_at_index(current_index)
 
 func scene_end():
@@ -264,17 +269,37 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	# wait for ui_accept if this is not a question
 	if not ques:
 		yield(self, "player_accept")
-		music.stop_voice()
-		if centered:
-			nvl_off()
-			centered = false
-		if not self.nvl: stage.remove_highlight()
-		waiting_acc = false
-		auto_load_next()
+		if not _rolling_back:
+			game.updateRollback()
+			music.stop_voice()
+			if centered:
+				nvl_off()
+				centered = false
+			if not self.nvl: stage.remove_highlight()
+			waiting_acc = false
+			auto_load_next()
 	
 	# If this is a question, then displaying the text is all we need.
 
 func _input(ev):
+	if ev.is_action_pressed('ui_left') and waiting_acc and not vn.inSetting and not vn.inNotif and not vn.skipping:
+		QM.reset_auto()
+		if game.rollback_records.size() >= 1:
+			screenEffects.removeLasting()
+			screenEffects.weather_off()
+			camera.reset_zoom()
+			self.waiting_cho = false
+			self.centered = false
+			nvl_off()
+			for n in choiceContainer.get_children():
+				n.queue_free()
+			emit_signal("player_accept", true)
+			game.history.pop_back()
+			on_rollback()
+			return
+		else:
+			notif.show('rollback')
+			
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
 		QM._on_historyButton_pressed()
 		return
@@ -343,8 +368,9 @@ func play_bgm(ev : Dictionary) -> void:
 	var path = ev['bgm']
 	if (path == "" or path == "off") and ev.size() == 1:
 		music.stop_bgm()
-		game.playback_events['bgm'] = {}
-		auto_load_next()
+		game.playback_events['bgm'] = {'bgm':''}
+		if not vn.inLoading:
+			auto_load_next()
 		return
 		
 	if path == "pause":
@@ -370,6 +396,7 @@ func play_bgm(ev : Dictionary) -> void:
 	# Now we're sure it's either play bgm or fadein bgm
 	var vol = 0
 	if ev.has('vol'): vol = ev['vol']
+	_cur_bgm = path
 	var music_path = vn.BGM_DIR + path
 	if not ev.has('fadein'): # has path or volume
 		music.play_bgm(music_path, vol)
@@ -379,7 +406,6 @@ func play_bgm(ev : Dictionary) -> void:
 		return
 			
 	if ev.has('fadein'):
-		
 		music.fadein(music_path, ev['fadein'], vol)
 		game.playback_events['bgm'] = ev
 		if !vn.inLoading:
@@ -445,6 +471,7 @@ func change_scene_to(path : String):
 	screenEffects.weather_off()
 	QM.reset_auto()
 	QM.reset_skip()
+	game.rollback_records = []
 	var error = get_tree().change_scene(vn.ROOT_DIR + path)
 	if error == OK:
 		self.queue_free()
@@ -468,7 +495,6 @@ func set_dvar(ev : Dictionary) -> void:
 		else:
 			vn.dvar[left] = fun.calculate(right)
 			
-		print(vn.dvar[left])
 	else:
 		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
@@ -503,7 +529,7 @@ func check_condition(cond_list) -> bool:
 			back_var = _parse_var(back_var)
 			match rel:
 				"=": result = (front_var == back_var)
-				"==": result = (front_var <= back_var)
+				"==": result = (front_var == back_var)
 				"<=": result = (front_var <= back_var)
 				">=": result = (front_var >= back_var)
 				"<": result = (front_var < back_var)
@@ -579,13 +605,16 @@ func fadeout(time : float, auto_forw = true) -> void:
 
 func tint(ev : Dictionary) -> void:
 	var time = 1
-	if ev.has('time'): time = ev['time']
+	if ev.has('time'): 
+		time = ev['time']
 	if ev.has('color'):
 		if ev['screen'] == 'tintwave':
 			screenEffects.tintWave(ev['color'], time)
 		elif ev['screen'] == 'tint':
 			screenEffects.tint(ev['color'], time)
-			
+			# When saving to playback, no need to replay the fadein effect
+			ev['time'] = 0.05
+		
 		game.playback_events['screen'] = ev
 	else:
 		vn.error("Tint or tintwave requires the color field.", ev)
@@ -662,7 +691,6 @@ func camera_effect(ev : Dictionary) -> void:
 func character_event(ev : Dictionary) -> void:
 	# For character event, auto_load_next should be considered within
 	# each individual method.
-	
 	var temp = ev['chara'].split(" ")
 	if temp.size() != 2:
 		vn.error('Expecting a uid and an effect name separated by a space.', ev)
@@ -883,7 +911,7 @@ func check_dialog():
 	elif not self.nvl and dialogbox.adding:
 		dialogbox.force_finish()
 	else:
-		emit_signal("player_accept")
+		emit_signal("player_accept", false)
 
 
 func clear_boxes():
@@ -904,22 +932,44 @@ func wait(time : float) -> void:
 
 func on_choice_made(ev : Dictionary) -> void:
 	QM.enable_skip_auto()
-	for n in vnui.get_node('choiceContainer').get_children():
+	for n in choiceContainer.get_children():
 		n.queue_free()
 	
+	game.updateRollback()
 	waiting_cho = false
 	if ev.size() == 0:
 		auto_load_next()
 	else:
 		intepret_events(ev)
 
+func _is_roll_back(rb):
+	_rolling_back = rb
 
-func load_playback(play_back):
+func on_rollback():
+	var last = game.rollback_records.pop_back()
+	vn.dvar = last['dvar']
+	game.currentSaveDesc = last['currentSaveDesc']
+	game.currentIndex = last['currentIndex']
+	game.currentBlock = last['currentBlock']
+	game.playback_events = last['playback']
+	current_index = game.currentIndex
+	current_block = all_blocks[game.currentBlock]
+	# print(game.playback_events)
+	load_playback(game.playback_events, true)
+	load_event_at_index(current_index)
+
+
+func load_playback(play_back, rollBackMode = false):
 	vn.inLoading = true
 	if play_back['bg'].size() > 0:
 		intepret_events(play_back['bg'])
 	if play_back['bgm'].size() > 0:
-		intepret_events(play_back['bgm'])
+		if rollBackMode:
+			var bgm = play_back['bgm']
+			if _cur_bgm != bgm['bgm']:
+				intepret_events(bgm)
+		else:
+			intepret_events(play_back['bgm'])
 	if play_back['screen'].size() > 0:
 		intepret_events(play_back['screen'])
 	if play_back['camera'].size() > 0:
@@ -927,13 +977,25 @@ func load_playback(play_back):
 	if play_back['weather'].size() > 0:
 		intepret_events(play_back['weather'])
 	
+	var onStageCharas = []
 	for d in play_back['charas']:
 		var dkeys = d.keys()
 		var loc = d['loc']
 		dkeys.erase('loc')
 		var uid = dkeys[0]
-		intepret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
-		
+		if rollBackMode:
+			onStageCharas.push_back(uid)
+			if stage.is_on_stage(uid):
+				stage.change_pos(uid, parse_loc(loc))
+				stage.change_expression(uid, d[uid])
+			else:
+				intepret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+		else:
+			intepret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+	
+	if onStageCharas.size() != 0 and rollBackMode:
+		stage._remove_on_rollback(onStageCharas)
+	
 	if play_back['nvl'] != '':
 		nvl_on()
 		game.nvl_text = play_back['nvl']
@@ -943,6 +1005,7 @@ func load_playback(play_back):
 	just_loaded = true
 
 func split_condition(line:String):
+	var arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/']
 	var front_var = ''
 	var back_var = ''
 	var rel = ''
@@ -1024,7 +1087,7 @@ func nvl_on():
 
 func trigger_accept():
 	if not waiting_cho:
-		emit_signal("player_accept")
+		emit_signal("player_accept", false)
 		if hide_vnui:
 			if not QM.hiding: QM.visible = true
 			if self.nvl:

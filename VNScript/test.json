@@ -1,0 +1,65 @@
+{
+	"Dialogs": {
+		"starter": [
+			{
+				"chara": "female join",
+				"loc": "1600 600"
+			},
+			{
+				"female": "Today is a great day. I want to go shopping"
+			},
+			{
+				"bg": "shoppingmall.png",
+				"fadein": 1
+			},
+			{
+				"choice": "c1",
+				"female happy": "Should I buy this?"
+			},
+			{
+				"female sad": "Fine, I don't have the money for this."
+			}
+		],
+		"dialog2": [
+			{
+				"dvar": "mo = mo - 100"
+			},
+			{
+				"female happy": "It costs me a lot but I really like it"
+			}
+		]
+	},
+	"Choices": {
+		"c1": [
+			{
+				"Yes, I want to buy it.": {
+					"then": "dialog2"
+				}
+			},
+			{
+				"No. Too expensive": {
+
+				}
+			}
+		],
+		"c2": [
+			{
+				"Order Sushi": {
+					"dvar": "mo = mo-100"
+				}
+			},
+			{
+				"Order Ramen": {
+					"dvar": "mo = mo - 20"
+				}
+			}
+		]
+	},
+	"Conditions": {
+		"cond1": "mo > 100",
+		"cond2": [
+			"mo>500 ",
+			" mo<650"
+		]
+	}
+}

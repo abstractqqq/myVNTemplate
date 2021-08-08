@@ -45,6 +45,7 @@ func readSave(save : saveSlot) -> bool:
 		game.currentNodePath = data['currentNodePath']
 		game.currentBlock = data['currentBlock']
 		game.history = data['history']
+		game.rollback_records = data['rollback']
 		game.playback_events = data['playback']
 		game.load_instruction = "load_game"
 		vn.music_volume = data['bgm_volume']

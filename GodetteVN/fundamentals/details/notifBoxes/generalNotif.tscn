@@ -56,6 +56,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="okButton" type="Button" parent="."]
+visible = false
+margin_left = 167.128
+margin_top = 126.131
+margin_right = 220.128
+margin_bottom = 169.131
+custom_fonts/font = SubResource( 2 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+custom_colors/font_color_hover = Color( 0.101961, 0.568627, 0.694118, 1 )
+text = "Ok"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="yesButton" type="Button" parent="."]
 margin_left = 87.7805
 margin_top = 126.48
@@ -72,4 +87,5 @@ __meta__ = {
 
 [connection signal="gui_input" from="." to="." method="_on_back2MainBox_gui_input"]
 [connection signal="pressed" from="noButton" to="." method="_on_noButton_pressed"]
+[connection signal="pressed" from="okButton" to="." method="_on_okButton_pressed"]
 [connection signal="pressed" from="yesButton" to="." method="_on_yesButton_pressed"]

@@ -1,0 +1,32 @@
+-DIALOG-starter
+chara::  female join ; loc :: 1600 600;
+female :: Today is a great day. I want to go shopping;
+bg:: 	shoppingmall.png; fadein:: 	1;
+choice:: 	c1; female happy:: Should I buy this?;
+female sad:: 	Fine, I don't have the money for this.;
+-END
+-DIALOG-dialog2
+dvar:: 	mo = mo - 100;
+female happy:: It costs me a lot but I really like it;
+
+-END
+-CHOICE-c1
+c_text:: 	Yes, I want to buy it.; then:: 	dialog2;
+c_text:: 	No. Too expensive;
+
+-END
+
+-CHOICE-c2
+c_text:: 	Order Sushi; dvar:: 	mo = mo-100;
+c_text:: 	Order Ramen; dvar:: 	mo = mo - 20;
+
+-CONDITIONS-
+cond1:: 	mo > 100;
+cond2:: 	mo>500 , mo<650;
+
+-END
+
+
+
+
+

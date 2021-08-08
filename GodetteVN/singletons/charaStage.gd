@@ -169,15 +169,18 @@ func is_on_stage(uid : String) -> bool:
 	for n in get_children():
 		if n.name != "_dummy" and n.unique_id == uid:
 			return true
-			
 	return false
 
 func all_on_stage():
 	var output = []
 	for n in get_children():
 		if n.name != "_dummy":
-			var temp = {n.unique_id: n.current_expression, 'loc': n.position}
+			var temp = {n.unique_id: n.current_expression, 'loc': n.loc}
 			output.append(temp)
 			
 	return output
 
+func _remove_on_rollback(arr):
+	for n in get_children():
+		if n.name != "_dummy" and not (n.unique_id in arr ):
+			n.call_deferred('free')

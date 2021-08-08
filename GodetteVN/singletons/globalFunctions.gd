@@ -49,45 +49,6 @@ func movement_type(type:String)-> int:
 
 # Working
 
-# Used in rollback
-# Classifying events and what types of actions should be followed
-# for what kind of events during rollback
-# Ignore and auto-rollback one more: chara,
-# Playback: speech, 
-# Revert to previous:
-# Undo: history manipulation, system 
-
-func event_match(ev:Dictionary) -> int:
-	var m = 0
-	match ev:
-		{"condition", "then", "else",..}: m = 0
-		{"condition",..}: m = 0
-		{"fadein"}: m = 0
-		{"fadeout"}: m = 0
-		{"screen",..}: m = 0
-		{"bg",..}: m = 0
-		{"chara",..}: m = 0
-		{"weather"}: m = 0
-		{"camera", ..}: m = 0
-		{"express"}: m = 0
-		{"bgm",..}: m = 0
-		{'audio',..}: m = 0
-		{'dvar'}: m = 0
-		{'font', 'path'}: m = 0
-		{'sfx',..}: m = 0
-		{'then',..}: m = 0
-		{'premade'}: m = 0
-		{"system"}: m = 0
-		{'choice',..}: m = 0
-		{'wait'}: m = 0
-		{'nvl'}: m = 0
-		{'GDscene'}: m = 0
-		{'history', ..}: m = 0
-		{'float', 'wait',..}: m = 0
-		{'center'}: m = 0
-		_: m = -1 # This signifies speech event
-		
-	return m
 
 #----------------------------------------------------------------
 

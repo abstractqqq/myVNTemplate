@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 var general = preload("res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.tscn")
-const notifList = ["quit", "main", "override"]
+const notifList = ["quit", "main", "override", 'rollback']
 
 
 func clear():

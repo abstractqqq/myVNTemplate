@@ -25,7 +25,7 @@ func tint(c: Color, time: float):
 func removeLasting():
 	var lasting = get_node('lasting')
 	for n in lasting.get_children():
-		n.queue_free()
+		n.call_deferred('free')
 
 	
 func tintWave(c:Color,time:float):
@@ -41,8 +41,6 @@ func pixelate_out(t:float):
 	self.add_child(r)
 	r.pixelate_out(t)
 
-# Pixellate is only used during a screen transition. So if pixellate out
-# is called, then color rect already has loaded the material
 func pixelate_in(t:float):
 	var rect = load("res://GodetteVN/fundamentals/details/transitionRect.tscn")
 	var r = rect.instance()

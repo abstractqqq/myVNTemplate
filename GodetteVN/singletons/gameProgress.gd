@@ -38,7 +38,7 @@ var nvl_text = ''
 # Current characters on stage together w/ their expressions 
 
 
-var playback_events = {'bg':{}, 'bgm':{}, 'camera':{}, 'screen':{}, 'charas':[],\
+var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'camera':{'zoom':Vector2(1,1), 'offset':Vector2(0,0)}, 'screen':{}, 'charas':[],\
  'weather': {}, 'nvl': ''}
 
 func get_latest_onstage():
@@ -61,7 +61,6 @@ var load_instruction = "new_game"
 var currentFormat = null # save current format. Used for thumbnail creation
 
 
-
 #-------------Important--------------------------------
 # I am still debating whether to remove the max dialog variable
 #------------------------------------------------------
@@ -70,18 +69,26 @@ var history = []
 
 #-------------Rollback Helper---------------------------
 # Unused now.
-var roll_back_records = {'bg':[], 'bgm':[], 'blocks':[]} 
-
+var rollback_records = []
 
 #------------------------------------------------------
 # Utility functions
 
-# remember the input is not just a line, it is an array [unique id, text]
+# Textbox is an array [unique id, text]
 func updateHistory(textbox):
-	history.push_back(textbox)
 	if (history.size() > vn.max_dialog_display):
 		history.pop_front()
 		# will be slow if this array gets too long
-		
-func roll_back_helper():
-	pass
+	history.push_back(textbox)
+	
+func updateRollback():
+	get_latest_nvl() # get current nvl text.
+	get_latest_onstage() # get current on stage characters.
+	if rollback_records.size() > vn.max_rollback_steps:
+		rollback_records.remove(0)
+	
+	var cur_playback = playback_events.duplicate(true)
+	var rollback_data = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
+	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar}
+	rollback_records.push_back(rollback_data)
+	
