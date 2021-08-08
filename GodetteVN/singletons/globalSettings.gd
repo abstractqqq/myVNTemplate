@@ -9,10 +9,10 @@ const max_rollback_steps = 100 # allow users to rollback at most this num of ste
 # Narrator
 const narrator_display_name = ''
 # paths
-const main_menu_path = "/GodetteVN/mainMenu.tscn"
+const main_menu_path = "/GodetteVN/titleScreen.tscn"
 const start_scene_path = "/GodetteVN/sampleScene.tscn"
 const credit_scene_path = "" # if you have one
-const ending_scene_path = "/GodetteVN/mainMenu.tscn" # by default, ending scene = go back to main
+const ending_scene_path = "/GodetteVN/titleScreen.tscn" # by default, ending scene = go back to main
 #
 
 # default directories
@@ -55,7 +55,7 @@ const NVL_DIM = Color(0.2,0.2,0.2,1)
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
 # Preloaded Scenes (must be used often)
-# var ALL_IN_ONE = preload("res://GodetteVN/fundamentals/optionalScreens/allInOneScreen.tscn")
+# var MAIN_MENU = preload("res://GodetteVN/fundamentals/optionalScreens/mainMenu.tscn")
 
 
 # --------------------------- Game Experience Variables ------------------------

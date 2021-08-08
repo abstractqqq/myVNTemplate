@@ -305,8 +305,8 @@ func _input(ev):
 		return
 		
 	#if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
-	#	var allInOne = vn.ALL_IN_ONE.instance()
-	#	add_child(allInOne)
+	#	var mm = vn.MAIN_MENU.instance()
+	#	add_child(mm)
 	#	return
 	
 	if waiting_cho:

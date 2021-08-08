@@ -51,7 +51,7 @@ _global_script_class_icons={
 [application]
 
 config/name="GodetteVN"
-run/main_scene="res://GodetteVN/mainMenu.tscn"
+run/main_scene="res://GodetteVN/titleScreen.tscn"
 config/use_custom_user_dir=true
 config/icon="res://icon.png"
 

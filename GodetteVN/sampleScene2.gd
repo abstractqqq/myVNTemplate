@@ -3,7 +3,7 @@ extends generalDialog
 
 #---------------------------------- Choices ---------------------------------------
 var food_choices = [
-	{'Sushi': {'dvar': "money -= 10"}},
+	{'Sushi': {'dvar': "mo = mo-10"}},
 	{'Ramen': {'then' : 'block2'}}
 ]
 
