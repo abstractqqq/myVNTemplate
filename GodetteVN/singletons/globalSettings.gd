@@ -53,6 +53,10 @@ const NVL_DIM = Color(0.2,0.2,0.2,1)
 
 # Other constants used throught the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
+# Bad names for dvar
+const BAD_NAMES = ["nw", "nl", "sm", 'dc']
+# Bad uids for characters
+const BAD_UIDS = ['all', '']
 
 # Preloaded Scenes (must be used often)
 # var MAIN_MENU = preload("res://GodetteVN/fundamentals/optionalScreens/mainMenu.tscn")
@@ -77,9 +81,9 @@ var cps : int = 50 # either 50 or 25
 # ---------------------------- Dvar Varibles ----------------------------
 # VERY IMPORTANT
 # PLEASE DO NOT NAME A DVAR THE SAME AS THE NAME OF ANY BBCODE!
-# Also not "nw"
+# Also not "nw". Do not initialize dvar here. Use set_dvar method instead.
 
-var dvar = {'mo':50, 'le':0, 'tt': true}
+var dvar = {}
 
 # ------------------------- Game State Variables--------------------------------
 
@@ -97,7 +101,21 @@ func reset_states():
 	noMouse = false
 	skipping = false
 	auto_on = false
+	
+#--------------------------------------------------------------------------------
+func set_dvar(v:String, value):
+	if v.is_valid_identifier():
+		vn.error("A valid dvar name should only contain letters, digits, and underscores and the "+\
+		"first character should not be a digit.")
+	
+	for bad in vn.BAD_NAMES:
+		if bad in v:
+			vn.error("The name %s cannot be used as a dvar name." % [bad])
 		
+	vn.dvar[v] = value
+	print("Successfully set %s to value %s." % [v, value])
+
+
 func error(message, ev = {}):
 	if message == "p" or message == "path":
 		message = "Path invalid."

@@ -63,7 +63,7 @@ func _on_historyButton_pressed():
 func _on_saveButton_pressed():
 	reset_auto()
 	reset_skip()
-	_create_screenshot()
+	fun.create_thumbnail()
 	var save = load(vn.SAVE_PATH)
 	get_parent().add_child(save.instance())
 
@@ -155,32 +155,6 @@ func _on_QsaveButton_mouse_entered():
 func _on_QsaveButton_mouse_exited():
 	vn.noMouse = false
 
-func _on_QsaveButton_pressed(msg = "[Quick Save] "):
-	_create_screenshot()
-	var slot = load(vn.SAVESLOT)
-	var sl = slot.instance()
-	var temp = game.currentSaveDesc
-	game.currentSaveDesc = msg + temp
-	sl.make_save(sl.path)
-	sl.queue_free()
-	game.currentSaveDesc = temp
+func _on_QsaveButton_pressed():
+	fun.make_a_save("[Quick Save] ")
 
-
-
-func _create_screenshot():
-	var thumbnail = get_viewport().get_texture().get_data()
-	thumbnail.flip_y()
-	thumbnail.resize(vn.THUMBNAIL_WIDTH, vn.THUMBNAIL_HEIGHT, Image.INTERPOLATE_LANCZOS)
-	game.currentFormat = thumbnail.get_format()
-	
-	var dir = Directory.new()
-	if !dir.dir_exists(vn.THUMBNAIL_DIR):
-		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
-		
-	var file = File.new()
-	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
-	var error = file.open(save_path, File.WRITE)
-	if error == OK:
-		# store raw image data
-		file.store_var(thumbnail.get_data())
-		file.close()

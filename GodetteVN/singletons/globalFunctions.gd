@@ -2,7 +2,7 @@ extends Node
 
 # A collection of functions that are used globally as convenient methods.
 
-# Declare other variables here, if you have any
+
 
 #-------------------------------------------------------------------------
 # Premade event sections:
@@ -54,8 +54,7 @@ func movement_type(type:String)-> int:
 
 func break_line(line:String , s:String):
 	# breaks the line according to the letter s
-	# For instance, if line = 'x = (a+b)^2', it returns [x, (a+b)^2] 
-
+	# For instance, if line = 'x = (a+b)^2', s = '=', it returns [x, (a+b)^2] 
 	if s in line:
 		return line.split(s)
 	else:
@@ -69,3 +68,36 @@ func calculate(what:String):
 	calculator.call_deferred('free')
 	return result
 	
+#----------------------------------------------------------------------
+# Make a save.
+
+func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
+	var thumbnail = get_viewport().get_texture().get_data()
+	thumbnail.flip_y()
+	thumbnail.resize(width, height, Image.INTERPOLATE_LANCZOS)
+	game.currentFormat = thumbnail.get_format()
+	
+	var dir = Directory.new()
+	if !dir.dir_exists(vn.THUMBNAIL_DIR):
+		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
+		
+	var file = File.new()
+	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
+	var error = file.open(save_path, File.WRITE)
+	if error == OK:
+		# store raw image data
+		file.store_var(thumbnail.get_data())
+		file.close()
+
+func make_a_save(msg = "[Quick Save] " , delay:float = 0.0):
+	if delay > 0:
+		yield(get_tree().create_timer(delay), 'timeout')
+		
+	create_thumbnail()
+	var slot = load(vn.SAVESLOT)
+	var sl = slot.instance()
+	var temp = game.currentSaveDesc
+	game.currentSaveDesc = msg + temp
+	sl.make_save(sl.path)
+	sl.queue_free()
+	game.currentSaveDesc = temp

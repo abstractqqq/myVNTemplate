@@ -129,7 +129,7 @@ func path_valid(path : String) -> bool:
 
 func load_json(path: String):
 	var f = File.new()
-	var error = f.open(vn.SCRIPT_DIR + path, File.READ)
+	var error = f.open(path, File.READ)
 	if error == OK:
 		var t = JSON.parse(f.get_as_text()).get_result()
 		f.close()

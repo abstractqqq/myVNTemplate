@@ -1,5 +1,7 @@
 extends Node
 
+# name for this singleton in script is chara
+
 var all_chara = {}
 
 func _ready():
@@ -11,15 +13,16 @@ func _ready():
 	# VN is an example of a spriteless character.
 	# 2. Stage characters: characters who have sprites, and players
 	# will see their sprites. For stage characters, you need to use
-	# {chara: uid join , loc : ..., expression: } 
+	# {chara : uid join , loc : 1600 600}
 	# before they can be shown on stage.
 	
+	
 	# To define a spriteless character, you do:
-	spriteless_character("", "") # This is the narrator
+	spriteless_character("", "") 
+	# This is the narrator. Do not delete this line.
 	# Format: (display_name, unique_id, Color (optional))
 	# Color should be declared as color in Godot, for instance
 	# Color(0,1,0) = Green
-	
 	
 	# Here you define character with sprites, they must have a 
 	# Godot scene in the folder GodetteVN/Characters with the name
@@ -28,7 +31,11 @@ func _ready():
 	stage_character("test2")
 	stage_character("gt")
 	
-	
+	# You may initialize your variables here
+	#'mo':50, 'le':0, 'tt': true
+	set_dvar("mo", 50)
+	set_dvar("le",0)
+	set_dvar("tt", true)
 	
 	
 	
@@ -51,6 +58,12 @@ func _ready():
 
 # Keep a record of the path to the scene of the stage character
 func stage_character(uid:String) -> void:
+	if uid in vn.BAD_UIDS:
+		if uid == "":
+			vn.error("The empty string uid is preserved for the narrator." % [uid])
+		else:
+			vn.error("The uid %s is not allowed." % [uid])
+	
 	var path = vn.CHARA_SCDIR+uid+".tscn"
 	var ch_scene = load(path)
 	if ch_scene == null:
@@ -58,11 +71,18 @@ func stage_character(uid:String) -> void:
 	var c = ch_scene.instance()
 	var info = {"uid":c.unique_id,"display_name":c.display_name,"name_color":c.name_color,"path":path}
 	all_chara[uid] = info
-	c.queue_free()
+	c.call_deferred('free')
 
 # Difference is that stage character also has a path field.
 
 func spriteless_character(dname:String, uid:String, color=Color(0,0,0,1))->void:
+	if uid in vn.BAD_UIDS:
+		if uid != "":
+			vn.error("The uid %s is not allowed." % [uid])
+		else:
+			if all_chara.has(""):
+				vn.error("The empty string uid is preserved for the narrator." % [uid])
+		
 	all_chara[uid] = {"uid":uid, "display_name":dname, "name_color":color}
 
 func get_character_info(uid:String):
@@ -70,3 +90,15 @@ func get_character_info(uid:String):
 		return all_chara[uid]
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
+
+func set_dvar(v:String, value):
+	if not v.is_valid_identifier():
+		vn.error("A valid dvar name should only contain letters, digits, and underscores and the "+\
+		"first character should not be a digit.")
+	
+	for bad in vn.BAD_NAMES:
+		if bad in v:
+			vn.error("The name %s cannot be used as a dvar name." % [bad])
+		
+	vn.dvar[v] = value
+	print("Successfully set %s to value %s." % [v, value])

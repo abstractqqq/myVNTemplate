@@ -21,7 +21,7 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 # If uid hasn't joined, then this method will return null
 # The reason I didn't put an error report like vn.error("...") is that
 # This null error, imo, is more obvious to debug than getting an error
-# as reported by vn.error("")
+# reported by vn.error("")
 
 
 # A duplicate method only for convenience.

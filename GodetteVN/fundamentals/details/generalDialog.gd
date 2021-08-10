@@ -1,6 +1,9 @@
 extends Node2D
 class_name generalDialog
+
+export(String, FILE, "*.json") var dialog_json 
 export(bool) var debug_mode
+export(String) var scene_description
 export(PackedScene) var choiceBar = preload("res://GodetteVN/fundamentals/choiceBar.tscn")
 
 var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
@@ -12,6 +15,8 @@ var current_block = null
 var all_blocks = null
 var all_choices = null
 var all_conditions = null
+# Other
+var latest_voice = null
 
 # Only used in rollback
 var _cur_bgm = null
@@ -43,7 +48,8 @@ signal player_accept(rb)
 
 #--------------------------------------------------------------------------------
 func _ready():
-	var _error = self.connect("player_accept",self, '_is_roll_back')
+	var _error = self.connect("player_accept", self, '_is_roll_back')
+	
 #--------------------------------- Interpretor ----------------------------------
 
 func load_event_at_index(ind : int) -> void:
@@ -127,7 +133,10 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 	nvlBox.connect('load_next', self, 'trigger_accept')
 	if load_instruction == "new_game":
 		current_index = 0
-		current_block = blocks['starter'] # this is an array of events
+		if blocks.has("starter"):
+			current_block = blocks['starter'] # this is an array of events
+		else:
+			vn.error("Dialog must have a block called starter.")
 		game.currentIndex = 0
 		game.currentBlock = 'starter' # this is the name corresponding to the array
 	elif load_instruction == "load_game":
@@ -167,12 +176,19 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 		vn.error('nvl expects a boolean or the keyword clear.', ev)
 	
 func speech_parse(ev : Dictionary) -> void:
+	# Voice first
+	if ev.has('voice'):
+		latest_voice = ev['voice']
+		if not vn.skipping:
+			voice(ev['voice'], false)
+	else:
+		latest_voice = null
+	# Speech
 	var combine = "NANITHEFUCK"
 	for k in ev.keys(): # Not voice, not speed, means it has to be "uid expression"
 		if k != 'voice' and k != 'speed':
 			combine = k # combine=unique_id and expression combined
 			break
-			
 	if combine == 'NANITHEFUCK': # Otherwise, error
 		vn.error("Speech event requires a valid character/narrator." ,ev)
 	
@@ -183,11 +199,8 @@ func speech_parse(ev : Dictionary) -> void:
 			say(combine, ev[combine])
 	else:
 		say(combine, ev[combine])
-				
-	if ev.has('voice') and not vn.skipping:
-		voice(ev['voice'], false)
 
-func generate_choices(event: Dictionary):
+func generate_choices(ev: Dictionary):
 	# make a say event
 	if self.nvl:
 		nvl_off()
@@ -196,40 +209,44 @@ func generate_choices(event: Dictionary):
 		speaker.text = ""
 	if vn.auto_on or vn.skipping:
 		QM.disable_skip_auto()
-	waiting_cho = true
-	if event.has('voice'):
-		voice(event['voice'], false)
+	if ev.has('voice'):
+		latest_voice = ev['voice']
+		voice(ev['voice'], false)
+	else: latest_voice = null
 	var combine = ""
-	for k in event.keys():
+	for k in ev.keys():
 		if k != 'id' and k != 'choice' and k != 'voice':
 			combine = k
 			break
 	if combine != "":
-		say(combine, event[combine], 0, true)
+		say(combine, ev[combine], 0, true)
 		
-	var options = all_choices[event['choice']]
+	var options = all_choices[ev['choice']]
+	waiting_cho = true
 	for i in options.size():
-		var ev = options[i]
-		if ev.size()>2 : 
+		var ev2 = options[i]
+		if ev2.size()>2 : 
 			vn.error('Only size 1 or 2 dict will be accepted as choice.')
-		elif ev.size() == 2:
-			if ev.has('condition'):
-				if not check_condition(ev['condition']):
-					continue # skip to the next one if condition not met
+		elif ev2.size() == 2:
+			if ev2.has('condition'):
+				if not check_condition(ev2['condition']):
+					continue # skip to the next choice if condition not met
 			else:
 				vn.error('If a choice is size 2, then it has to have a condition.')
 					
 		var choice_text = ""
-		for k in ev.keys():
+		for k in ev2.keys():
 			if k != "condition":
 				choice_text = k # grap the key not equal to condition
 				break
-					
-		var choice_ev = ev[choice_text] # the choice action
+		
+		var choice_ev = ev2[choice_text] # the choice action
+		choice_text = preprocess(choice_text, false) 
 		var choice = choiceBar.instance()
+		print(choice_ev)
 		choice.setup_choice_event(choice_text, choice_ev)
 		choice.connect("choice_made", self, "on_choice_made")
-		vnui.get_node('choiceContainer').add_child(choice)
+		choiceContainer.add_child(choice)
 		# waiting for user choice
 	
 func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
@@ -254,7 +271,11 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 				game.nvl_text = ''
 			else:
 				game.nvl_text = nvlBox.bbcode_text
-			game.history.push_back([temp[0], nvlBox.get_text()])
+				
+			if latest_voice == null:
+				game.history.push_back([temp[0], nvlBox.get_text()])
+			else:
+				game.history.push_back([temp[0], nvlBox.get_text(), latest_voice])
 	else:
 		speaker.set("custom_colors/default_color", speaking_chara["name_color"])
 		speaker.bbcode_text = speaking_chara["display_name"]
@@ -262,7 +283,10 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 		if just_loaded:
 			just_loaded = false
 		else:
-			game.history.push_back([temp[0], dialogbox.get_text()])
+			if latest_voice == null:
+				game.history.push_back([temp[0], dialogbox.get_text()])
+			else:
+				game.history.push_back([temp[0], dialogbox.get_text(), latest_voice])
 		
 		stage.set_highlight(temp[0])
 		
@@ -341,7 +365,6 @@ func _input(ev):
 	
 func change_font(ev : Dictionary):
 	var path = vn.FONT_DIR + ev['path']
-	
 	match ev['font']:
 		'normal':
 			dialogbox.add_font_override("normal_font", load(path))
@@ -435,12 +458,12 @@ func voice(path:String, auto_forw = true) -> void:
 func change_background(ev : Dictionary) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
-		bg_change(path)
+		bg.bg_change(path)
 	elif ev.has('fade'):
 		var t = float(ev['fade'])/2
 		fadeout(t, false)
 		yield(get_tree().create_timer(t), 'timeout')
-		bg_change(path)
+		bg.bg_change(path)
 		fadein(t, false)
 		yield(get_tree().create_timer(t), 'timeout')
 	elif ev.has('pixelate'):
@@ -450,7 +473,7 @@ func change_background(ev : Dictionary) -> void:
 		hide_boxes()
 		QM.visible = false
 		yield(get_tree().create_timer(t), 'timeout')
-		bg_change(path)
+		bg.bg_change(path)
 		screenEffects.pixel_in(t)
 		yield(get_tree().create_timer(t), 'timeout')
 		show_boxes()
@@ -535,7 +558,7 @@ func check_condition(cond_list) -> bool:
 				"<": result = (front_var < back_var)
 				">": result = (front_var > back_var)
 				"!=": result = (front_var != back_var)
-				_: vn.error('Relation ' + rel + ' invalid.')
+				_: vn.error('Unknown Relation ' + rel)
 			
 			final_result = _a_what_b(is_or, final_result, result)
 		elif typeof(cond) == 19: # array type
@@ -1045,7 +1068,7 @@ func float_text(ev: Dictionary) -> void:
 	if ev.has('fadein'): in_t = ev['fadein']
 	var f = floatText.instance()
 	if ev.has('font') and ev['font'] != "" and ev['font'] != "default":
-		f.set_font(ev['font'])
+		f.set_font(vn.ROOT_DIR + ev['font'])
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:
 		f.display(ev['float'], ev['time'], in_t, loc)
@@ -1131,9 +1154,6 @@ func show_boxes():
 		get_node('VNUI/textBox').visible = true
 		get_node('VNUI/nameBox').visible = true
 		
-func bg_change(path: String):
-	var bg_path = vn.BG_DIR + path
-	bg.texture = load(bg_path)
 
 func dimming(c : Color):
 	get_node('background').modulate = c
@@ -1154,10 +1174,17 @@ func system(ev : Dictionary):
 		"skip": # same as above
 			if temp[1] == "off":
 				QM.reset_skip()
-		
+		"rollback", "roll_back" ,"RB":
+			if temp[1] == "clear":
+				game.rollback_records = []
+		"auto_save", "AS":
+			fun.make_a_save("[Auto Save] ")
 		"make_save", "MS":
-			QM._on_QsaveButton_pressed("[Auto Save] ")
-		
+			QM.reset_skip()
+			QM.reset_auto()
+			notif.show("make_save")
+			var cur_notif = notif.get_current_notif()
+			yield(cur_notif, "clicked")
 		"save_load", "SL":
 			if temp[1] == "on":
 				QM.get_node("saveButton").disabled = false
@@ -1269,10 +1296,12 @@ func parse_true_false(truth, ev = {}) -> bool:
 		vn.error("Expecting true or false after this indicator.", ev)
 		return false
 
-func preprocess(words : String) -> String:
-	# preprocess the input to see if there are any special things
-	dialogbox.nw = false
-	nvlBox.nw = false
+func preprocess(words : String, speech = true) -> String:
+	# [nw] should not work for choices. Only works in regular speech.
+	# Therefore we need a speech parameter here.
+	if speech:
+		dialogbox.nw = false
+		nvlBox.nw = false
 	var leng = words.length()
 	var output = ''
 	var i = 0
@@ -1290,7 +1319,7 @@ func preprocess(words : String) -> String:
 					
 			match inner:
 				"nw":
-					if not vn.skipping:
+					if not vn.skipping and speech:
 						if self.nvl:
 							nvlBox.nw = true
 						else:

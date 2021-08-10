@@ -95,7 +95,7 @@ func camera_action(sub:String):
 	set_line(lineNum,"")
 	match sub:
 		"shake": set_line(lineNum, "camera :: shake ; amount :: 250 ; time :: 2 ;")
-		"zoom": set_line(lineNum, "camera :: zoom ; scale :: ; loc :: 0 0 ; time :: 1, type :: linear ;")
+		"zoom": set_line(lineNum, "camera :: zoom ; scale :: ; loc :: 0 0 ; time :: 1; type :: linear ;")
 		"move": set_line(lineNum, "camera :: move ; loc :: ; time :: 1 ; type :: linear ;")
 		_: return
 
@@ -127,7 +127,8 @@ func then_action():
 #-------------------------------- Above is Script Editing --------------------------------
 #-------------------------------- Below is Text Parsing ----------------------------------
 
-func strip_text(t:String) -> String: 
+func strip_text(t:String) -> String:
+	# Potentially this is faster than strip_edges? 
 	# = Python Strip, get rid of left and right empty spaces
 	t = (t.lstrip(" ")).rstrip(" ")
 	t = t.replace("\t","")
@@ -138,18 +139,19 @@ func line_to_choice(line:String, num:int) -> Dictionary:
 	
 	var sm_split = line.split(";")
 	var l = sm_split.size()
-	if sm_split[l-1] == "":
-		sm_split.remove(l-1)
-		l -= 1
+	l -= 1
+	if sm_split[l] == "":
+		sm_split.remove(l)
 	else:
 		print("Error when parsing at line: " + line)
 		vn.error("Missing ';' at end of line " + str(num))
 		
-	if l == 2:
+	if l == 2 or l == 3:
 		var valid = false
+		var has_cond = false
 		var ctext : String = ""
 		var cev = {}
-		# find choice_text field first,
+		# find c_text field first,
 		for term in sm_split:
 			if "c_text" in term:
 				valid = true
@@ -158,16 +160,22 @@ func line_to_choice(line:String, num:int) -> Dictionary:
 			else:
 				var t = term.split("::")
 				var left = strip_text(t[0])
+				if l == 3 and left == "condition":
+					has_cond = true
 				var right = strip_text(t[1])
 				if left == "then" or left == "dvar":
 					cev[left] = right
+				elif left == "condition":
+					right = _cond_to_array(right)
+					ev[left] = right
 				else:
 					print("Currently only 3 choices events are allowed: nothing, then event, or dvar event.")
 					vn.error("Choice format error at line number " + str(num))
-		if valid:
+		if (l == 2 and valid) or (l == 3 and valid and has_cond):
 			ev[ctext] = cev
 		else:
-			print("A choice line must have one 'c_text' field.")
+			print("A choice line must have one 'c_text' field, and a choice action, and an optional " +\
+			"condition field.")
 			vn.error("Choice format error at line number " + str(num))
 	elif l == 1:
 		if "c_text" in sm_split[0]:
@@ -177,6 +185,7 @@ func line_to_choice(line:String, num:int) -> Dictionary:
 		else:
 			print("A choice line must have one 'c_text' field.")
 			vn.error("Choice format error at line number " + str(num))
+
 	else:
 		print("Error when parsing at line: " + line)
 		print("A choice line should have one 'c_text' field and only one other optional choice event.")
@@ -198,19 +207,13 @@ func line_to_cond(line:String, num:int):
 		var term = (sm_split[0]).split("::")
 		var left = strip_text(term[0])
 		var right = strip_text(term[1])
-		if "," in right:
-			var temp = right.split(',')
-			right = []
-			for t in temp:
-				right.push_back(t)
-		
+		right = _cond_to_array(right)
 		_cond_blocks[left] = right
 	else:
 		vn.error("Expecting one condition per line. Error at line " + str(num))
 	
 func line_to_event(line:String, num:int)->Dictionary:
 	var ev : Dictionary = {}
-
 	var sm_split = line.split(";")
 	if sm_split[sm_split.size()-1] == "":
 		sm_split.remove(sm_split.size()-1)
@@ -225,6 +228,8 @@ func line_to_event(line:String, num:int)->Dictionary:
 			var val = strip_text(temp[1])
 			if val.is_valid_float():
 				val = float(val)
+			elif key == "condition":
+				val = _cond_to_array(val)
 			ev[key] = val
 		else:
 			print("Incorrect format: " + term + " at line " + str(num))
@@ -263,7 +268,7 @@ func _parse_timeline():
 	var ev_list = text.split("\n")
 	for i in range(ev_list.size()):
 		var line = ev_list[i]
-		line = line.lstrip(' ') 
+		line = line.strip_edges()
 		if line == "": continue
 		if line[0] == "#": continue
 		if line[0] == "-": 
@@ -273,7 +278,28 @@ func _parse_timeline():
 			1: _dialog_blocks[_d_name].push_back(line_to_event(line,i+1))
 			2: _choice_blocks[_ch_name].push_back(line_to_choice(line,i+1))
 			3: line_to_cond(line,i+1)
-		
+
+func _cond_to_array(cond:String):
+	if "," in cond:
+		cond = cond.strip_edges()
+		cond = cond.replace(" ", '')
+		cond = cond.replace("[", "[\"")
+		cond = cond.replace("]", "\"]")
+		cond = cond.replace(",", "\",\"")
+		var new_str : String = ""
+		for i in cond.length():
+			var letter = cond[i]
+			if letter == "\"":
+				if cond[i+1] != "[" and (cond[i+1] != "]" or cond[i-1] != "]")\
+				and (cond[i+1] != "," or cond[i-1] != "]"):
+					new_str += letter
+			else:
+				new_str += letter
+		# print(new_str)
+		return JSON.parse(new_str).result
+	else:
+		return cond
+
 func get_timeline():
 	_parse_timeline()
 	return {"Dialogs":_dialog_blocks,"Choices": _choice_blocks, "Conditions": _cond_blocks}

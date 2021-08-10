@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://voiceButton.gd" type="Script" id=1]
+[ext_resource path="res://gui/speaker.png" type="Texture" id=2]
+
+[node name="voiceButton" type="TextureButton"]
+margin_right = 37.0
+margin_bottom = 34.0
+focus_mode = 0
+texture_normal = ExtResource( 2 )
+script = ExtResource( 1 )
+
+[connection signal="pressed" from="." to="." method="_on_voiceButton_pressed"]

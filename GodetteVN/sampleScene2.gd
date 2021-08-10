@@ -18,7 +18,7 @@ var main_block = [
 	{"female": "What should I eat today?", 'choice' : 'food', 'id':0},
 	{"female": "When your game ends, do the following."},
 	{"female": "Use a GDscene change to go back to your designated ending scene. In this demo, the ending "+\
-	"scene will be the mainMenu scene. But don't forget to change it to your actual ending if you "+\
+	"scene will be the title screen. But don't forget to change it to your actual ending if you "+\
 	"have one!"},
 	{"female": "Thank you so much for bearing with me!"},
 	{"fadeout":2},
@@ -47,7 +47,7 @@ var choice_blocks = {'food': food_choices}
 
 #---------------------------------------------------------------------
 func _ready():
-	game.currentSaveDesc = "Introduction to System 2"
+	game.currentSaveDesc = scene_description
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
 	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)

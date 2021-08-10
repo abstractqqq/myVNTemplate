@@ -5,7 +5,7 @@ func _ready():
 	# no need to read quit message to quit the game in main menu
 	get_tree().set_auto_accept_quit(true)
 	OS.set_window_maximized(true)
-
+	
 func _on_exitButton_pressed():
 	get_tree().quit()
 

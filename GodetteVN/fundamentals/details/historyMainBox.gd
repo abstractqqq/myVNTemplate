@@ -1,16 +1,18 @@
 extends ScrollContainer
 
-var text = preload("res://GodetteVN/fundamentals/details/textBoxInHistory.tscn")
+var tb = preload("res://GodetteVN/fundamentals/details/textBoxInHistory.tscn")
 var atBottom = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	for i in game.history.size():
-		var textbox = text.instance()
+		var textbox = tb.instance()
 		var temp = game.history[i]
 		var c = chara.all_chara[temp[0]]
 		textbox.setName(c["display_name"], c["name_color"])
 		textbox.setText(temp[1])
+		if temp.size()>= 3:
+			textbox.setVoice(temp[2])
 		$textContainer.add_child(textbox)
 
 func _process(_delta):

@@ -30,15 +30,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
-margin_right = 1600.0
-margin_bottom = 120.0
-custom_constants/separation = 10
+[node name="box" type="HBoxContainer" parent="."]
+margin_right = 40.0
+margin_bottom = 40.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="speaker" type="Label" parent="HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="box"]
+margin_right = 150.0
+margin_bottom = 90.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="speaker" type="Label" parent="box/VBoxContainer"]
 margin_right = 150.0
 margin_bottom = 40.0
 rect_min_size = Vector2( 150, 40 )
@@ -47,10 +53,18 @@ custom_fonts/font = SubResource( 1 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 text = "Sample Name:"
 
-[node name="text" type="RichTextLabel" parent="HBoxContainer"]
-margin_left = 160.0
-margin_right = 1600.0
-margin_bottom = 120.0
+[node name="HBoxContainer" type="HBoxContainer" parent="box"]
+margin_left = 154.0
+margin_right = 894.0
+margin_bottom = 90.0
+custom_constants/separation = 10
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="text" type="RichTextLabel" parent="box/HBoxContainer"]
+margin_right = 740.0
+margin_bottom = 90.0
 rect_min_size = Vector2( 740, 90 )
 size_flags_horizontal = 3
 custom_fonts/italics_font = SubResource( 2 )
