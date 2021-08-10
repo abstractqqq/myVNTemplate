@@ -32,7 +32,7 @@ func set_text(which:String):
 		"main":
 			tbox.bbcode_text = "Do you want to go back to main menu?"
 		"override":
-			tbox.bbcode_text = "Do you want to override the save?"
+			tbox.bbcode_text = "Do you want to override this file?"
 		"rollback":
 			tbox.bbcode_text = "You cannot rollback anymore."
 			get_node("okButton").visible = true

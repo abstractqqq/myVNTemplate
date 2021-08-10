@@ -9,7 +9,7 @@ export(Color) var line_comment_color = Color(0.445313, 0.445313, 0.445313)
 
 
 var lineNum : int
-
+var allUids = []
 #----------------------------------------------------------
 # private variables
 var _parse_mode = 0
@@ -34,6 +34,9 @@ func _ready():
 	self.text = "-DIALOG-starter\n\n\n-END\n\n\n-CHOICE-\n\n\n-END\n\n\n-CONDITIONS-\n\n\n-END"
 	
 	cursor_set_line(1)
+	for k in chara.all_chara.keys():
+		if chara.all_chara[k].has('path'):
+			allUids.push_back(k)
 
 
 func _input(event):
@@ -48,7 +51,7 @@ func _input(event):
 		
 		match selection_match(lead):
 			0:cursor_action()
-			1:character_action(sub)
+			1:character_action(lead, sub)
 			2:camera_action(sub)
 			3:screen_action(sub)
 			4:bgm_action(sub)
@@ -68,27 +71,31 @@ func selection_match(lead:String) -> int:
 		"float": m = 5
 		"font": m = 6
 		"then": m = 7
-		_: m = -1
+		_:
+			if lead in allUids:
+				m = 1
+			else:
+				m = -1
 		
 	return m
 
 func cursor_action():
 	insert_text_at_cursor(":: ;")
-	cursor_set_column(cursor_get_column() - 1)
+	cursor_set_column(cursor_get_column() - 2)
 
-func character_action(sub:String):
+func character_action(lead:String, sub:String):
 	set_line(lineNum,"")
 	match sub:
-		"move": set_line(lineNum, "chara :: uid move ; loc :: ; type :: linear  ; time :: 1 ;")
-		"jump": set_line(lineNum, "chara :: uid jump ; amount :: 80 ; time :: 0.25 ; dir :: up ;")
-		"join": set_line(lineNum, "chara :: uid join ; loc :: ; expression :: default ;")
-		"fadein": set_line(lineNum, "chara :: uid fadein ; loc :: ; expression :: default ; time :: 1 ;")
-		"shake": set_line(lineNum, "chara :: uid shake ; amount :: 250 ; time :: 2 ;")
-		"fadeout": set_line(lineNum, "chara :: uid fadeout ; time :: 1 ;")
-		"spin": set_line(lineNum, "chara :: uid spin ; deg :: 360 ; time :: 1 ; type :: linear ; sdir :: 1 ;")
-		"leave": set_line(lineNum, "chara :: uid leave ;")
-		"vpunch": set_line(lineNum, "chara :: uid vpunch ;")
-		"hpunch": set_line(lineNum, "chara :: uid hpunch ;")
+		"move": set_line(lineNum, "chara :: %s move ; loc :: ; type :: linear  ; time :: 1 ;" % [lead])
+		"jump": set_line(lineNum, "chara :: %s jump ; amount :: 80 ; time :: 0.25 ; dir :: up ;" % [lead])
+		"join": set_line(lineNum, "chara :: %s join ; loc :: ; expression :: default ;" % [lead])
+		"fadein": set_line(lineNum, "chara :: %s fadein ; loc :: ; expression :: default ; time :: 1 ;" % [lead])
+		"shake": set_line(lineNum, "chara :: %s shake ; amount :: 250 ; time :: 2 ;" % [lead])
+		"fadeout": set_line(lineNum, "chara :: %s fadeout ; time :: 1 ;" % [lead])
+		"spin": set_line(lineNum, "chara :: %s spin ; deg :: 360 ; time :: 1 ; type :: linear ; sdir :: 1 ;" % [lead])
+		"leave": set_line(lineNum, "chara :: %s leave ;" % [lead])
+		"vpunch": set_line(lineNum, "chara :: %s vpunch ;" % [lead])
+		"hpunch": set_line(lineNum, "chara :: %s hpunch ;" % [lead])
 		_: return
 
 func camera_action(sub:String):
