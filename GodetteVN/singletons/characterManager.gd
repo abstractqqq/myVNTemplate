@@ -89,7 +89,7 @@ func get_character_info(uid:String):
 	if all_chara.has(uid):
 		return all_chara[uid]
 	else:
-		vn.error("No character with this uid {0} is found".format({0:uid}))
+		vn.error("No character with this uid %s is found" % uid )
 
 func set_dvar(v:String, value):
 	if not v.is_valid_identifier():
@@ -97,7 +97,7 @@ func set_dvar(v:String, value):
 		"first character should not be a digit.")
 	
 	for bad in vn.BAD_NAMES:
-		if bad in v:
+		if bad == v:
 			vn.error("The name %s cannot be used as a dvar name." % [bad])
 		
 	vn.dvar[v] = value

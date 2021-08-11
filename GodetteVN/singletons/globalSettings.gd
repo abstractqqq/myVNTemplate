@@ -3,7 +3,7 @@ extends Node
 # Constants
 
 # History and rollback
-const max_dialog_display = 300 # only display 300 history entries
+const max_dialog_display = 200 # only display 200 history entries
 const max_rollback_steps = 100 # allow users to rollback at most this num of steps
 
 # Narrator
@@ -51,7 +51,7 @@ const DIM = Color(0.86,0.86,0.86,1)
 const CENTER_DIM = Color(0.7,0.7,0.7,1)
 const NVL_DIM = Color(0.2,0.2,0.2,1)
 
-# Other constants used throught the engine
+# Other constants used throughout the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 # Bad names for dvar
 const BAD_NAMES = ["nw", "nl", "sm", 'dc']
@@ -59,20 +59,14 @@ const BAD_NAMES = ["nw", "nl", "sm", 'dc']
 const BAD_UIDS = ['all', '']
 
 # Preloaded Scenes (must be used often)
-# var MAIN_MENU = preload("res://GodetteVN/fundamentals/optionalScreens/mainMenu.tscn")
+var MAIN_MENU = preload("res://GodetteVN/fundamentals/mainMenu.tscn")
 
 
 # --------------------------- Game Experience Variables ------------------------
-# can be changed in game
-var music_volume : float = 0 # the default initial value on the BGM audio bus
-var effect_volume : float = 0 # for sound effect
-var voice_volume: float = 0 # for voice acting
+
 var auto_on = false # Auto forward or not
-var auto_speed: int = 1 # Auto forward speed
-# 0 = slow: after all text is shown on screen, forward to next in 6s
-# 1 = Normal: after all text is shown on screen, forward to next in 4s
-# 2 = fast: after all text is shown on screen, forward to next in 2s
-var auto_bound = ((-1)*auto_speed + 3.25)*20 # how many 0.05s do we need to wait if auto is on
+var auto_bound = -1 # Initialize to -1. Will get changed in fileRelated.
+# how many 0.05s do we need to wait if auto is on
 # Formula ((-1)*auto_speed + 3.25)*20
 
 var cps : int = 50 # either 50 or 25
@@ -104,12 +98,12 @@ func reset_states():
 	
 #--------------------------------------------------------------------------------
 func set_dvar(v:String, value):
-	if v.is_valid_identifier():
+	if not v.is_valid_identifier():
 		vn.error("A valid dvar name should only contain letters, digits, and underscores and the "+\
 		"first character should not be a digit.")
 	
 	for bad in vn.BAD_NAMES:
-		if bad in v:
+		if bad == v:
 			vn.error("The name %s cannot be used as a dvar name." % [bad])
 		
 	vn.dvar[v] = value
@@ -125,6 +119,5 @@ func error(message, ev = {}):
 	if ev.size() != 0:
 		message += "\n Possible error at event: " + str(ev)
 			
-
 	push_error(message)
 	get_tree().quit()

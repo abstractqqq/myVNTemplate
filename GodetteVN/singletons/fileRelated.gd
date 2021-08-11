@@ -1,6 +1,12 @@
 extends Node
 
+var system_data = {}
+const CONFIG_PATH = "res://GodetteVN/config.json"
 const image_exts = ['png', 'jpg', 'jpeg']
+
+func _ready():
+	load_config()
+
 #------------------------------------------------------------------------------
 func get_save_files():
 	
@@ -48,11 +54,6 @@ func readSave(save : saveSlot) -> bool:
 		game.rollback_records = data['rollback']
 		game.playback_events = data['playback']
 		game.load_instruction = "load_game"
-		vn.music_volume = data['bgm_volume']
-		vn.effect_volume = data['eff_volume']
-		vn.voice_volume = data['voice_volume']
-		vn.auto_speed = data['auto_speed']
-		vn.auto_bound = (7 - (vn.auto_speed + 1) * 2) * 20
 		vn.dvar = data['dvar']
 		file.close()
 	else:
@@ -64,7 +65,9 @@ func readSave(save : saveSlot) -> bool:
 
 #-------------------------------------------------------------------------------
 func get_chara_sprites(uid, which = "sprite"):
-	
+	# This method should only be used in development phase.
+	# The exported project won't work with dir calls depending on
+	# what kind of paths are passed.
 	var sprites = []
 	var dir = Directory.new()
 	if which == "anim" or which == "animation" or which == "spritesheet":
@@ -96,7 +99,9 @@ func get_chara_sprites(uid, which = "sprite"):
 	return sprites
 
 func get_backgrounds():
-	
+	# This method should only be used in development phase.
+	# The exported project won't work with dir calls depending on
+	# what kind of paths are passed.
 	var bgs = []
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.BG_DIR):
@@ -121,6 +126,9 @@ func get_backgrounds():
 
 #-------------------------------------------------------------------------------
 func path_valid(path : String) -> bool:
+	# This method should only be used in development phase.
+	# Path checks might not work because of 
+	# the way paths are encoded.
 	var file = File.new()
 	var exists = file.file_exists(path)
 	file.close()
@@ -135,4 +143,28 @@ func load_json(path: String):
 		f.close()
 		return t
 	else:
-		vn.error("Unknow error when opening the json.")
+		vn.error("Error: %s." % error)
+
+#------------------------ Config, Volume, etc. -------------------------------
+
+func write_to_config():
+	var file = File.new()
+	var error = file.open(CONFIG_PATH, File.WRITE)
+	if error == OK:
+		file.store_line(JSON.print(system_data,'\t'))
+		file.close()
+	else:
+		vn.error('Error when opening config: %s' %error)
+	
+func load_config():
+	system_data = load_json(CONFIG_PATH)
+	vn.auto_bound = (7 - (system_data['auto_speed'] + 1) * 2) * 20
+
+func spoiler_proof_dialog(scene_path:String, all_dialog_blocks):
+	if not system_data.has(scene_path):
+		var ev = {}
+		for block in all_dialog_blocks.keys():
+			ev[block] = 0
+			
+		system_data[scene_path] = ev
+

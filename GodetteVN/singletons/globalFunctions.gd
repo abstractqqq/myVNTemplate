@@ -101,3 +101,36 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0):
 	sl.make_save(sl.path)
 	sl.queue_free()
 	game.currentSaveDesc = temp
+
+
+#------------------------------------------------------------------------
+# Given any sentence with a [dvar] in it, 
+# This will prase any dvar into their values and insert back
+# to the sentence
+func dvarMarkup(words:String):
+	var leng = words.length()
+	var output = ''
+	var i = 0
+	while i < leng:
+		var c = words[i]
+		var inner = ""
+		if c == '[':
+			i += 1
+			while words[i] != ']':
+				inner += words[i]
+				i += 1
+				if i >= leng:
+					vn.error("Please do not use square brackets " +\
+					"unless for bbcode or display dvar purposes.")
+					
+			if vn.dvar.has(inner):
+				output += str(vn.dvar[inner])
+			else:
+				output += '[' + inner + ']'
+						
+		else:
+			output += c
+			
+		i += 1
+	
+	return output

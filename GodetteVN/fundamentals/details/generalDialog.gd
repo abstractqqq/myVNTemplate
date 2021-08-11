@@ -49,6 +49,9 @@ signal player_accept(rb)
 #--------------------------------------------------------------------------------
 func _ready():
 	var _error = self.connect("player_accept", self, '_is_roll_back')
+
+func set_bg_path(node_path:String):
+	bg = get_node(node_path)
 	
 #--------------------------------- Interpretor ----------------------------------
 
@@ -154,6 +157,11 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 func auto_load_next():
 	current_index += 1
 	game.currentIndex = current_index
+	if vn.skipping:
+		if not game.checkSkippable():
+			vn.skipping = false
+			QM.reset_skip()
+	
 	load_event_at_index(current_index)
 
 func scene_end():
@@ -241,9 +249,8 @@ func generate_choices(ev: Dictionary):
 				break
 		
 		var choice_ev = ev2[choice_text] # the choice action
-		choice_text = preprocess(choice_text, false) 
+		choice_text = fun.dvarMarkup(choice_text)
 		var choice = choiceBar.instance()
-		print(choice_ev)
 		choice.setup_choice_event(choice_text, choice_ev)
 		choice.connect("choice_made", self, "on_choice_made")
 		choiceContainer.add_child(choice)
@@ -294,7 +301,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	if not ques:
 		yield(self, "player_accept")
 		if not _rolling_back:
-			game.updateRollback()
+			game.progressUpdate()
 			music.stop_voice()
 			if centered:
 				nvl_off()
@@ -321,17 +328,16 @@ func _input(ev):
 			game.history.pop_back()
 			on_rollback()
 			return
-		else:
+		else: # Show to readers that they cannot rollback further
 			notif.show('rollback')
 			
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
 		QM._on_historyButton_pressed()
 		return
 		
-	#if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
-	#	var mm = vn.MAIN_MENU.instance()
-	#	add_child(mm)
-	#	return
+	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
+		add_child(vn.MAIN_MENU.instance())
+		return
 	
 	if waiting_cho:
 		# Waiting for a choice. Do nothing. Any input will be nullified.
@@ -958,7 +964,7 @@ func on_choice_made(ev : Dictionary) -> void:
 	for n in choiceContainer.get_children():
 		n.queue_free()
 	
-	game.updateRollback()
+	game.progressUpdate()
 	waiting_cho = false
 	if ev.size() == 0:
 		auto_load_next()

@@ -50,6 +50,7 @@ func _on_noButton_pressed():
 func _on_yesButton_pressed():
 	match type:
 		"main":
+			fileRelated.write_to_config()
 			screenEffects.removeLasting()
 			screenEffects.weather_off()
 			music.stop_bgm()
@@ -61,6 +62,7 @@ func _on_yesButton_pressed():
 		"override":
 			emit_signal("decision", true)
 		"quit":
+			fileRelated.write_to_config()
 			get_tree().quit()
 		"make_save":
 			fun.make_a_save("", 0.2)

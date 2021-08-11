@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "fakeWalker",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/fakeWalker.gd"
+"path": "res://GodetteVN/fundamentals/details/helpClasses/fakeWalker.gd"
 }, {
 "base": "Node2D",
 "class": "generalDialog",
@@ -63,12 +63,12 @@ config/icon="res://icon.png"
 
 [autoload]
 
+fileRelated="*res://GodetteVN/singletons/fileRelated.gd"
 vn="*res://GodetteVN/singletons/globalSettings.gd"
 game="*res://GodetteVN/singletons/gameProgress.gd"
 fun="*res://GodetteVN/singletons/globalFunctions.gd"
 chara="*res://GodetteVN/singletons/characterManager.gd"
 stage="*res://GodetteVN/singletons/characterStage.tscn"
-fileRelated="*res://GodetteVN/singletons/fileRelated.gd"
 notif="*res://GodetteVN/singletons/notification.tscn"
 music="*res://GodetteVN/singletons/musicController.tscn"
 screenEffects="*res://GodetteVN/singletons/screenEffects.tscn"

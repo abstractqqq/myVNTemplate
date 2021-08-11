@@ -53,10 +53,10 @@ __meta__ = {
 }
 
 [node name="settingMainBox" parent="." instance=ExtResource( 1 )]
-margin_left = 169.04
-margin_top = 142.909
-margin_right = 1169.04
-margin_bottom = 942.909
+margin_left = 200.0
+margin_top = 140.0
+margin_right = 1200.0
+margin_bottom = 940.0
 
 [node name="BackButton" type="Button" parent="."]
 margin_left = 73.1974

@@ -23,7 +23,7 @@ func script_to_json():
 		$AcceptDialog.popup_centered()
 		file.close()
 	else:
-		vn.error('Error when saving script files. (Unknown reason.)')
+		vn.error('Error when loading: %s' %error)
 
 func save_as_txt(ctrlS=false):
 	var file = File.new()
@@ -44,7 +44,7 @@ func save_as_txt(ctrlS=false):
 				$AcceptDialog.popup_centered()
 			file.close()
 		else:
-			vn.error('Error when saving script files. (Unknown reason.)')
+			vn.error('Error when saving: %s' %error)
 
 
 func _on_loadButton_pressed():
@@ -67,7 +67,7 @@ func _on_FileDialog_file_selected(path):
 		$tlname.text = fname
 		f.close()
 	else:
-		vn.error('Unknown error when opening script.')
+		vn.error('Error when opening: %s' % error)
 
 func _on_tlname_text_changed(new_text):
 	fname = new_text

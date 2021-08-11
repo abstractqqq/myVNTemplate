@@ -92,3 +92,18 @@ func updateRollback():
 	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar}
 	rollback_records.push_back(rollback_data)
 	
+
+func checkSkippable()->bool:
+	if fileRelated.system_data.has(game.currentNodePath):
+		if game.currentIndex > fileRelated.system_data[game.currentNodePath][game.currentBlock]:
+			return false
+		else:
+			return true
+	else:
+		return true
+
+func progressUpdate():
+	updateRollback()
+	if checkSkippable() == false:
+		fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
+		

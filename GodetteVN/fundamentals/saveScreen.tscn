@@ -60,9 +60,9 @@ __meta__ = {
 }
 
 [node name="saveMainBox" parent="." instance=ExtResource( 3 )]
-margin_left = 250.0
+margin_left = 290.0
 margin_top = 120.0
-margin_right = 1850.0
+margin_right = 1890.0
 margin_bottom = 1020.0
 
 [connection signal="pressed" from="returnButton" to="." method="_on_returnButton_pressed"]
