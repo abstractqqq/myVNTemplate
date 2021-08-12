@@ -11,6 +11,11 @@ export(bool) var in_all = true
 export(bool) var apply_highlight = true
 export(bool) var fade_on_change = false
 export(float, 0.1, 1) var fade_time = 0.5
+export(bool) var use_character_font = false
+export(String, FILE, '*.tres') var normal_font = ''
+export(String, FILE, '*.tres') var bold_font = ''
+export(String, FILE, '*.tres') var italics_font = ''
+export(String, FILE, '*.tres') var bold_italics_font = ''
 #
 
 var rng = RandomNumberGenerator.new()

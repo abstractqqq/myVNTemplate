@@ -1,19 +1,29 @@
 extends RichTextLabel
 
+# I could have let NVL extend from dialog.gd, but I am afraid that
+# in the future some functionality will be drastically different
+# for nvl mode and regular (avl) mode.
+
+# Right now, all functions in nvl are slightly different than those
+# in dialog.gd
+
+# Same as dialog box
 onready var timer = $Timer
 onready var autoTimer = $autoTimer
+var skipCounter = 0
+var autoCounter = 0
+var adding = false
+var nw = false
+
 
 # center = nvl in disguise
 const default_size = Vector2(1100,800)
 const default_pos = Vector2(410,50)
 const center_size = Vector2(1100,300)
 const center_pos = Vector2(410,400)
-var skipCounter = 0
-var autoCounter = 0
 var last_uid = ''
-var adding = false
 var new_dialog = ''
-var nw = false
+
 var bblength = 0 # Only used in timer to make the condition checking faster
 signal load_next
 
@@ -80,7 +90,6 @@ func _on_Timer_timeout():
 			emit_signal("load_next")
 
 
-
 # Call this after set_dialog, to get newly parsed words. (Pvars will be parsed
 # into text.)
 func get_text():
@@ -92,7 +101,6 @@ func center_mode():
 	self.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	self.grow_vertical = Control.GROW_DIRECTION_BOTH
 	self.bbcode_text = "[center]"
-
 
 func clear():
 	self.bbcode_text = ""

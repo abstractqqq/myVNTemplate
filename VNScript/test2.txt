@@ -2,6 +2,7 @@
 bg:: 	busstop.jpg; pixelate:: 	2;
 dvar:: 	mo = (mo+50)*10;
 chara :: female join ; loc :: 1600 600; 
+bgm:: myuu-angels.mp3 ; fadein :: 3;
 female:: EEEEEE; condition:: [[money1, money2], tt]	;
 female:: Hello there. Let me introduce you to the system; voice:: 	001.wav;
 chara :: female jump ; amount :: 800 ; time :: 2 ; dir :: up ;

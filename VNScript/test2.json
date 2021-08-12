@@ -13,6 +13,10 @@
 				"loc": "1600 600"
 			},
 			{
+				"bgm":"myuu-angels.mp3",
+				"fadein":3
+			},
+			{
 				"female": "EEEEEE",
 				"condition": [
 					[

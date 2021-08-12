@@ -74,11 +74,13 @@ var rollback_records = []
 #------------------------------------------------------
 # Utility functions
 
-# Textbox is an array [unique id, text]
+# Textbox is an array [unique id, text, voice(optional)]
 func updateHistory(textbox):
 	if (history.size() > vn.max_dialog_display):
 		history.pop_front()
 		# will be slow if this array gets too long
+		
+	textbox[1] = textbox[1].strip_edges()
 	history.push_back(textbox)
 	
 func updateRollback():

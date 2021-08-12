@@ -13,6 +13,6 @@ bus = "Effects"
 
 [node name="voice" type="AudioStreamPlayer" parent="."]
 
-[node name="tween1" type="Tween" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
-[connection signal="tween_completed" from="tween1" to="." method="_on_tween1_tween_completed"]
+[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]

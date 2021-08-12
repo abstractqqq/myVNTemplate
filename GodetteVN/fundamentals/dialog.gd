@@ -7,10 +7,26 @@ var skipCounter = 0
 var adding = false
 var nw = false
 
+var FONTS = {}
+const ft = ['normal', 'bold', 'italics', 'bold_italics']
+
 signal load_next
 
 func _ready():
+	for f in ft:
+		FONTS[f] = get('custom_fonts/%s_font'%f)
 	autoTimer.start()
+
+func reset_fonts():
+	for f in ft:
+		add_font_override('%s_font'%f, FONTS[f])
+
+
+func set_chara_fonts(ev:Dictionary):
+	for key in ev.keys():
+		ev[key] = ev[key].strip_edges()
+		if ev[key] != '':
+			add_font_override(key, load(ev[key]))
 
 func set_dialog(words : String, cps = vn.cps):
 	self.bbcode_text = "" # always clear it when new dialog is happening

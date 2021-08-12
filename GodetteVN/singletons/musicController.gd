@@ -1,37 +1,38 @@
 extends Node
 
-onready var bgm1 = $bgm1
-onready var t1 = $tween1
-var in_fadeout = false
-
 func play_bgm(path : String, vol = 0):
-	in_fadeout = false
-	if t1.is_active():
-		t1.remove_all()
-	
-	bgm1.stop()
-	bgm1.volume_db = vol
-	bgm1.stream = load(path)
-	bgm1.play()
+	finish_anim()
+	$bgm1.stop()
+	$bgm1.volume_db = vol
+	$bgm1.stream = load(path)
+	$bgm1.play()
 	
 func fadeout(time: float):
-	if t1.is_active():
-		t1.remove_all()
-	if bgm1.playing:
-		var vol = bgm1.volume_db
-		in_fadeout = true
-		t1.interpolate_property(bgm1, "volume_db", vol, -80, time, 0, Tween.EASE_IN, 0)
-		t1.start()
-		
+	finish_anim()
+	var vol = $bgm1.volume_db
+	var animation = Animation.new()
+	var track_index = animation.add_track(Animation.TYPE_VALUE)
+	animation.track_set_path(track_index, "bgm1:volume_db")
+	animation.set_length(time)
+	animation.track_insert_key(track_index, 0, vol)
+	animation.track_insert_key(track_index, time, -80)
+	$AnimationPlayer.add_animation("fadeout", animation)
+	$AnimationPlayer.play("fadeout")
+
 func fadein(path: String, time: float, vol = 0):
-	in_fadeout = false
-	if t1.is_active():
-		t1.remove_all()
-	bgm1.stop()
-	bgm1.stream = load(path)
-	bgm1.play()
-	t1.interpolate_property(bgm1, "volume_db", -80, vol, time, 0, Tween.EASE_IN, 0)
-	t1.start()
+	finish_anim()
+	$bgm1.stop()
+	$bgm1.stream = load(path)
+	var animation = Animation.new()
+	var track_index = animation.add_track(Animation.TYPE_VALUE)
+	animation.track_set_path(track_index, "bgm1:volume_db")
+	animation.set_length(time)
+	animation.track_insert_key(track_index, 0, -80)
+	animation.track_insert_key(track_index, time, vol)
+	$AnimationPlayer.add_animation("fadein", animation)
+	$AnimationPlayer.play("fadein")
+	$bgm1.play()
+	
 	
 func play_sound(path, vol = 0):
 	$sound.volume_db = vol
@@ -48,16 +49,22 @@ func stop_voice():
 	$voice.stop()
 
 func stop_bgm():
-	bgm1.stop()
+	$bgm1.stop()
 	
 func pause_bgm():
-	bgm1.set_stream_paused(true)
+	$bgm1.set_stream_paused(true)
 	
 func resume_bgm():
-	bgm1.set_stream_paused(false)
+	$bgm1.set_stream_paused(false)
 
-func _on_tween1_tween_completed(object,_key):
-	if in_fadeout:
-		object.stop()
-		in_fadeout = false
+func finish_anim():
+	var cur_anim = $AnimationPlayer.current_animation
+	if cur_anim == "fadein":
+		$AnimationPlayer.stop()
+		$AnimationPlayer.remove_animation(cur_anim)
+	elif cur_anim != '':
+		var delta = $AnimationPlayer.current_animation_length - $AnimationPlayer.current_animation_position
+		$AnimationPlayer.advance(delta+1)
 
+func _on_AnimationPlayer_animation_finished(anim_name):
+	$AnimationPlayer.remove_animation(anim_name)

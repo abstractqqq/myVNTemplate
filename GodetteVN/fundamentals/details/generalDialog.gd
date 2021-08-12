@@ -101,12 +101,10 @@ func intepret_events(event):
 		{"bgm",..}: play_bgm(ev)
 		{'audio',..}: play_sound(ev)
 		{'dvar'}: set_dvar(ev)
-		{'font', 'path'}: change_font(ev)
 		{'sfx',..}: sfx_player(ev)
 		{'then',..}: then(ev)
 		{'premade'}:
-			if debug_mode:
-				print("PREMADE EVENT:")
+			if debug_mode: print("PREMADE EVENT:")
 			intepret_events(fun.call_premade_events(ev['premade']))
 		{"system"}: system(ev)
 		{"sys"}: system(ev)
@@ -164,8 +162,6 @@ func auto_load_next():
 	
 	load_event_at_index(current_index)
 
-func scene_end():
-	pass
 #------------------------ Related to Dialog Progression ------------------------
 func set_nvl(ev: Dictionary, auto_forw = true):
 	if typeof(ev['nvl']) == 1:
@@ -258,7 +254,7 @@ func generate_choices(ev: Dictionary):
 	
 func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	var temp = combine.split(" ") # temp[0] = uid, temp[1] = expression
-	var speaking_chara = stage.get_character_info(temp[0])
+	var wspeaker = chara.all_chara[temp[0]]
 	if temp.size() == 2:
 		stage.change_expression(temp[0], temp[1])
 			
@@ -284,8 +280,16 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 			else:
 				game.history.push_back([temp[0], nvlBox.get_text(), latest_voice])
 	else:
-		speaker.set("custom_colors/default_color", speaking_chara["name_color"])
-		speaker.bbcode_text = speaking_chara["display_name"]
+		speaker.set("custom_colors/default_color", wspeaker["name_color"])
+		speaker.bbcode_text = wspeaker["display_name"]
+		if wspeaker['font'] and not nvl:
+			var fonts = {'normal_font':wspeaker['normal_font'],
+			'bold_font': wspeaker['bold_font'],
+			'italics_font':wspeaker['italics_font'],
+			'bold_italics_font':wspeaker['bold_italics_font']}
+			dialogbox.set_chara_fonts(fonts)
+		else:
+			dialogbox.reset_fonts()
 		dialogbox.set_dialog(words, cps)
 		if just_loaded:
 			just_loaded = false
@@ -369,29 +373,7 @@ func _input(ev):
 				check_dialog()
 				
 	
-func change_font(ev : Dictionary):
-	var path = vn.FONT_DIR + ev['path']
-	match ev['font']:
-		'normal':
-			dialogbox.add_font_override("normal_font", load(path))
-			nvlBox.add_font_override("normal_font", load(path))
-		'bold':
-			dialogbox.add_font_override("bold_font", load(path))
-			nvlBox.add_font_override("bold_font", load(path))
-		'italics':
-			dialogbox.add_font_override("bold_font", load(path))
-			nvlBox.add_font_override("bold_font", load(path))
-		'bold_italics':
-			dialogbox.add_font_override("bold_font", load(path))
-			nvlBox.add_font_override("bold_font", load(path))
-		'mono':
-			dialogbox.add_font_override("mono_font", load(path))
-			nvlBox.add_font_override("mono_font", load(path))
-		_: vn.error("Unknown font style (Use normal, bold, italics, bold_italics or mono.).", ev)
-			
-	auto_load_next()
-	
-	
+
 #------------------------ Related to Music and Sound ---------------------------
 func play_bgm(ev : Dictionary) -> void:
 	var path = ev['bgm']
@@ -402,14 +384,14 @@ func play_bgm(ev : Dictionary) -> void:
 			auto_load_next()
 		return
 		
-	if path == "pause":
-		music.pause_bgm()
-		auto_load_next()
-		return
-	elif path == "resume":
-		music.resume_bgm()
-		auto_load_next()
-		return
+	#if path == "pause":
+	#	music.pause_bgm()
+	#	auto_load_next()
+	#	return
+	#elif path == "resume":
+	#	music.resume_bgm()
+	#	auto_load_next()
+	#	return
 		
 	# Deal with fadeout first
 	if path == "" and ev.size() > 1: # must be a fadeout
@@ -501,11 +483,15 @@ func change_scene_to(path : String):
 	QM.reset_auto()
 	QM.reset_skip()
 	game.rollback_records = []
-	var error = get_tree().change_scene(vn.ROOT_DIR + path)
-	if error == OK:
+	fileRelated.write_to_config()
+	if path == "free":
 		self.queue_free()
 	else:
-		vn.error('p')
+		var error = get_tree().change_scene(vn.ROOT_DIR + path)
+		if error == OK:
+			self.queue_free()
+		else:
+			vn.error('p')
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
@@ -870,11 +856,11 @@ func history_manipulation(ev: Dictionary):
 	var what = ev['history']
 	if what == "push":
 		if ev.size() != 2:
-			vn.error('History push got more fields than 2.', ev)
+			vn.error('History push got more than 2 fields.', ev)
 		
 		for k in ev.keys():
 			if k != 'history':
-				game.history.push_back([k, preprocess(ev[k])])
+				game.history.push_back([k, fun.dvarMarkup(ev[k])])
 				break
 		
 	elif what == "pop":
@@ -1067,7 +1053,7 @@ func dvar_or_float(dvar:String):
 
 func float_text(ev: Dictionary) -> void:
 	var wt = ev['wait']
-	ev['float'] = preprocess(ev['float'])
+	ev['float'] = fun.dvarMarkup(ev['float'])
 	var loc = Vector2(600,300)
 	if ev.has('loc'): loc = ev['loc']
 	var in_t = 1
@@ -1302,12 +1288,14 @@ func parse_true_false(truth, ev = {}) -> bool:
 		vn.error("Expecting true or false after this indicator.", ev)
 		return false
 
-func preprocess(words : String, speech = true) -> String:
-	# [nw] should not work for choices. Only works in regular speech.
-	# Therefore we need a speech parameter here.
-	if speech:
-		dialogbox.nw = false
-		nvlBox.nw = false
+
+func _dialog_state_reset():
+	dialogbox.nw = false
+	nvlBox.nw = false
+
+func preprocess(words : String) -> String:
+
+	_dialog_state_reset()
 	var leng = words.length()
 	var output = ''
 	var i = 0
@@ -1325,7 +1313,7 @@ func preprocess(words : String, speech = true) -> String:
 					
 			match inner:
 				"nw":
-					if not vn.skipping and speech:
+					if not vn.skipping:
 						if self.nvl:
 							nvlBox.nw = true
 						else:
@@ -1333,6 +1321,8 @@ func preprocess(words : String, speech = true) -> String:
 				"sm": output += ";"
 				"dc": output += "::"
 				"nl": output += "\n"
+				"lbr": output += "["
+				"rbr": output += "]"
 				_: 
 					if vn.dvar.has(inner):
 						output += str(vn.dvar[inner])

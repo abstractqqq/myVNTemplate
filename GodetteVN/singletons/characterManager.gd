@@ -70,6 +70,15 @@ func stage_character(uid:String) -> void:
 		vn.error("The character scene cannot be found.")
 	var c = ch_scene.instance()
 	var info = {"uid":c.unique_id,"display_name":c.display_name,"name_color":c.name_color,"path":path}
+	if c.use_character_font:
+		info['font'] = true
+		info['normal_font'] = c.normal_font
+		info['italics_font'] = c.italics_font
+		info['bold_font'] = c.bold_font
+		info['bold_italics_font'] = c.bold_italics_font
+	else:
+		info['font'] = false
+	
 	all_chara[uid] = info
 	c.call_deferred('free')
 
@@ -83,7 +92,7 @@ func spriteless_character(dname:String, uid:String, color=Color(0,0,0,1))->void:
 			if all_chara.has(""):
 				vn.error("The empty string uid is preserved for the narrator." % [uid])
 		
-	all_chara[uid] = {"uid":uid, "display_name":dname, "name_color":color}
+	all_chara[uid] = {"uid":uid, "display_name":dname, "name_color":color, 'font':false}
 
 func get_character_info(uid:String):
 	if all_chara.has(uid):

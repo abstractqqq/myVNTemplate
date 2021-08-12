@@ -36,7 +36,6 @@ const SAVE_PATH = "res://GodetteVN/fundamentals/saveScreen.tscn"
 const SAVESLOT = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
 const HIST_PATH = "res://GodetteVN/fundamentals/historyScreen.tscn"
 
-
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 110

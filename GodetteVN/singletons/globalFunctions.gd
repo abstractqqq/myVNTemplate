@@ -13,7 +13,8 @@ extends Node
 # can retrieve it anytime without typing all the commands. All you need 
 # to type is that {premade: your_key_name_for_the_event }
 var premade_events = {
-	"EXAMPLE" : {"" : "Hello World!"}
+	"EXAMPLE" : {"" : "Hello World!"},
+	"EXPRCHG" : {"express": "female surprised"}
 }
 
 
@@ -106,7 +107,7 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0):
 #------------------------------------------------------------------------
 # Given any sentence with a [dvar] in it, 
 # This will prase any dvar into their values and insert back
-# to the sentence
+# to the sentence. But it doesn't process things like [nw]. Only dvar.
 func dvarMarkup(words:String):
 	var leng = words.length()
 	var output = ''
@@ -134,3 +135,4 @@ func dvarMarkup(words:String):
 		i += 1
 	
 	return output
+
