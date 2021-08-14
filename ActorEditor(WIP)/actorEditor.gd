@@ -169,10 +169,7 @@ func _on_charaGenPopup_confirmed():
 		ch.set_sprite_frames(load(sheetName))
 		ch.unique_id = cur_uid
 		ch.display_name = dname
-		#ch.expression_list = temp_dict
-		#ch.anim_list = anim_dict
 		ch.scale = Vector2(xscale.value, yscale.value)
-		# ch.texture = load(vn.CHARA_DIR + temp_dict['default'])
 		packed_scene.pack(ch)
 		error = ResourceSaver.save(vn.CHARA_SCDIR+cur_uid+".tscn", packed_scene)
 		if error == OK:

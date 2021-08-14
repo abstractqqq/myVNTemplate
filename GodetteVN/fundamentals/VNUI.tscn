@@ -3,8 +3,8 @@
 [ext_resource path="res://GodetteVN/fundamentals/details/dialogBox.tscn" type="PackedScene" id=1]
 [ext_resource path="res://fonts/DEFAULT_ITALICS.tres" type="DynamicFont" id=2]
 [ext_resource path="res://fonts/DEFAULT_BOLD.tres" type="DynamicFont" id=3]
+[ext_resource path="res://GodetteVN/fundamentals/details/choiceContainer.tscn" type="PackedScene" id=4]
 [ext_resource path="res://GodetteVN/fundamentals/quickMenuLayer.tscn" type="PackedScene" id=5]
-[ext_resource path="res://GodetteVN/fundamentals/details/nvlBox.tscn" type="PackedScene" id=6]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=7]
 [ext_resource path="res://fonts/DEFAULT_NORMAL.tres" type="DynamicFont" id=8]
 
@@ -18,6 +18,16 @@ custom_fonts/font = ExtResource( 7 )
 custom_colors/font_color = Color( 0.815686, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
 autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sideImage" type="TextureRect" parent="."]
+margin_top = 520.0
+margin_right = 480.0
+margin_bottom = 1060.0
+expand = true
+stretch_mode = 1
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -68,21 +78,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="choiceContainer" type="VBoxContainer" parent="."]
-anchor_left = 0.25
-anchor_right = 0.269
-margin_left = -70.0
-margin_top = 30.0
-margin_right = 993.52
-margin_bottom = 830.0
-rect_min_size = Vector2( 1100, 800 )
-custom_constants/separation = 5
-alignment = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="nvlBox" parent="." instance=ExtResource( 6 )]
-mouse_filter = 1
+[node name="choiceContainer" parent="." instance=ExtResource( 4 )]
 
 [node name="quickMenu" parent="." instance=ExtResource( 5 )]

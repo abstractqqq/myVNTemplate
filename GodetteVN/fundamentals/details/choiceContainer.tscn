@@ -1,0 +1,15 @@
+[gd_scene format=2]
+
+[node name="choiceContainer" type="VBoxContainer"]
+anchor_left = 0.25
+anchor_right = 0.269
+margin_left = -70.0
+margin_top = 30.0
+margin_right = 993.52
+margin_bottom = 830.0
+rect_min_size = Vector2( 1100, 800 )
+custom_constants/separation = 5
+alignment = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}

@@ -4,7 +4,7 @@
 	"voice_volume": 0,
 	"auto_speed": 1,
 	"res://GodetteVN/sampleScene.tscn": {
-		"starter": 58,
-		"b_leave": 0
+		"starter": 59,
+		"b_leave": 1
 	}
 }

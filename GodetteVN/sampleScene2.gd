@@ -20,6 +20,7 @@ var main_block = [
 	{"female": "Use a GDscene change to go back to your designated ending scene. In this demo, the ending "+\
 	"scene will be the title screen. But don't forget to change it to your actual ending if you "+\
 	"have one!"},
+	{'side':'female_smile.png'},
 	{"female": "Thank you so much for bearing with me!"},
 	{"fadeout":2},
 	{'bgm': ''},

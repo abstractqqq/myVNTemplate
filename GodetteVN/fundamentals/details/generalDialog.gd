@@ -9,7 +9,6 @@ export(PackedScene) var choiceBar = preload("res://GodetteVN/fundamentals/choice
 var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
 
 # Core data
-var current_dialog = ""
 var current_index = 0
 var current_block = null
 var all_blocks = null
@@ -31,17 +30,20 @@ var hide_all_boxes = false
 var hide_vnui = false
 var no_scroll = false
 var no_right_click = false
+var one_time_font_change = false
 #----------------------
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Important components
 onready var bg = $background
 onready var vnui = $VNUI
 onready var QM = vnui.get_node('quickMenu')
-onready var nvlBox = vnui.get_node('nvlBox')
 onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = get_node('camera')
+onready var sideImage = vnui.get_node('sideImage')
+
+var nvlBox = null
 #-----------------------
 # signals
 signal player_accept(rb)
@@ -52,6 +54,63 @@ func _ready():
 
 func set_bg_path(node_path:String):
 	bg = get_node(node_path)
+	
+func _input(ev):
+	if ev.is_action_pressed('vn_rollback') and waiting_acc and not vn.inSetting and not vn.inNotif and not vn.skipping:
+		QM.reset_auto()
+		if game.rollback_records.size() >= 1:
+			screenEffects.removeLasting()
+			screenEffects.weather_off()
+			sideImageChange("",false)
+			camera.reset_zoom()
+			self.waiting_cho = false
+			self.centered = false
+			nvl_off()
+			for n in choiceContainer.get_children():
+				n.queue_free()
+			emit_signal("player_accept", true)
+			game.history.pop_back()
+			on_rollback()
+			return
+		else: # Show to readers that they cannot rollback further
+			notif.show('rollback')
+			
+	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
+		QM._on_historyButton_pressed()
+		return
+		
+	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
+		add_child(vn.MAIN_MENU.instance())
+		return
+	
+	if waiting_cho:
+		# Waiting for a choice. Do nothing. Any input will be nullified.
+		# In a choice event, game resumes only when a choice button is selected.
+		return
+		
+	if ev.is_action_pressed('vn_cancel') and not vn.inNotif and not vn.inSetting and not no_right_click:
+		hide_UI()
+
+	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
+		if hide_vnui: # Show UI
+			hide_UI(true)
+		# vn_accept is mouse left click
+		if ev.is_action_pressed('vn_accept'):
+			if vn.auto_on or vn.skipping:
+				if not vn.noMouse:
+					QM.reset_auto()
+					QM.reset_skip()
+				else:
+					return
+			else:
+				if not vn.noMouse and not vn.inNotif and not vn.inSetting:
+					check_dialog()
+		else: # not mouse
+			if vn.auto_on or vn.skipping:
+				QM.reset_auto()
+				QM.reset_skip()
+			elif not vn.inNotif and not vn.inSetting:
+				check_dialog()
 	
 #--------------------------------- Interpretor ----------------------------------
 
@@ -108,6 +167,7 @@ func intepret_events(event):
 			intepret_events(fun.call_premade_events(ev['premade']))
 		{"system"}: system(ev)
 		{"sys"}: system(ev)
+		{'side'}: sideImageChange(ev['side'])
 		{'choice',..}: generate_choices(ev)
 		{'wait'}: wait(ev['wait'])
 		{'nvl'}: set_nvl(ev)
@@ -131,7 +191,6 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 	all_choices = choices
 	all_conditions = conditions
 	dialogbox.connect('load_next', self, 'trigger_accept')
-	nvlBox.connect('load_next', self, 'trigger_accept')
 	if load_instruction == "new_game":
 		current_index = 0
 		if blocks.has("starter"):
@@ -187,6 +246,12 @@ func speech_parse(ev : Dictionary) -> void:
 			voice(ev['voice'], false)
 	else:
 		latest_voice = null
+	# one time font change
+	one_time_font_change = ev.has('font')
+	if one_time_font_change:
+		var path = vn.FONT_DIR + ev['font']
+		dialogbox.add_font_override('normal_font', load(path))
+
 	# Speech
 	var combine = "NANITHEFUCK"
 	for k in ev.keys(): # Not voice, not speed, means it has to be "uid expression"
@@ -217,6 +282,10 @@ func generate_choices(ev: Dictionary):
 		latest_voice = ev['voice']
 		voice(ev['voice'], false)
 	else: latest_voice = null
+	one_time_font_change = ev.has('font')
+	if one_time_font_change:
+		var path = vn.FONT_DIR + ev['font']
+		dialogbox.add_font_override('normal_font', load(path))
 	var combine = ""
 	for k in ev.keys():
 		if k != 'id' and k != 'choice' and k != 'voice':
@@ -238,10 +307,10 @@ func generate_choices(ev: Dictionary):
 			else:
 				vn.error('If a choice is size 2, then it has to have a condition.')
 					
-		var choice_text = ""
+		var choice_text = ''
 		for k in ev2.keys():
 			if k != "condition":
-				choice_text = k # grap the key not equal to condition
+				choice_text = k # grab the key not equal to condition
 				break
 		
 		var choice_ev = ev2[choice_text] # the choice action
@@ -282,13 +351,13 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	else:
 		speaker.set("custom_colors/default_color", wspeaker["name_color"])
 		speaker.bbcode_text = wspeaker["display_name"]
-		if wspeaker['font'] and not nvl:
+		if wspeaker['font'] and not nvl and not one_time_font_change:
 			var fonts = {'normal_font':wspeaker['normal_font'],
 			'bold_font': wspeaker['bold_font'],
 			'italics_font':wspeaker['italics_font'],
 			'bold_italics_font':wspeaker['bold_italics_font']}
 			dialogbox.set_chara_fonts(fonts)
-		else:
+		elif not one_time_font_change:
 			dialogbox.reset_fonts()
 		dialogbox.set_dialog(words, cps)
 		if just_loaded:
@@ -315,65 +384,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 			auto_load_next()
 	
 	# If this is a question, then displaying the text is all we need.
-
-func _input(ev):
-	if ev.is_action_pressed('ui_left') and waiting_acc and not vn.inSetting and not vn.inNotif and not vn.skipping:
-		QM.reset_auto()
-		if game.rollback_records.size() >= 1:
-			screenEffects.removeLasting()
-			screenEffects.weather_off()
-			camera.reset_zoom()
-			self.waiting_cho = false
-			self.centered = false
-			nvl_off()
-			for n in choiceContainer.get_children():
-				n.queue_free()
-			emit_signal("player_accept", true)
-			game.history.pop_back()
-			on_rollback()
-			return
-		else: # Show to readers that they cannot rollback further
-			notif.show('rollback')
-			
-	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
-		QM._on_historyButton_pressed()
-		return
-		
-	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
-		add_child(vn.MAIN_MENU.instance())
-		return
 	
-	if waiting_cho:
-		# Waiting for a choice. Do nothing. Any input will be nullified.
-		# In a choice event, game resumes only when a choice button is selected.
-		return
-		
-	if ev.is_action_pressed('vn_cancel') and not vn.inNotif and not vn.inSetting and not no_right_click:
-		hide_UI()
-
-	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
-		if hide_vnui: # Show UI
-			hide_UI(true)
-		# vn_accept is mouse left click
-		if ev.is_action_pressed('vn_accept'):
-			if vn.auto_on or vn.skipping:
-				if not vn.noMouse:
-					QM.reset_auto()
-					QM.reset_skip()
-				else:
-					return
-			else:
-				if not vn.noMouse and not vn.inNotif and not vn.inSetting:
-					check_dialog()
-		else: # not mouse
-			if vn.auto_on or vn.skipping:
-				QM.reset_auto()
-				QM.reset_skip()
-			elif not vn.inNotif and not vn.inSetting:
-				check_dialog()
-				
-	
-
 #------------------------ Related to Music and Sound ---------------------------
 func play_bgm(ev : Dictionary) -> void:
 	var path = ev['bgm']
@@ -486,6 +497,8 @@ func change_scene_to(path : String):
 	fileRelated.write_to_config()
 	if path == "free":
 		self.queue_free()
+	elif path == 'idle':
+		pass
 	else:
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
@@ -906,6 +919,16 @@ func get_target_index(bname : String, target_id):
 			return i
 	vn.error('Cannot find event with id ' + target_id + ' in ' + bname)
 	
+func sideImageChange(path:String, auto_forw = true):
+	if path == "":
+		game.playback_events.erase('side')
+		sideImage.texture = null
+	else:
+		sideImage.texture = load(vn.SIDE_IMAGE+path)
+		game.playback_events['side'] = path
+	
+	if auto_forw:
+		auto_load_next()
 
 func check_dialog():
 	if not QM.hiding: QM.visible = true
@@ -991,6 +1014,8 @@ func load_playback(play_back, rollBackMode = false):
 		camera.set_camera(play_back['camera'])
 	if play_back['weather'].size() > 0:
 		intepret_events(play_back['weather'])
+	if play_back.has('side'):
+		sideImageChange(play_back['side'], false)
 	
 	var onStageCharas = []
 	for d in play_back['charas']:
@@ -1075,9 +1100,9 @@ func float_text(ev: Dictionary) -> void:
 func nvl_off():
 	show_boxes()
 	dialogbox.get_node('autoTimer').start()
-	nvlBox.visible = false
-	nvlBox.clear()
-	nvlBox.get_node('autoTimer').stop()
+	if nvlBox != null:
+		nvlBox.clear() # will queue free
+	nvlBox = null
 	get_node('background').modulate = Color(1,1,1,1)
 	stage.set_modulate_4_all(Color(0.86,0.86,0.86,1))
 	self.nvl = false
@@ -1088,7 +1113,9 @@ func nvl_on():
 	clear_boxes()
 	hide_boxes()
 	dialogbox.get_node('autoTimer').stop()
-	nvlBox.visible = true
+	nvlBox = load("res://GodetteVN/fundamentals/details/nvlBox.tscn").instance()
+	nvlBox.connect('load_next', self, 'trigger_accept')
+	vnui.add_child(nvlBox)
 	nvlBox.get_node('autoTimer').start()
 	if centered:
 		nvlBox.center_mode()
@@ -1290,8 +1317,10 @@ func parse_true_false(truth, ev = {}) -> bool:
 
 
 func _dialog_state_reset():
-	dialogbox.nw = false
-	nvlBox.nw = false
+	if nvl:
+		nvlBox.nw = false
+	else:
+		dialogbox.nw = false
 
 func preprocess(words : String) -> String:
 

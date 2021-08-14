@@ -24,7 +24,7 @@ func fadein(t:float):
 	
 func pixelate_out(t:float):
 	var transition_player = get_node("AnimationPlayer")
-	self.material = load("res://customShaders/pixelate.tres")
+	self.material = load("res://GodetteVN/shaders/pixelate.tres")
 	var animation = Animation.new()
 	var track_index = animation.add_track(Animation.TYPE_VALUE)
 	animation.track_set_path(track_index, ":material:shader_param/time")
@@ -36,7 +36,7 @@ func pixelate_out(t:float):
 	
 func pixelate_in(t:float):
 	var transition_player = get_node("AnimationPlayer")
-	self.material = load("res://customShaders/pixelate.tres")
+	self.material = load("res://GodetteVN/shaders/pixelate.tres")
 	var animation = Animation.new()
 	var track_index = animation.add_track(Animation.TYPE_VALUE)
 	animation.track_set_path(track_index, ":material:shader_param/time")

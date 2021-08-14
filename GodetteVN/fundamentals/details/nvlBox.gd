@@ -103,15 +103,8 @@ func center_mode():
 	self.bbcode_text = "[center]"
 
 func clear():
-	self.bbcode_text = ""
 	game.nvl_text = ""
-	last_uid = ''
-	bblength = 0
-	self.rect_position = default_pos
-	self.rect_size = default_size
-	self.grow_horizontal = Control.GROW_DIRECTION_END
-	self.grow_vertical = Control.GROW_DIRECTION_END
-	autoCounter = 0
+	self.queue_free()
 
 
 func _on_autoTimer_timeout():
