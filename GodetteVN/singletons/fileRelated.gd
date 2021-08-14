@@ -158,6 +158,9 @@ func write_to_config():
 	
 func load_config():
 	system_data = load_json(CONFIG_PATH)
+	AudioServer.set_bus_volume_db(1, system_data["bgm_volume"])
+	AudioServer.set_bus_volume_db(2, system_data["eff_volume"])
+	AudioServer.set_bus_volume_db(3, system_data["voice_volume"])
 	vn.auto_bound = (7 - (system_data['auto_speed'] + 1) * 2) * 20
 
 func spoiler_proof_dialog(scene_path:String, all_dialog_blocks):
@@ -168,3 +171,6 @@ func spoiler_proof_dialog(scene_path:String, all_dialog_blocks):
 			
 		system_data[scene_path] = ev
 
+func _exit_tree():
+	write_to_config()
+	# Don't quit here, as it will be done by Godot automatically.

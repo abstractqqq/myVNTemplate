@@ -1,8 +1,8 @@
 {
-	"bgm_volume": 0,
+	"bgm_volume": -20,
 	"eff_volume": 0,
 	"voice_volume": 0,
-	"auto_speed": 1,
+	"auto_speed": 2,
 	"res://GodetteVN/sampleScene.tscn": {
 		"starter": 59,
 		"b_leave": 1

@@ -50,6 +50,7 @@ signal player_accept(rb)
 
 #--------------------------------------------------------------------------------
 func _ready():
+	fileRelated.load_config()
 	var _error = self.connect("player_accept", self, '_is_roll_back')
 
 func set_bg_path(node_path:String):
