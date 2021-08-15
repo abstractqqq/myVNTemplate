@@ -12,9 +12,8 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 # characters are so important, they deserve their own stage.
 
 # Some recurring code comments:
-# 1. If character's fade_on_change is turned on, then there will be
-# dummies named _dummy on stage. So exclude them in children.
-# 2. You might see this multiple times
+
+# 1. You might see this multiple times
 # var c = find_chara_on_stage(uid)
 #	  c.class_methods...
 # It is not gauranteed that find_chara_on_stage will find the chara.
@@ -34,8 +33,8 @@ func get_character_info(uid:String):
 
 func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
 	if uid == 'all':
-		for n in get_children():
-			if n.name != "_dummy" and n.in_all:
+		for n in $characters.get_children():
+			if n.in_all:
 				n.shake(amount, time, mode)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -45,8 +44,8 @@ func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
 func jump(uid:String, dir:Vector2, amount:float, time:float):
 	dir = dir.normalized()
 	if uid == 'all':
-		for n in get_children():
-			if n.name != "_dummy" and n.in_all:
+		for n in $characters.get_children():
+			if n.in_all:
 				n.jump(dir, amount, time)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -54,8 +53,8 @@ func jump(uid:String, dir:Vector2, amount:float, time:float):
 		
 func spin(sdir:int,uid:String, degrees:float, time:float, type:String="linear"):
 	if uid == 'all':
-		for n in get_children():
-			if n.name != "_dummy" and n.in_all:
+		for n in $characters.get_children():
+			if n.in_all:
 				n.spin(sdir,degrees, time, type)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -90,7 +89,7 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 				c.modulate = Color(0.86,0.86,0.86,0)
 			else:
 				c.modulate = Color(1,1,1,0)
-			add_child(c)
+			$characters.add_child(c)
 			c.loc = location
 			c.position = location
 			c.fadein(time)
@@ -99,8 +98,8 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
-		for n in get_children():
-			if n.name != "_dummy" and n.in_all:
+		for n in $characters.get_children():
+			if n.in_all:
 				n.fadeout(time)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -112,7 +111,7 @@ func join(uid: String, loc: Vector2, expression:String="default"):
 		var ch_scene = load(info['path'])
 		# If load fails, there will be a bug pointing to this line
 		var c = ch_scene.instance()
-		add_child(c)
+		$characters.add_child(c)
 		if c.change_expression(expression):
 			c.position = loc
 			c.loc = loc
@@ -127,24 +126,24 @@ func set_highlight(uid : String) -> void:
 	# this might happen every once in a while.
 	var info = chara.all_chara[uid]
 	if info.has('path'):
-		for n in get_children():
-			if n.name != "_dummy" and n.unique_id == uid and n.apply_highlight:
+		for n in $characters.get_children():
+			if n.unique_id == uid and n.apply_highlight:
 				n.modulate = Color(1,1,1,1)
 				break
 
 func remove_highlight() -> void:
-	for n in get_children():
-		if n.name != "_dummy" and n.apply_highlight:
+	for n in $characters.get_children():
+		if n.apply_highlight:
 			n.modulate = vn.DIM
 
 func remove_chara(uid : String):
 	if uid == 'absolute_all':
-		for n in get_children():
+		for n in $characters.get_children():
 			n.call_deferred("free")
 			
 	elif uid == 'all':
-		for n in get_children():
-			if n.name != "_dummy" and n.in_all:
+		for n in $characters.get_children():
+			if n.in_all:
 				n.call_deferred("free")
 	else:
 		var c = find_chara_on_stage(uid)
@@ -152,13 +151,13 @@ func remove_chara(uid : String):
 
 
 func set_modulate_4_all(c : Color):
-	for n in get_children():
+	for n in $characters.get_children():
 		if n.apply_highlight:
 			n.modulate = c
 
 func find_chara_on_stage(uid:String):
-	for n in get_children():
-		if n.name != "_dummy" and n.unique_id == uid:
+	for n in $characters.get_children():
+		if n.unique_id == uid:
 			return n
 			
 	print('Warning: the character with uid {0} cannot be found or has not joined the stage.'.format({0:uid}))
@@ -166,21 +165,20 @@ func find_chara_on_stage(uid:String):
 
 
 func is_on_stage(uid : String) -> bool:
-	for n in get_children():
-		if n.name != "_dummy" and n.unique_id == uid:
+	for n in $characters.get_children():
+		if n.unique_id == uid:
 			return true
 	return false
 
 func all_on_stage():
 	var output = []
-	for n in get_children():
-		if n.name != "_dummy":
-			var temp = {n.unique_id: n.current_expression, 'loc': n.loc}
-			output.append(temp)
+	for n in $characters.get_children():
+		var temp = {n.unique_id: n.current_expression, 'loc': n.loc}
+		output.append(temp)
 			
 	return output
 
 func _remove_on_rollback(arr):
-	for n in get_children():
-		if n.name != "_dummy" and not (n.unique_id in arr ):
+	for n in $characters.get_children():
+		if not (n.unique_id in arr ):
 			n.call_deferred('free')

@@ -6,7 +6,7 @@ var hiding = false
 func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		notif.clear()
-		#notif.show("quit")
+		notif.show("quit")
 		reset_auto()
 		reset_skip()
 

@@ -41,7 +41,7 @@ onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = get_node('camera')
-onready var sideImage = vnui.get_node('sideImage')
+onready var sideImage = stage.get_node('other/sideImage')
 
 var nvlBox = null
 #-----------------------
@@ -155,7 +155,7 @@ func intepret_events(event):
 		{"screen",..}: screen_effects(ev)
 		{"bg",..}: change_background(ev)
 		{"chara",..}: character_event(ev)
-		{"weather"}: change_weather(ev)
+		{"weather"}: change_weather(ev['weather'])
 		{"camera", ..}: camera_effect(ev)
 		{"express"}: express(ev['express'])
 		{"bgm",..}: play_bgm(ev)
@@ -491,7 +491,7 @@ func change_scene_to(path : String):
 	music.stop_voice()
 	if path == vn.main_menu_path:
 		music.stop_bgm()
-	screenEffects.weather_off()
+	change_weather('', false)
 	QM.reset_auto()
 	QM.reset_skip()
 	game.rollback_records = []
@@ -499,7 +499,7 @@ func change_scene_to(path : String):
 	if path == "free":
 		self.queue_free()
 	elif path == 'idle':
-		pass
+		return
 	else:
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
@@ -853,16 +853,16 @@ func character_spin(uid:String, ev:Dictionary):
 	stage.spin(sdir, uid, deg, time, type)
 	auto_load_next()
 #--------------------------------- Weather -------------------------------------
-func change_weather(ev:Dictionary):
-	var we = ev['weather']
+func change_weather(we:String, auto_forw = true):
 	screenEffects.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
 		if we == "":
-			game.playback_events['weather'] = {}
+			game.playback_events.erase('weather')
 		else:
-			game.playback_events['weather'] = ev
+			game.playback_events['weather'] = {'weather':we}
 		
-		auto_load_next()
+		if auto_forw:
+			auto_load_next()
 
 #--------------------------------- History -------------------------------------
 func history_manipulation(ev: Dictionary):
@@ -1013,8 +1013,8 @@ func load_playback(play_back, rollBackMode = false):
 		intepret_events(play_back['screen'])
 	if play_back['camera'].size() > 0:
 		camera.set_camera(play_back['camera'])
-	if play_back['weather'].size() > 0:
-		intepret_events(play_back['weather'])
+	if play_back.has('weather'):
+		change_weather(play_back['weather']['weather'], false)
 	if play_back.has('side'):
 		sideImageChange(play_back['side'], false)
 	
@@ -1150,8 +1150,8 @@ func hide_UI(show=false):
 	if hide_vnui:
 		QM.visible = false
 		hide_boxes()
-		nvlBox.visible = false
 		if self.nvl:
+			nvlBox.visible = false
 			dimming(Color(1,1,1,1))
 	else:
 		if not QM.hiding: QM.visible = true

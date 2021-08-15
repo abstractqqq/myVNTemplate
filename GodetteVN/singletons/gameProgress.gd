@@ -39,7 +39,7 @@ var nvl_text = ''
 
 
 var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'camera':{'zoom':Vector2(1,1), 'offset':Vector2(0,0)}, 'screen':{}, 'charas':[],\
- 'weather': {}, 'nvl': ''}
+ 'nvl': ''}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()

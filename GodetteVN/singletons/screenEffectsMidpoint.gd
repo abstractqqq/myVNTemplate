@@ -62,7 +62,8 @@ func show_weather(w_name:String):
 		var weather = load(all_weathers[w_name])
 		w.add_child(weather.instance())
 	else:
-		print('Weather not found. Nothing is done.')
+		if w_name != "":
+			print('Weather not found. Nothing is done.')
 	
 # ---------------------------Flashlight-----------------------------
 
