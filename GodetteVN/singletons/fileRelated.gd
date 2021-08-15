@@ -195,11 +195,14 @@ func make_spoilerproof(scene_path:String, all_dialog_blocks):
 			
 		system_data[scene_path] = ev
 		
-func reset_spolierproof(scene_path:String):
+func reset_spoilerproof(scene_path:String):
 	if system_data.has(scene_path):
 		for key in system_data[scene_path].keys():
 			system_data[scene_path][key] = 0
 			
+func remove_spoilerproof(scene_path:String):
+	if system_data.has(scene_path):
+		system_data.erase(scene_path)
 
 func _exit_tree():
 	write_to_config()
