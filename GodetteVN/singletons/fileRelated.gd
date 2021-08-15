@@ -1,7 +1,7 @@
 extends Node
 
 var system_data = {}
-const CONFIG_PATH = "res://GodetteVN/config.json"
+const CONFIG_PATH = "user://config.json"
 const image_exts = ['png', 'jpg', 'jpeg']
 
 func _ready():
@@ -144,32 +144,62 @@ func load_json(path: String):
 		return t
 	else:
 		vn.error("Error: %s." % error)
+		
+func load_config_with_pass():
+	var directory = Directory.new();
+	if not directory.file_exists(CONFIG_PATH):
+		var temp = {'bgm_volume':0, 'eff_volume':0, 'voice_volume':0,'auto_speed':1}
+		var file = File.new()
+		var error = file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE, vn.PASSWORD)
+		if error == OK:
+			file.store_line(JSON.print(temp,'\t'))
+			file.close()
+		else:
+			vn.error('Error when opening config: %s' %error)
+		temp.clear()
+	
+	var f = File.new()
+	var error = f.open_encrypted_with_pass(CONFIG_PATH, File.READ, vn.PASSWORD)
+	if error == OK:
+		var t = JSON.parse(f.get_as_text()).get_result()
+		f.close()
+		return t
+	else:
+		vn.error("Error: %s." % error)
 
 #------------------------ Config, Volume, etc. -------------------------------
 
 func write_to_config():
-	var file = File.new()
-	var error = file.open(CONFIG_PATH, File.WRITE)
-	if error == OK:
-		file.store_line(JSON.print(system_data,'\t'))
-		file.close()
-	else:
-		vn.error('Error when opening config: %s' %error)
-	
+	var directory = Directory.new();
+	if directory.file_exists(CONFIG_PATH):
+		var file = File.new()
+		var error = file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE,vn.PASSWORD)
+		if error == OK:
+			file.store_line(JSON.print(system_data,'\t'))
+			file.close()
+		else:
+			vn.error('Error when opening config: %s' %error)
+		
 func load_config():
-	system_data = load_json(CONFIG_PATH)
+	system_data = load_config_with_pass()
 	AudioServer.set_bus_volume_db(1, system_data["bgm_volume"])
 	AudioServer.set_bus_volume_db(2, system_data["eff_volume"])
 	AudioServer.set_bus_volume_db(3, system_data["voice_volume"])
 	vn.auto_bound = (7 - (system_data['auto_speed'] + 1) * 2) * 20
 
-func spoiler_proof_dialog(scene_path:String, all_dialog_blocks):
+func make_spoilerproof(scene_path:String, all_dialog_blocks):
 	if not system_data.has(scene_path):
 		var ev = {}
 		for block in all_dialog_blocks.keys():
 			ev[block] = 0
 			
 		system_data[scene_path] = ev
+		
+func reset_spolierproof(scene_path:String):
+	if system_data.has(scene_path):
+		for key in system_data[scene_path].keys():
+			system_data[scene_path][key] = 0
+			
 
 func _exit_tree():
 	write_to_config()

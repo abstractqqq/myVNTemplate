@@ -101,6 +101,7 @@ func _on_autoButton_mouse_exited():
 
 func reset_auto():
 	var auto = get_node('autoButton')
+	auto.disabled = false
 	auto.modulate = Color(1,1,1,1)
 	vn.auto_on = false
 
@@ -122,6 +123,7 @@ func _on_skipButton_pressed():
 
 func reset_skip():
 	var sk = get_node('skipButton')
+	sk.disabled = false
 	sk.modulate = Color(1,1,1,1)
 	vn.skipping = false
 

@@ -30,6 +30,9 @@ func get_character_info(uid:String):
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
+func reset_sideImage():
+	$other/sideImage.texture = null
+
 
 func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
 	if uid == 'all':

@@ -54,6 +54,7 @@ func _on_yesButton_pressed():
 			screenEffects.removeLasting()
 			screenEffects.weather_off()
 			music.stop_bgm()
+			stage.reset_sideImage()
 			stage.remove_chara('absolute_all')
 			#----------------------------------------
 			var error = get_tree().change_scene(vn.ROOT_DIR + vn.main_menu_path)

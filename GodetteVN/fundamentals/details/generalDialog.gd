@@ -59,6 +59,7 @@ func set_bg_path(node_path:String):
 func _input(ev):
 	if ev.is_action_pressed('vn_rollback') and waiting_acc and not vn.inSetting and not vn.inNotif and not vn.skipping:
 		QM.reset_auto()
+		QM.reset_skip()
 		if game.rollback_records.size() >= 1:
 			screenEffects.removeLasting()
 			screenEffects.weather_off()
@@ -488,14 +489,16 @@ func change_background(ev : Dictionary) -> void:
 
 func change_scene_to(path : String):
 	stage.remove_chara('absolute_all')
-	music.stop_voice()
-	if path == vn.main_menu_path:
-		music.stop_bgm()
+	stage.reset_sideImage()
+	# music.stop_voice()
 	change_weather('', false)
 	QM.reset_auto()
 	QM.reset_skip()
 	game.rollback_records = []
 	fileRelated.write_to_config()
+	if path == vn.title_screen_path:
+		music.stop_bgm()
+		
 	if path == "free":
 		self.queue_free()
 	elif path == 'idle':

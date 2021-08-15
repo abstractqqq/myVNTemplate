@@ -66,7 +66,7 @@ func _ready():
 		# Adding this will make all dialogs in this json file to be spoiler proof.
 		# Which means that skip cannot skip to what the player hasn't read yet.
 		# This line should be included when you're ready to deploy. (Also test it before release)
-		fileRelated.spoiler_proof_dialog(game.currentNodePath, dialog_data['Dialogs'])
+		fileRelated.make_spoilerproof(game.currentNodePath, dialog_data['Dialogs'])
 		
 		# When you're in development mode, it's a good idea to be able to skip around without constraint.
 		

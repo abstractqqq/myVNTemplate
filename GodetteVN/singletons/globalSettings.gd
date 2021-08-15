@@ -9,7 +9,7 @@ const max_rollback_steps = 100 # allow users to rollback at most this num of ste
 # Narrator
 const narrator_display_name = ''
 # paths
-const main_menu_path = "/GodetteVN/titleScreen.tscn"
+const title_screen_path = "/GodetteVN/titleScreen.tscn"
 const start_scene_path = "/GodetteVN/sampleScene.tscn"
 const credit_scene_path = "" # if you have one
 const ending_scene_path = "/GodetteVN/titleScreen.tscn" # by default, ending scene = go back to main
