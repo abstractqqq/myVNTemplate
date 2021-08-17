@@ -15,6 +15,21 @@ var main_block = [
 	{"fadein": 2},
 	{'chara': "female join", "loc": "1600 600", "expression":""},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
+	{'female smile1': 'Let me show you a cool new feature.'},
+	{'female': "Suppose I am very confused now."},
+	{'chara':'female add', 'path':'/GodetteVN/sfxScenes/questionMark.tscn','at':'head'},
+	{'female':"If you look at the code, it says the special effect question mark should show up "+\
+	"at 'head'."},
+	{'female':'That means you can define points on your character and show special '+\
+	"effects at those points."},
+	{"female":"Currently, there is no way to save these effects, so the special effect should be "+\
+	"temporary, like question marks, or blood bleeding, or other short flashy stuff."},
+	{'female':'The special uid "all" can also be used here provided that all characters have the '+\
+	"point defined."},
+	{'female': "To see how this point 'head' is defined, you can go to female.tscn and see."},
+	{'female': 'The idea is to create Node2D as subnodes, and rename them beginning with a _ .'},
+	{'female': 'I believe that will add a lot room for customization, if you know how to make these '+\
+	"special effects in Godot. (And don't forget to queuefree them.)"},
 	{"female": "What should I eat today?", 'choice' : 'food', 'id':0},
 	{"female": "When your game ends, do the following."},
 	{"female": "Use a GDscene change to go back to your designated ending scene. In this demo, the ending "+\

@@ -37,6 +37,10 @@ func _ready():
 	set_dvar("le",0)
 	set_dvar("tt", true)
 	
+	# Used in clickable test
+	set_dvar('obj1', false)
+	set_dvar('obj2', false)
+	
 	
 	
 	

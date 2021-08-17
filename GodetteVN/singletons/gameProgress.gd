@@ -91,7 +91,7 @@ func updateRollback():
 	
 	var cur_playback = playback_events.duplicate(true)
 	var rollback_data = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
-	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar}
+	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar.duplicate()}
 	rollback_records.push_back(rollback_data)
 	
 
@@ -104,7 +104,7 @@ func checkSkippable()->bool:
 	else:
 		return true
 
-func progressUpdate():
+func makeSnapshot():
 	updateRollback()
 	if checkSkippable() == false:
 		fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex

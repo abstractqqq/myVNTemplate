@@ -16,7 +16,7 @@ var all_choices = null
 var all_conditions = null
 # Other
 var latest_voice = null
-
+var idle = false
 # Only used in rollback
 var _cur_bgm = null
 var _rolling_back = false
@@ -57,16 +57,19 @@ func set_bg_path(node_path:String):
 	bg = get_node(node_path)
 	
 func _input(ev):
-	if ev.is_action_pressed('vn_rollback') and waiting_acc and not vn.inSetting and not vn.inNotif and not vn.skipping:
+	
+	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting and not vn.inNotif and not vn.skipping:
 		QM.reset_auto()
 		QM.reset_skip()
 		if game.rollback_records.size() >= 1:
+			waiting_acc = false
+			idle = false
 			screenEffects.removeLasting()
 			screenEffects.weather_off()
 			sideImageChange("",false)
 			camera.reset_zoom()
-			self.waiting_cho = false
-			self.centered = false
+			waiting_cho = false
+			centered = false
 			nvl_off()
 			for n in choiceContainer.get_children():
 				n.queue_free()
@@ -376,7 +379,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	if not ques:
 		yield(self, "player_accept")
 		if not _rolling_back:
-			game.progressUpdate()
+			game.makeSnapshot()
 			music.stop_voice()
 			if centered:
 				nvl_off()
@@ -498,11 +501,10 @@ func change_scene_to(path : String):
 	fileRelated.write_to_config()
 	if path == vn.title_screen_path:
 		music.stop_bgm()
-		
 	if path == "free":
 		self.queue_free()
 	elif path == 'idle':
-		return
+		idle = true
 	else:
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
@@ -740,11 +742,8 @@ func character_event(ev : Dictionary) -> void:
 						character_shake(uid, ev, 2)
 					else:
 						character_shake(uid, ev, 0)
-			"spin":
-				if vn.skipping:
-					auto_load_next()
-				else:
-					character_spin(uid,ev)
+			"add": character_add(uid, ev)
+			"spin": character_spin(uid,ev)
 			"jump": 
 				if vn.skipping : 
 					auto_load_next()
@@ -843,6 +842,12 @@ func character_move(uid:String, ev:Dictionary):
 	else:
 		vn.error("Character move expects a loc.", ev)
 
+func character_add(uid:String, ev:Dictionary):
+	if ev.has('path') and ev.has('at'):
+		stage.add_to_chara_at(uid, ev['at'], vn.ROOT_DIR + ev['path'])
+		auto_load_next()
+	else:
+		vn.error('Character add expects a path and an "at".', ev)
 # This method is here to fill in default values
 func character_spin(uid:String, ev:Dictionary):
 	var sdir : int = 1
@@ -901,9 +906,10 @@ func then(ev : Dictionary) -> void:
 		change_block_to(ev['then'], 0)
 		
 func change_block_to(bname : String, bindex : int) -> void:
+	idle = false
 	if all_blocks.has(bname):
 		current_block = all_blocks[bname]
-		if bindex >= current_block.size():
+		if bindex >= current_block.size()-1:
 			vn.error("Cannot go back to the last event of block " + bname + ".")
 		else:
 			game.currentBlock = bname
@@ -977,7 +983,7 @@ func on_choice_made(ev : Dictionary) -> void:
 	for n in choiceContainer.get_children():
 		n.queue_free()
 	
-	game.progressUpdate()
+	game.makeSnapshot()
 	waiting_cho = false
 	if ev.size() == 0:
 		auto_load_next()
@@ -1197,6 +1203,11 @@ func system(ev : Dictionary):
 		"skip": # same as above
 			if temp[1] == "off":
 				QM.reset_skip()
+				
+		"clear": # clears the dialog box
+			dialogbox.text = ""
+			speaker.text = ""
+			
 		"rollback", "roll_back" ,"RB":
 			if temp[1] == "clear":
 				game.rollback_records = []
@@ -1218,7 +1229,7 @@ func system(ev : Dictionary):
 				QM.get_node("QsaveButton").disabled = true
 				QM.get_node("loadButton").disabled = true
 				
-		# The above 4 are not included in all.
+		# The above are not included in all.
 		
 		"right_click", "RC":
 			if temp[1] == "on":

@@ -99,6 +99,7 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 			c.change_expression(expression)
 	
 
+
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
 		for n in $characters.get_children():
@@ -120,6 +121,21 @@ func join(uid: String, loc: Vector2, expression:String="default"):
 			c.loc = loc
 			c.modulate = vn.DIM
 
+func add_to_chara_at(uid:String, pt_name:String, path:String):
+	if uid == 'all':
+		for c in $characters.get_children():
+			for n in c.get_children():
+				if n is Node2D and n.name == ('_' + pt_name):
+					var inst = load(path).instance()
+					n.add_child(inst)
+					break
+	else:
+		var c = find_chara_on_stage(uid)
+		for n in c.get_children():
+			if n is Node2D and n.name == ('_' + pt_name):
+				var inst = load(path).instance()
+				n.add_child(inst)
+				break
 
 func set_highlight(uid : String) -> void:
 	# I didn't use find_chara_on_stage only for this function because

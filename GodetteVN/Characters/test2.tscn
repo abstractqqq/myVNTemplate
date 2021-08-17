@@ -14,3 +14,6 @@ use_character_font = true
 normal_font = "res://fonts/ROBOTO_NORMAL.tres"
 bold_font = "res://fonts/ROBOTO_BOLD.tres"
 italics_font = "res://fonts/ROBOTO_ITALICS.tres"
+
+[node name="_head" type="Node2D" parent="."]
+position = Vector2( -65.1029, -388.372 )
