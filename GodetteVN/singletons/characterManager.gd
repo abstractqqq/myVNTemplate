@@ -27,8 +27,8 @@ func _ready():
 	# Here you define character with sprites, they must have a 
 	# Godot scene in the folder GodetteVN/Characters with the name
 	# uid.tscn 
-	stage_character("female")
-	stage_character("test2")
+	#stage_character("female")
+	#stage_character("test2")
 	stage_character("gt") # register your character so that the system knows
 	# which uid to look for
 	
@@ -39,8 +39,8 @@ func _ready():
 	set_dvar("tt", true)
 	
 	# Used in clickable test
-	set_dvar('obj1', false)
-	set_dvar('obj2', false)
+	#set_dvar('obj1', false)
+	#set_dvar('obj2', false)
 	
 	
 	
