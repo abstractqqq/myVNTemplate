@@ -9,28 +9,28 @@ export(PackedScene) var choiceBar = preload("res://GodetteVN/fundamentals/choice
 var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
 
 # Core data
-var current_index = 0
+var current_index : int = 0
 var current_block = null
 var all_blocks = null
 var all_choices = null
 var all_conditions = null
 # Other
 var latest_voice = null
-var idle = false
+var idle : bool = false
+var _nullify_prev_yield : bool = false
 # Only used in rollback
 var _cur_bgm = null
-var _rolling_back = false
 # State controls
-var nvl = false
-var centered = false
-var waiting_acc = false
-var waiting_cho = false
-var just_loaded = false
-var hide_all_boxes = false
-var hide_vnui = false
-var no_scroll = false
-var no_right_click = false
-var one_time_font_change = false
+var nvl : bool = false
+var centered : bool = false
+var waiting_acc : bool = false
+var waiting_cho : bool = false
+var just_loaded : bool = false
+var hide_all_boxes : bool = false
+var hide_vnui : bool = false
+var no_scroll : bool = false
+var no_right_click : bool = false
+var one_time_font_change : bool = false
 #----------------------
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Important components
@@ -46,18 +46,17 @@ onready var sideImage = stage.get_node('other/sideImage')
 var nvlBox = null
 #-----------------------
 # signals
-signal player_accept(rb)
+signal player_accept(npv)
 
 #--------------------------------------------------------------------------------
 func _ready():
 	fileRelated.load_config()
-	var _error = self.connect("player_accept", self, '_is_roll_back')
+	var _error = self.connect("player_accept", self, '_yield_check')
 
 func set_bg_path(node_path:String):
 	bg = get_node(node_path)
 	
 func _input(ev):
-	
 	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting and not vn.inNotif and not vn.skipping:
 		QM.reset_auto()
 		QM.reset_skip()
@@ -73,7 +72,7 @@ func _input(ev):
 			nvl_off()
 			for n in choiceContainer.get_children():
 				n.queue_free()
-			emit_signal("player_accept", true)
+			generate_nullify()
 			game.history.pop_back()
 			on_rollback()
 			return
@@ -376,9 +375,13 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 		stage.set_highlight(temp[0])
 		
 	# wait for ui_accept if this is not a question
+	wait_for_accept(ques)
+	
+	# If this is a question, then displaying the text is all we need.
+func wait_for_accept(ques:bool = false):
 	if not ques:
 		yield(self, "player_accept")
-		if not _rolling_back:
+		if not _nullify_prev_yield:
 			game.makeSnapshot()
 			music.stop_voice()
 			if centered:
@@ -387,9 +390,8 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 			if not self.nvl: stage.remove_highlight()
 			waiting_acc = false
 			auto_load_next()
-	
-	# If this is a question, then displaying the text is all we need.
-	
+
+
 #------------------------ Related to Music and Sound ---------------------------
 func play_bgm(ev : Dictionary) -> void:
 	var path = ev['bgm']
@@ -497,15 +499,17 @@ func change_scene_to(path : String):
 	change_weather('', false)
 	QM.reset_auto()
 	QM.reset_skip()
-	game.rollback_records = []
 	fileRelated.write_to_config()
 	if path == vn.title_screen_path:
+		game.rollback_records = []
 		music.stop_bgm()
 	if path == "free":
+		game.rollback_records = []
 		self.queue_free()
 	elif path == 'idle':
 		idle = true
 	else:
+		game.rollback_records = []
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
 			self.queue_free()
@@ -961,6 +965,8 @@ func check_dialog():
 	else:
 		emit_signal("player_accept", false)
 
+func generate_nullify(): 
+	emit_signal("player_accept", true)
 
 func clear_boxes():
 	speaker.bbcode_text = ''
@@ -990,8 +996,8 @@ func on_choice_made(ev : Dictionary) -> void:
 	else:
 		intepret_events(ev)
 
-func _is_roll_back(rb):
-	_rolling_back = rb
+func _yield_check(npy : bool):
+	_nullify_prev_yield = npy
 
 func on_rollback():
 	var last = game.rollback_records.pop_back()

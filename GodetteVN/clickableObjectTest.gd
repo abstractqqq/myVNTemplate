@@ -12,6 +12,7 @@ var starter = [
 var obj1 = [
 	{"dvar":"obj1 = true"},
 	{"" :"You found this Linux penguin. Good job."},
+	{'condition':'obj2=false', '':'You have one more to go.'},
 	{'sys':'clear'},
 	{"condition": ['obj1', 'obj2'], '': "Congratz, you've found all items."},
 	{"condition": ['obj1', 'obj2'], 'then':'inv_end'},
@@ -24,6 +25,7 @@ var obj2 = [
 	{"dvar":"obj2 = true"},
 	{"" :"You found the Santa!"},
 	{"": "Rememeber, it's always Chirstmas season!"},
+	{'condition':'obj1=false', '':'You have one more to go.'},
 	{'sys':'clear'},
 	{"condition": ['obj1', 'obj2'], '': "Congratz, you've found all items."},
 	{"condition": ['obj1', 'obj2'], 'then':'inv_end'},

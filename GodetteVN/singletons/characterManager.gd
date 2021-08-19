@@ -29,7 +29,8 @@ func _ready():
 	# uid.tscn 
 	stage_character("female")
 	stage_character("test2")
-	stage_character("gt")
+	stage_character("gt") # register your character so that the system knows
+	# which uid to look for
 	
 	# You may initialize your variables here
 	#'mo':50, 'le':0, 'tt': true
@@ -40,7 +41,6 @@ func _ready():
 	# Used in clickable test
 	set_dvar('obj1', false)
 	set_dvar('obj2', false)
-	
 	
 	
 	

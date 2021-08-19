@@ -6,8 +6,10 @@
 [node name="character" type="AnimatedSprite"]
 modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
 frames = ExtResource( 1 )
+animation = "crya"
+frame = 5
 script = ExtResource( 2 )
 display_name = "Godette"
 unique_id = "gt"
-name_color = Color( 0.133333, 0.278431, 0.709804, 1 )
+name_color = Color( 0.0588235, 0.0117647, 0.627451, 1 )
 fade_on_change = true
