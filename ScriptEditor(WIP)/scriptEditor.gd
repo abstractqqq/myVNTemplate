@@ -74,3 +74,14 @@ func _on_tlname_text_changed(new_text):
 
 func _on_saveButton_pressed():
 	save_as_txt()
+
+func _on_dvarButton_pressed():
+	var keys = vn.dvar.keys()
+	var output = "Currently defined dvars are: \n"
+	for k in keys:
+		output += "Dvar: [color=#000000]%s[/color] --- Initial Value: %s \n" % [k, vn.dvar[k]]
+	
+	output += "\n[color=#787878]If you define a dvar later, you may restart the editor to see it.[/color]"
+	$helperPopup/richText.bbcode_text = output
+	$helperPopup.popup_centered()
+	

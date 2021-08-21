@@ -18,7 +18,8 @@ layer = 100
 [node name="editor" type="ColorRect" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color( 0.164706, 0.152941, 0.152941, 1 )
+theme = ExtResource( 3 )
+color = Color( 0.168627, 0.160784, 0.160784, 1 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -138,6 +139,17 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="dvarButton" type="Button" parent="editor/buttons"]
+margin_left = 467.0
+margin_right = 556.0
+margin_bottom = 47.0
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Dvar"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="FileDialog" type="FileDialog" parent="editor"]
 margin_right = 953.0
 margin_bottom = 611.0
@@ -160,8 +172,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="helperPopup" type="AcceptDialog" parent="editor"]
+margin_right = 1048.0
+margin_bottom = 689.0
+window_title = ""
+
+[node name="richText" type="RichTextLabel" parent="editor/helperPopup"]
+margin_left = 22.0
+margin_top = 83.0
+margin_right = 1016.0
+margin_bottom = 536.0
+bbcode_enabled = true
+
 [connection signal="text_changed" from="editor/tlname" to="editor" method="_on_tlname_text_changed"]
 [connection signal="pressed" from="editor/buttons/saveButton" to="editor" method="_on_saveButton_pressed"]
 [connection signal="pressed" from="editor/buttons/loadButton" to="editor" method="_on_loadButton_pressed"]
 [connection signal="pressed" from="editor/buttons/jsonButton" to="editor" method="_on_jsonButton_pressed"]
+[connection signal="pressed" from="editor/buttons/dvarButton" to="editor" method="_on_dvarButton_pressed"]
 [connection signal="file_selected" from="editor/FileDialog" to="editor" method="_on_FileDialog_file_selected"]

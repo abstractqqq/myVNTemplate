@@ -9,9 +9,11 @@ var main_block = [
 	# start of content
 	{"fadein": 1},
 	{'chara': "gt join", "loc": "1600 650"},
+	{"gt":"Suppose I am very confused right now."},
+	{"chara":"gt add", "path":"/GodetteVN/sfxScenes/questionMark.tscn", "at":"head"},
 	{"gt": "Here we demonstrate how to do animations (spritesheet)."},
-	{"gt": "As long as you have the spritesheet ready, animation is as easy as drag and drop."},
-	{"gt cry": "You can look at the top left corner to see the events controlling everything."},
+	{"gt cry": "As long as you have the spritesheet ready, animation is as easy as drag and drop."},
+	{"gt": "You can look at the top left corner to see the events controlling everything."},
 	{"express": "gt crya"},
 	{"gt": "This baka is making me cry... ..."},
 	{'gt': "Yes, animation is compatible with all other character actions likes shake and move."},

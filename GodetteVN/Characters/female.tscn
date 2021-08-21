@@ -3,14 +3,10 @@
 [ext_resource path="res://GodetteVN/Characters/female_expressionSheet.tres" type="SpriteFrames" id=1]
 [ext_resource path="res://GodetteVN/Characters/characterTemplate.gd" type="Script" id=2]
 
-[node name="character" type="AnimatedSprite"]
+[node name="female" type="AnimatedSprite"]
 modulate = Color( 0.862745, 0.862745, 0.862745, 1 )
 frames = ExtResource( 1 )
 script = ExtResource( 2 )
 display_name = "A"
 unique_id = "female"
-name_color = Color( 0.00784314, 0.243137, 0.545098, 1 )
-fade_on_change = true
-
-[node name="_head" type="Node2D" parent="."]
-position = Vector2( 67.3478, -334.494 )
+name_color = null

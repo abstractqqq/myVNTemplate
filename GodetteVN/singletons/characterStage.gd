@@ -34,7 +34,7 @@ func reset_sideImage():
 	$other/sideImage.texture = null
 
 
-func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
+func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -44,7 +44,7 @@ func shake_chara(uid : String, amount: float, time: float, mode : int = 0):
 		c.shake(amount, time, mode)
 
 
-func jump(uid:String, dir:Vector2, amount:float, time:float):
+func jump(uid:String, dir:Vector2 = Vector2.UP, amount:float = 80, time:float = 0.25):
 	dir = dir.normalized()
 	if uid == 'all':
 		for n in $characters.get_children():
@@ -54,7 +54,7 @@ func jump(uid:String, dir:Vector2, amount:float, time:float):
 		var c = find_chara_on_stage(uid)
 		c.jump(dir, amount, time)
 		
-func spin(sdir:int,uid:String, degrees:float, time:float, type:String="linear"):
+func spin(uid:String, degrees:float = 360.0, time:float = 1.0, sdir:int = 1, type:String="linear"):
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -68,9 +68,9 @@ func change_pos(uid:String, loc:Vector2): # instant position change.
 	c.position = loc
 	c.loc = loc
 
-func change_pos_2(uid:String, loca:Vector2, time:float, mode):
+func change_pos_2(uid:String, loca:Vector2, time:float = 1, type = "linear"):
 	var c = find_chara_on_stage(uid)
-	c.change_pos_2(loca, time, mode)
+	c.change_pos_2(loca, time, type)
 	
 func change_expression(uid:String, expression:String):
 	var info = chara.all_chara[uid]

@@ -798,7 +798,7 @@ func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
 	var time = 2
 	if ev.has('amount'): amount = ev['amount']
 	if ev.has('time'): time = ev['time']
-	stage.shake_chara(uid, amount, time, mode)
+	stage.shake(uid, amount, time, mode)
 	auto_load_next()
 	
 
@@ -862,7 +862,7 @@ func character_spin(uid:String, ev:Dictionary):
 	if ev.has('sdir'): time = int(ev['sdir'])
 	if ev.has('deg'): deg = ev['deg']
 	if ev.has('time'): time = ev['time']
-	stage.spin(sdir, uid, deg, time, type)
+	stage.spin(uid, deg, time, sdir, type)
 	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):

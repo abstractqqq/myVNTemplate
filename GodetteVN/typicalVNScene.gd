@@ -22,35 +22,6 @@ extends generalDialog
 # This process is only suitable for VNs. For other purposes,
 # I need to do some further work.
 
-#-----------------------------------------------------------------
-
-# How to implement Parallax background?
-
-# (You need to know how to do parallax bg in Godot first)
-
-# First, make sure that your parallax background scene is a separate
-# Godot scene. You can use the builtin GDscene:scene_path function
-# to transition from one VN scene to this scene.
-
-# Now, replace the background node with the following nodes,
-# parallaxBackground/parallaxLayer/background
-# Now in the ready function below, call 
-# set_bg_path('parallaxBackground/parallaxLayer/background')
-# Now the var bg in generalDialog will be set to the correct node
-
-# In your parallaxLayer, you need to make your parallax self moving.
-# This is important because you don't want the position of characters
-# and the camera to change to achieve the parallax effect. 
-# That would mess up with character ations.
-
-# Next if you're using the same background node here as the background
-# in your parallax, then you're good to go. But if you're using a 
-# custom background node, whether it's a texture rect or sprite,
-# you need to make sure that it has a bg_change function that does
-# the same thing as the one for this background node. 
-
-# How do you switch back to a static background scene?
-# Just use GDscene again to go to another scene.
 
 #---------------------------------------------------------------------
 # To start using a json, do this

@@ -15,7 +15,7 @@ var temp_dict = {}
 var anim_dict = {}
 var sc = Vector2(1,1)
 var found = false
-var ready_to_generate = false
+var _ready_to_generate = false
 
 var counter = 0
 var speed = 30
@@ -125,11 +125,11 @@ func _on_generateButton_pressed():
 	
 	dname = display_edit.text
 	if dname == "":
-		ready_to_generate = false
+		_ready_to_generate = false
 		$charaGenPopup.dialog_text = "You must give an non-empty display name."
 		$charaGenPopup.popup_centered()
 	else:
-		ready_to_generate = true
+		_ready_to_generate = true
 		$charaGenPopup.dialog_text = ("You are about to generate a character scene with uid: {0}" +\
 		" display name: {1}, which will have the path: {2}.").format({0:cur_uid,1:dname,2:(vn.CHARA_SCDIR+cur_uid+".tscn")})
 		$charaGenPopup.dialog_text += "\n You can pick a name color for the character in the generated scene."
@@ -139,7 +139,7 @@ func _on_generateButton_pressed():
 
 
 func _on_charaGenPopup_confirmed():
-	if ready_to_generate == false:
+	if _ready_to_generate == false:
 		return
 	else:
 		var packed_scene = PackedScene.new()
@@ -166,6 +166,7 @@ func _on_charaGenPopup_confirmed():
 		else:
 			print("Some error occurred when trying to save spriteSheet.")
 		
+		ch.name = cur_uid
 		ch.set_sprite_frames(load(sheetName))
 		ch.unique_id = cur_uid
 		ch.display_name = dname
@@ -177,4 +178,4 @@ func _on_charaGenPopup_confirmed():
 		else:
 			print("Some error occurred when trying to save as scene.")
 		
-		ready_to_generate = false
+		_ready_to_generate = false

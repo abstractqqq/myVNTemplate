@@ -32,7 +32,6 @@ func _ready():
 	auto.add_item('Slow')
 	auto.add_item('Normal')
 	auto.add_item('Fast')
-	print(fileRelated.system_data['auto_speed'])
 	auto.select(fileRelated.system_data['auto_speed'])
 	
 func _on_volumeSlider_value_changed(value):
