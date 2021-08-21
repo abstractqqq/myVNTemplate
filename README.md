@@ -21,6 +21,8 @@ alternative if your game doesn't include advanced features or complicated miniga
 
 A link to the [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
 
+If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
+
 Projects done with this template:
 [My O2A2 entry](https://tqqq.itch.io/o2a2-elegy-of-a-songbird)
 
