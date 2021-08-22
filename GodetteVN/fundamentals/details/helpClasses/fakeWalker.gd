@@ -1,5 +1,5 @@
 extends Node2D
-class_name fakeWalker
+class_name FakeWalker
 
 
 var pos : Vector2

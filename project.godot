@@ -9,6 +9,16 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Node2D",
+"class": "FakeWalker",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/helpClasses/FakeWalker.gd"
+}, {
+"base": "Timer",
+"class": "ObjectTimer",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/helpClasses/ObjectTimer.gd"
+}, {
 "base": "AnimatedSprite",
 "class": "character",
 "language": "GDScript",
@@ -20,11 +30,6 @@ _global_script_classes=[ {
 "path": "res://clickableObject.gd"
 }, {
 "base": "Node2D",
-"class": "fakeWalker",
-"language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/helpClasses/fakeWalker.gd"
-}, {
-"base": "Node2D",
 "class": "generalDialog",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/generalDialog.gd"
@@ -33,11 +38,6 @@ _global_script_classes=[ {
 "class": "notificaionBox",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.gd"
-}, {
-"base": "Timer",
-"class": "objectTimer",
-"language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/objectTimer.gd"
 }, {
 "base": "Control",
 "class": "saveSlot",
@@ -50,12 +50,12 @@ _global_script_classes=[ {
 "path": "res://GodetteVN/fundamentals/details/stringCalculator.gd"
 } ]
 _global_script_class_icons={
+"FakeWalker": "",
+"ObjectTimer": "",
 "character": "",
 "clickableObject": "",
-"fakeWalker": "",
 "generalDialog": "",
 "notificaionBox": "",
-"objectTimer": "",
 "saveSlot": "",
 "stringCalculator": ""
 }

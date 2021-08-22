@@ -1,5 +1,5 @@
 extends Timer
-class_name objectTimer
+class_name ObjectTimer
 
 signal call_func(params)
 
@@ -37,6 +37,7 @@ func _timeout():
 		_params[_params.size()-2] = _counter
 	
 	if _counter >= _total:
+		emit_signal("call_func", _params)
 		self.queue_free()
 	else:
 		emit_signal("call_func", _params)

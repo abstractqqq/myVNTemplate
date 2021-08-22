@@ -58,7 +58,7 @@ func shake(amount: float, time : float, mode = 0):
 	# 0 : regular shake
 	# 1 : vpunch
 	# 2 : hpunch
-	var _objTimer = objectTimer.new(self,time,0.02,"_shake_action", [mode,amount])
+	var _objTimer = ObjectTimer.new(self,time,0.02,"_shake_action", [mode,amount])
 	add_child(_objTimer)
 	
 func _shake_action(params):
@@ -71,7 +71,7 @@ func _shake_action(params):
 		
 func jump(direc:Vector2, amount:float, time:float):
 	var step : float = amount/(time/0.04)
-	var _objTimer = objectTimer.new(self,time,0.02,"_jump_action", [direc,step], true)
+	var _objTimer = ObjectTimer.new(self,time,0.02,"_jump_action", [direc,step], true)
 	add_child(_objTimer)
 
 func _jump_action(params):
@@ -125,8 +125,8 @@ func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 # then if you do move first, then jump, then jump will not happen. Why?
 # tween.interpolate_property(self,"position",position,loca,time,m,Tween.EASE_IN_OUT)
 # Will move the character from position to loca, but what happens if during the tween,
-# the character's position get changed by another method? 
-# You should test it out. The answer is one of the method will be nullified somehow.
+# the character's position get changed by another tween? 
+# You should test it out. The answer is one of the tweens will be nullified somehow.
 # So to make jump and move compatible, I cannot use just a tween here.
 #
 # Q: Well, you can use your objectTimer to move the character, and update displacement
@@ -143,14 +143,14 @@ func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 func change_pos_2(loca:Vector2, time:float, type = "linear"):
 	self.loc = loca
 	var m = fun.movement_type(type)
-	var fake = fakeWalker.new()
+	var fake = FakeWalker.new()
 	fake.name = "_dummy"
 	fake.position = position
 	stage.add_child(fake)
 	var fake_tween = Tween.new()
 	fake.add_child(fake_tween)
 	fake_tween.interpolate_property(fake,"position",position,loca,time,m,Tween.EASE_IN_OUT)
-	var _objTimer = objectTimer.new(self,time,0.01,"_follow_fake",[fake])
+	var _objTimer = ObjectTimer.new(self,time,0.01,"_follow_fake",[fake])
 	add_child(_objTimer)
 	fake_tween.start()
 	fake_tween.connect("tween_completed", self, "clear_dummy")

@@ -27,8 +27,8 @@ func _ready():
 	# Here you define character with sprites, they must have a 
 	# Godot scene in the folder GodetteVN/Characters with the name
 	# uid.tscn 
-	#stage_character("female")
-	#stage_character("test2")
+	stage_character("female")
+	stage_character("test2")
 	stage_character("gt") # register your character so that the system knows
 	# which uid to look for
 	

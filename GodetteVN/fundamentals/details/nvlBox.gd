@@ -38,8 +38,10 @@ func set_dialog(uid : String, words : String, cps = vn.cps):
 			if self.text != '':
 				self.bbcode_text += "\n\n"
 		else:
-			var ch_info = stage.get_character_info(uid)
+			var ch_info = chara.all_chara[uid]
 			var color = ch_info["name_color"]
+			if color == null:
+				color = Color(255,255,255)
 			var n = ch_info["display_name"]
 			color = color.to_html(false)
 			if self.text == '':

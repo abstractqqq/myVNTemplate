@@ -48,7 +48,6 @@ func movement_type(type:String)-> int:
 		
 	return m
 
-# Working
 
 
 #----------------------------------------------------------------
@@ -90,7 +89,7 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		file.store_var(thumbnail.get_data())
 		file.close()
 
-func make_a_save(msg = "[Quick Save] " , delay:float = 0.0):
+func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 	if delay > 0:
 		yield(get_tree().create_timer(delay), 'timeout')
 		
@@ -98,10 +97,13 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0):
 	var slot = load(vn.SAVESLOT)
 	var sl = slot.instance()
 	var temp = game.currentSaveDesc
+	var curId = game.currentIndex
+	game.currentIndex = game.currentIndex - offset_by
 	game.currentSaveDesc = msg + temp
 	sl.make_save(sl.path)
 	sl.queue_free()
 	game.currentSaveDesc = temp
+	game.currentIndex = curId
 
 
 #------------------------------------------------------------------------

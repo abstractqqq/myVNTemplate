@@ -57,7 +57,8 @@ func set_bg_path(node_path:String):
 	bg = get_node(node_path)
 	
 func _input(ev):
-	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting and not vn.inNotif and not vn.skipping:
+	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting \
+	and not vn.inNotif and not vn.skipping:
 		QM.reset_auto()
 		QM.reset_skip()
 		if game.rollback_records.size() >= 1:
@@ -82,8 +83,9 @@ func _input(ev):
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
 		QM._on_historyButton_pressed()
 		return
-		
-	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif:
+	# QM hiding means that quick menu is being hidden. If that is the case,
+	# then the user probably wants to disable access to main menu too.
+	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif and not QM.hiding:
 		add_child(vn.MAIN_MENU.instance())
 		return
 	
@@ -660,8 +662,9 @@ func tint(ev : Dictionary) -> void:
 # Scene animations/special effects
 func sfx_player(ev : Dictionary) -> void:
 	var target_scene = load(vn.ROOT_DIR + ev['sfx']).instance()
-	add_child(target_scene)
 	if ev.has('loc'): target_scene.position = ev['loc']
+	if ev.has('params'):target_scene.params = ev['params']
+	add_child(target_scene)
 	if ev.has('anim'):
 		var anim = target_scene.get_node('AnimationPlayer')
 		if anim.has_animation(ev['anim']):
@@ -907,9 +910,9 @@ func then(ev : Dictionary) -> void:
 	if ev.has('target id') and ev['target id'] != -1:
 		change_block_to(ev['then'], 1 + get_target_index(ev['then'], ev['target id']))
 	else:
-		change_block_to(ev['then'], 0)
+		change_block_to(ev['then'],0)
 		
-func change_block_to(bname : String, bindex : int) -> void:
+func change_block_to(bname : String, bindex:int = 0) -> void:
 	idle = false
 	if all_blocks.has(bname):
 		current_block = all_blocks[bname]
@@ -931,7 +934,7 @@ func get_target_index(bname : String, target_id):
 		var d = all_blocks[bname][i]
 		if d.has('id') and (d['id'] == target_id):
 			return i
-	vn.error('Cannot find event with id ' + target_id + ' in ' + bname)
+	vn.error('Cannot find event with id ' + str(target_id) + ' in ' + bname)
 	
 func sideImageChange(path:String, auto_forw = true):
 	if path == "":
@@ -984,12 +987,17 @@ func wait(time : float) -> void:
 		print("Warning: wait time < 0.1s is ignored.")
 		auto_load_next()
 
-func on_choice_made(ev : Dictionary) -> void:
+func on_choice_made(ev : Dictionary, allow_rollback = true) -> void:
 	QM.enable_skip_auto()
 	for n in choiceContainer.get_children():
 		n.queue_free()
 	
-	game.makeSnapshot()
+	if allow_rollback: # if this choice is allowed to be rolled back
+		# In the case of a timed choice, on_choice_made will be called
+		# externally, and usually timed choices shouldn't be allowed to 
+		# rollback (it's hard to do that unless I make timed choices a built
+		# in thing... It's not impossible but not right now.)
+		game.makeSnapshot()
 	waiting_cho = false
 	if ev.size() == 0:
 		auto_load_next()
@@ -1217,8 +1225,9 @@ func system(ev : Dictionary):
 		"rollback", "roll_back" ,"RB":
 			if temp[1] == "clear":
 				game.rollback_records = []
-		"auto_save", "AS":
-			fun.make_a_save("[Auto Save] ")
+		"auto_save", "AS": # make a save, with 0 seconds delay, and save
+			# at current index - 1 because at current index, the event is sys:auto_save
+			fun.make_a_save("[Auto Save] ",0,1)
 		"make_save", "MS":
 			QM.reset_skip()
 			QM.reset_auto()

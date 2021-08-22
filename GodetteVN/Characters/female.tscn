@@ -9,4 +9,4 @@ frames = ExtResource( 1 )
 script = ExtResource( 2 )
 display_name = "A"
 unique_id = "female"
-name_color = null
+name_color = Color( 0.498039, 0.0431373, 0.0431373, 1 )
