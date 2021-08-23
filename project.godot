@@ -32,7 +32,7 @@ _global_script_classes=[ {
 "base": "TextureButton",
 "class": "clickableObject",
 "language": "GDScript",
-"path": "res://clickableObject.gd"
+"path": "res://GodetteVN/clickableObjects/clickableObject.gd"
 }, {
 "base": "Node2D",
 "class": "generalDialog",
