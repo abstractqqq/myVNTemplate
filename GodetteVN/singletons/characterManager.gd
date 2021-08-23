@@ -24,6 +24,8 @@ func _ready():
 	# Color should be declared as color in Godot, for instance
 	# Color(0,1,0) = Green
 	
+	spriteless_character("", "vo")
+	
 	# Here you define character with sprites, they must have a 
 	# Godot scene in the folder GodetteVN/Characters with the name
 	# uid.tscn 
@@ -37,6 +39,9 @@ func _ready():
 	set_dvar("mo", 50)
 	set_dvar("le",0)
 	set_dvar("tt", true)
+	
+	# Suppose for vo, we do not want name box at all (no name display + no namebox texture)
+	set_noname("vo")
 	
 	# Used in clickable test
 	set_dvar('obj1', false)
@@ -115,3 +120,9 @@ func set_dvar(v:String, value):
 		
 	vn.dvar[v] = value
 	print("Successfully set %s to value %s." % [v, value])
+	
+func set_noname(uid:String):
+	if all_chara.has(uid):
+		all_chara[uid]['no_nb'] = true
+	else:
+		vn.error("The uid %s is not regiestered. Might be a typo." % [uid])

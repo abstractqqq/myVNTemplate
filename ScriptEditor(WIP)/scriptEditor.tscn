@@ -178,10 +178,10 @@ margin_bottom = 689.0
 window_title = ""
 
 [node name="richText" type="RichTextLabel" parent="editor/helperPopup"]
-margin_left = 22.0
-margin_top = 83.0
-margin_right = 1016.0
-margin_bottom = 536.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 1040.0
+margin_bottom = 631.0
 bbcode_enabled = true
 
 [connection signal="text_changed" from="editor/tlname" to="editor" method="_on_tlname_text_changed"]

@@ -4,9 +4,9 @@ class_name generalDialog
 export(String, FILE, "*.json") var dialog_json 
 export(bool) var debug_mode
 export(String) var scene_description
-export(PackedScene) var choiceBar = preload("res://GodetteVN/fundamentals/choiceBar.tscn")
 
-var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
+export(String, FILE, "*.tscn") var choice_bar = vn.DEFAULT_CHOICE
+export(String, FILE, "*.tscn") var float_text = vn.DEFAULT_FLOAT
 
 # Core data
 var current_index : int = 0
@@ -41,7 +41,6 @@ onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = get_node('camera')
-onready var sideImage = stage.get_node('other/sideImage')
 
 var nvlBox = null
 #-----------------------
@@ -66,7 +65,7 @@ func _input(ev):
 			idle = false
 			screenEffects.removeLasting()
 			screenEffects.weather_off()
-			sideImageChange("",false)
+			sideImageChange({},false)
 			camera.reset_zoom()
 			waiting_cho = false
 			centered = false
@@ -126,9 +125,9 @@ func load_event_at_index(ind : int) -> void:
 		change_scene_to(vn.ending_scene_path)
 	else:
 		if debug_mode:print("Debug: current event index is " + str(current_index))
-		intepret_events(current_block[ind])
+		interpret_events(current_block[ind])
 
-func intepret_events(event):
+func interpret_events(event):
 	# Try to keep the code under each case <=3 lines
 	# Also keep the number of cases small. Try to repeat the use of key words.
 	var ev = event.duplicate(true)
@@ -170,24 +169,18 @@ func intepret_events(event):
 		{'then',..}: then(ev)
 		{'premade'}:
 			if debug_mode: print("PREMADE EVENT:")
-			intepret_events(fun.call_premade_events(ev['premade']))
+			interpret_events(fun.call_premade_events(ev['premade']))
 		{"system"}: system(ev)
 		{"sys"}: system(ev)
-		{'side'}: sideImageChange(ev['side'])
+		{'side'}: sideImageChange(ev)
 		{'choice',..}: generate_choices(ev)
 		{'wait'}: wait(ev['wait'])
 		{'nvl'}: set_nvl(ev)
 		{'GDscene'}: change_scene_to(ev['GDscene'])
 		{'history', ..}: history_manipulation(ev)
-		{'float', 'wait',..}: float_text(ev)
+		{'float', 'wait',..}: flt_text(ev)
 		{'voice'}:voice(ev['voice'])
-		{'center'}:
-			self.centered = true
-			set_nvl({'nvl': true}, false)
-			if ev.has('speed'):
-				say('', ev['center'], ev['speed'])
-			else:
-				say('', ev['center'])
+		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
 			
@@ -213,6 +206,8 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 	else:
 		vn.error('Unknown loading instruction.')
 	
+	if music.bgm != '':
+		_cur_bgm = music.bgm
 	if debug_mode: print("Debug: current block is " + game.currentBlock)
 	load_event_at_index(current_index)
 
@@ -244,6 +239,21 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 	else:
 		vn.error('nvl expects a boolean or the keyword clear.', ev)
 	
+func set_center(ev: Dictionary):
+	self.centered = true
+	set_nvl({'nvl': true}, false)
+	var u = ''
+	if ev.has('who'): u = ev['who']
+	if ev.has('speed'):
+		say(u, ev['center'], ev['speed'])
+	else:
+		say(u, ev['center'])
+	if ev.has('voice'):
+		voice(ev['voice'], false)
+		latest_voice = ev['voice']
+	else:
+		latest_voice = null
+
 func speech_parse(ev : Dictionary) -> void:
 	# Voice first
 	if ev.has('voice'):
@@ -259,12 +269,12 @@ func speech_parse(ev : Dictionary) -> void:
 		dialogbox.add_font_override('normal_font', load(path))
 
 	# Speech
-	var combine = "NANITHEFUCK"
-	for k in ev.keys(): # Not voice, not speed, means it has to be "uid expression"
+	var combine = "wwttff"
+	for k in ev.keys(): # k is not voice, not speed, means it has to be "uid expression"
 		if k != 'voice' and k != 'speed':
 			combine = k # combine=unique_id and expression combined
 			break
-	if combine == 'NANITHEFUCK': # Otherwise, error
+	if combine == "wwttff": # for loop ends without setting combine
 		vn.error("Speech event requires a valid character/narrator." ,ev)
 	
 	if ev.has('speed'):
@@ -321,7 +331,7 @@ func generate_choices(ev: Dictionary):
 		
 		var choice_ev = ev2[choice_text] # the choice action
 		choice_text = fun.dvarMarkup(choice_text)
-		var choice = choiceBar.instance()
+		var choice = load(choice_bar).instance()
 		choice.setup_choice_event(choice_text, choice_ev)
 		choice.connect("choice_made", self, "on_choice_made")
 		choiceContainer.add_child(choice)
@@ -332,7 +342,8 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	var wspeaker = chara.all_chara[temp[0]]
 	if temp.size() == 2:
 		stage.change_expression(temp[0], temp[1])
-			
+	
+	_hide_namebox(temp[0])
 	words = preprocess(words)
 	if vn.skipping: cps = 0
 	waiting_acc = true
@@ -344,12 +355,12 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 			else:
 				nvlBox.visible_characters = nvlBox.text.length()
 		else:
-			nvlBox.set_dialog(temp[0], words, cps)
-			if centered: 
+			if centered:
+				nvlBox.set_dialog(temp[0], words, cps, true)
 				game.nvl_text = ''
 			else:
+				nvlBox.set_dialog(temp[0], words, cps)
 				game.nvl_text = nvlBox.bbcode_text
-				
 			if latest_voice == null:
 				game.history.push_back([temp[0], nvlBox.get_text()])
 			else:
@@ -428,6 +439,7 @@ func play_bgm(ev : Dictionary) -> void:
 	var vol = 0
 	if ev.has('vol'): vol = ev['vol']
 	_cur_bgm = path
+	music.bgm = path
 	var music_path = vn.BGM_DIR + path
 	if not ev.has('fadein'): # has path or volume
 		music.play_bgm(music_path, vol)
@@ -455,11 +467,10 @@ func play_sound(ev :Dictionary) -> void:
 	auto_load_next()
 	
 		
-func voice(path:String, auto_forw = true) -> void:
+func voice(path:String, auto_forw:bool = true) -> void:
 	var voice_path = vn.VOICE_DIR + path
 	music.play_voice(voice_path)
-	if auto_forw:
-		auto_load_next()
+	if auto_forw: auto_load_next()
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
 # I will need to refactor this...
@@ -606,7 +617,7 @@ func screen_effects(ev: Dictionary):
 	match ef:
 		"", "off": 
 			screenEffects.removeLasting()
-			game.playback_events['screen'] = {}
+			game.playback_events.erase('screen')
 		"tint": tint(ev)
 		"tintwave": tint(ev)
 		"flashlight": flashlight(ev)
@@ -621,7 +632,7 @@ func flashlight(ev:Dictionary):
 	screenEffects.flashlight(sc)
 	game.playback_events['screen'] = ev
 
-func fadein(time : float, auto_forw = true) -> void:
+func fadein(time : float, auto_forw:bool = true) -> void:
 	clear_boxes()
 	if not self.nvl: show_boxes()
 	QM.visible = false
@@ -632,7 +643,7 @@ func fadein(time : float, auto_forw = true) -> void:
 	if not QM.hiding: QM.visible = true
 	if auto_forw: auto_load_next()
 	
-func fadeout(time : float, auto_forw = true) -> void:
+func fadeout(time : float, auto_forw:bool = true) -> void:
 	clear_boxes()
 	hide_boxes()
 	QM.visible = false
@@ -682,7 +693,7 @@ func camera_effect(ev : Dictionary) -> void:
 		"hpunch": if not vn.skipping: camera.hpunch()
 		"reset": 
 			camera.reset_zoom()
-			game.playback_events['camera'] = {}
+			game.playback_events.erase('camera')
 		"zoom":
 			QM.reset_skip()
 			if ev.has('scale'):
@@ -692,7 +703,7 @@ func camera_effect(ev : Dictionary) -> void:
 				if ev.has('time'): time = ev['time']
 				if ev.has('type'): type = ev['type']
 				if ev.has('loc'): offset = ev['loc']
-				if type == 'instant':
+				if type == 'instant' or vn.skipping:
 					camera.zoom(ev['scale'], offset)
 				else:
 					camera.zoom_timed(ev['scale'], time, type,offset)
@@ -876,8 +887,7 @@ func change_weather(we:String, auto_forw = true):
 		else:
 			game.playback_events['weather'] = {'weather':we}
 		
-		if auto_forw:
-			auto_load_next()
+		if auto_forw: auto_load_next()
 
 #--------------------------------- History -------------------------------------
 func history_manipulation(ev: Dictionary):
@@ -936,16 +946,25 @@ func get_target_index(bname : String, target_id):
 			return i
 	vn.error('Cannot find event with id ' + str(target_id) + ' in ' + bname)
 	
-func sideImageChange(path:String, auto_forw = true):
+func sideImageChange(ev:Dictionary, auto_forw:bool = true):
+	if ev.size() == 0:
+		return
+	var path = ev['side']
+	var sideImage = stage.get_node('other/sideImage')
+	sideImage.position = Vector2(-35,530) # by default
 	if path == "":
-		game.playback_events.erase('side')
 		sideImage.texture = null
+		game.playback_events.erase('side')
 	else:
 		sideImage.texture = load(vn.SIDE_IMAGE+path)
-		game.playback_events['side'] = path
-	
-	if auto_forw:
-		auto_load_next()
+		game.playback_events['side'] = ev
+		if ev.has("scale"):
+			# if you want to limit scale to 0-1 for both x and y, use
+			# fun.correct_scale(ev['scale'])
+			sideImage.scale = ev['scale']
+		if ev.has('loc'):
+			sideImage.position = ev['loc']
+	if auto_forw: auto_load_next()
 
 func check_dialog():
 	if not QM.hiding: QM.visible = true
@@ -1002,7 +1021,7 @@ func on_choice_made(ev : Dictionary, allow_rollback = true) -> void:
 	if ev.size() == 0:
 		auto_load_next()
 	else:
-		intepret_events(ev)
+		interpret_events(ev)
 
 func _yield_check(npy : bool):
 	_nullify_prev_yield = npy
@@ -1021,20 +1040,21 @@ func on_rollback():
 	load_event_at_index(current_index)
 
 
-func load_playback(play_back, rollBackMode = false):
+func load_playback(play_back, RBM = false): # Roll Back Mode
+	print(play_back)
 	vn.inLoading = true
 	if play_back['bg'].size() > 0:
-		intepret_events(play_back['bg'])
+		interpret_events(play_back['bg'])
 	if play_back['bgm'].size() > 0:
-		if rollBackMode:
+		if RBM:
 			var bgm = play_back['bgm']
 			if _cur_bgm != bgm['bgm']:
-				intepret_events(bgm)
+				interpret_events(bgm)
 		else:
-			intepret_events(play_back['bgm'])
-	if play_back['screen'].size() > 0:
-		intepret_events(play_back['screen'])
-	if play_back['camera'].size() > 0:
+			interpret_events(play_back['bgm'])
+	if play_back.has('screen'):
+		interpret_events(play_back['screen'])
+	if play_back.has('camera'):
 		camera.set_camera(play_back['camera'])
 	if play_back.has('weather'):
 		change_weather(play_back['weather']['weather'], false)
@@ -1047,18 +1067,17 @@ func load_playback(play_back, rollBackMode = false):
 		var loc = d['loc']
 		dkeys.erase('loc')
 		var uid = dkeys[0]
-		if rollBackMode:
+		if RBM:
 			onStageCharas.push_back(uid)
 			if stage.is_on_stage(uid):
 				stage.change_pos(uid, parse_loc(loc))
 				stage.change_expression(uid, d[uid])
 			else:
-				intepret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+				interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
 		else:
-			intepret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+			interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
 	
-	if onStageCharas.size() != 0 and rollBackMode:
-		stage._remove_on_rollback(onStageCharas)
+	if RBM: stage.remove_on_rollback(onStageCharas)
 	
 	if play_back['nvl'] != '':
 		nvl_on()
@@ -1100,24 +1119,36 @@ func dvar_or_float(dvar:String):
 		vn.error('Variable is not a dvar and is not a valid float.')
 	return output
 
-func float_text(ev: Dictionary) -> void:
+func flt_text(ev: Dictionary) -> void:
 	var wt = ev['wait']
 	ev['float'] = fun.dvarMarkup(ev['float'])
 	var loc = Vector2(600,300)
 	if ev.has('loc'): loc = ev['loc']
 	var in_t = 1
 	if ev.has('fadein'): in_t = ev['fadein']
-	var f = floatText.instance()
+	var f = load(float_text).instance()
 	if ev.has('font') and ev['font'] != "" and ev['font'] != "default":
 		f.set_font(vn.ROOT_DIR + ev['font'])
+	if ev.has('dir'):
+		var speed = 30
+		if ev.has('speed'): speed = ev['speed']
+		f.set_movement(ev['dir'], speed)
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:
 		f.display(ev['float'], ev['time'], in_t, loc)
 	else:
 		f.display(ev['float'], wt, in_t, loc)
 	
-	if vn.FLOAT_HIS:
-		game.history.push_back(["", ev['float']])
+	if ev.has('hist') and (parse_true_false(ev['hist'])):
+		var who = ''
+		if ev.has('who'): who = ev['who']
+		if ev.has('voice'):
+			latest_voice = ev['voice']
+			voice(ev['voice'], false)
+			game.history.push_back([who, ev['float'], latest_voice])
+		else:
+			latest_voice = null
+			game.history.push_back([who, ev['float']])
 		
 	wait(wt)
 
@@ -1137,7 +1168,7 @@ func nvl_on():
 	clear_boxes()
 	hide_boxes()
 	dialogbox.get_node('autoTimer').stop()
-	nvlBox = load("res://GodetteVN/fundamentals/details/nvlBox.tscn").instance()
+	nvlBox = load(vn.DEFAULT_NVL).instance()
 	nvlBox.connect('load_next', self, 'trigger_accept')
 	vnui.add_child(nvlBox)
 	nvlBox.get_node('autoTimer').start()
@@ -1189,14 +1220,24 @@ func hide_UI(show=false):
 
 
 func hide_boxes():
+	hide_all_boxes = true
 	get_node('VNUI/textBox').visible = false
 	get_node('VNUI/nameBox').visible = false
 	
 func show_boxes():
-	if not hide_all_boxes:
+	if hide_all_boxes:
 		get_node('VNUI/textBox').visible = true
 		get_node('VNUI/nameBox').visible = true
+		hide_all_boxes = false
 		
+func _hide_namebox(uid:String):
+	if not hide_all_boxes:
+		get_node('VNUI/nameBox').visible = true
+	if chara.all_chara.has(uid):
+		var info = chara.all_chara[uid]
+		if info.has('no_nb') and info['no_nb']:
+			get_node('VNUI/nameBox').visible = false
+	
 
 func dimming(c : Color):
 	get_node('background').modulate = c
@@ -1219,8 +1260,7 @@ func system(ev : Dictionary):
 				QM.reset_skip()
 				
 		"clear": # clears the dialog box
-			dialogbox.text = ""
-			speaker.text = ""
+			clear_boxes()
 			
 		"rollback", "roll_back" ,"RB":
 			if temp[1] == "clear":
@@ -1262,10 +1302,8 @@ func system(ev : Dictionary):
 		
 		"boxes":
 			if temp[1] == "on":
-				hide_all_boxes = false
 				show_boxes()
 			elif temp[1] == "off":
-				hide_all_boxes = true
 				hide_boxes()
 				
 		"scroll":
@@ -1276,14 +1314,12 @@ func system(ev : Dictionary):
 				
 		"all":
 			if temp[1] == "on":
-				hide_all_boxes = false
 				no_scroll = false
 				QM.visible = true
 				QM.hiding = false
 				self.no_right_click = false
 				show_boxes()
 			elif temp[1] == "off":
-				hide_all_boxes = true
 				no_scroll = true
 				QM.visible = false
 				QM.hiding = true
@@ -1296,6 +1332,14 @@ func system(ev : Dictionary):
 func parse_loc(loc, ev = {}) -> Vector2:
 	if typeof(loc) == 5: # 5 = Vector2
 		return loc
+	
+	if typeof(loc) == 4 and loc == "R":
+		var v = get_viewport().size
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		var rndv = Vector2(rng.randf_range(100, v.x-100),\
+		rng.randf_range(80, v.y-80))
+		return rndv
 	
 	var vec = loc.split(" ")
 	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
@@ -1331,7 +1375,8 @@ func parse_color(color, ev = {}) -> Color:
 			else:
 				return Color(temp2[0], temp2[1], temp2[2], temp2[3])
 		else:
-			vn.error("Expecting value of the form flaot1 float2 float3( float4) after color.", ev)
+			print("Error event: " + str(ev))
+			push_error("Expecting value of the form flaot1 float2 float3( float4) after color.")
 			return Color()
 
 func parse_true_false(truth, ev = {}) -> bool:
@@ -1342,9 +1387,9 @@ func parse_true_false(truth, ev = {}) -> bool:
 	elif truth == "false":
 		return false
 	else:
-		vn.error("Expecting true or false after this indicator.", ev)
+		print("Error event: " + str(ev))
+		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
-
 
 func _dialog_state_reset():
 	if nvl:

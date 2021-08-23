@@ -63,9 +63,6 @@ func _on_Timer_timeout():
 	set_process(false)
 	self.offset = default_offset
 	
-func _correct_zm(v:Vector2) -> Vector2:
-	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
-	
 	
 func camera_move(v:Vector2, t:float, mode = 'linear'):
 	if t <= 0.05:
@@ -81,7 +78,7 @@ func camera_move(v:Vector2, t:float, mode = 'linear'):
 		tween.queue_free()
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
-	zm = _correct_zm(zm)
+	zm = fun.correct_scale(zm)
 	var m = fun.movement_type(mode)
 	var tween1 = Tween.new()
 	var tween2 = Tween.new()
@@ -98,7 +95,7 @@ func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	tween2.queue_free()
 
 func zoom(zm:Vector2, off = Vector2(1,1)):
-	zm = _correct_zm(zm)
+	zm = fun.correct_scale(zm)
 	# by default, zoom is instant
 	self.offset = off
 	self.zoom = zm

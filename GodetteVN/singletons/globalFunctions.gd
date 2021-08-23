@@ -138,3 +138,12 @@ func dvarMarkup(words:String):
 	
 	return output
 
+#---------------------------------------------------------------------
+# Used if you only want your scale/zoom parameters to be between 0 and 1.
+# Notice sometimes for scale, you want to allow bigger scale. (This is not
+# recommended however, because this might destroy the image)
+func correct_scale(v:Vector2) -> Vector2:
+	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
+
+#---------------------------------------------------------------------
+# String parsing functions

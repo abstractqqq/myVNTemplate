@@ -13,8 +13,14 @@ var main_block = [
 	# start of content
 	{"bg": "condo.jpg"},
 	{"fadein": 2},
-	{'chara': "female join", "loc": "1600 600", "expression":""},
+	{"vo": "This is vo talking."},
+	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
+	"attribute for any talking characters in characterManager.gd."},
+	{'chara': "female join", "loc": "R"},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
+	{"female":"In case you haven't noticed, I am joining the scene at location R, which stands for random."},
+	{"female":"This is a new feature. For all events with the field loc, you can put R for a random position."},
+	{"female":"This is certainly not ideal for character's joining location, but this is just an example."},
 	{'female smile1': 'Let me show you a cool new feature.'},
 	{'female': "Suppose I am very confused now."},
 	{'chara':'female add', 'path':'/GodetteVN/sfxScenes/questionMark.tscn','at':'head'},
@@ -26,17 +32,29 @@ var main_block = [
 	"temporary, like question marks, or blood bleeding, or other short flashy stuff."},
 	{'female':'The special uid "all" can also be used here provided that all characters have the '+\
 	"point defined."},
+	{'female':"(Technical side: if for some characters the point head is defined, and some not "+\
+	" then this will be applied to all character with that point and with in_all = true)"},
 	{'female': "To see how this point 'head' is defined, you can go to female.tscn and see."},
-	{'female': 'The idea is to create Node2D as subnodes, and rename them beginning with a _ .'},
-	{'female': 'I believe that will add a lot room for customization, if you know how to make these '+\
+	{'female': 'The idea is to create Node2D as subnodes, and rename it beginning with a _ .'},
+	{'female': 'I believe that will add a lot room for customization, provided you know how to make these '+\
 	"special effects in Godot. (And don't forget to queuefree them.)"},
 	{"female": "What should I eat today?", 'choice' : 'food', 'id':0},
+	{"female":"Ok, let me show you how to put an image on the side."},
+	{'side':'female_smile.png'},
+	{'female':'Lastly, I want show you how to use centered text!'},
+	{'center':"Center text can be called like this", "who":'female'},
+	{"female":"Notice that although my name is not displayed in the centered text, in history," +\
+	" my name is still displayed."},
+	{"female":"This is because it looks visually awkward to display a name for a centered text."},
+	{"female": "By default, the narrator will be the one who says the centered text, but you can "+\
+	" change this by adding an optional who field. If you have voice for that line, you can add an "+\
+	"optional voice field too."},
+	{"female":"But remember that the name is not going to be displayed in centered text. (only in history)"},
 	{"female": "When your game ends, do the following."},
 	{"female": "Use a GDscene change to go back to your designated ending scene. In this demo, the ending "+\
 	"scene will be the title screen. But don't forget to change it to your actual ending if you "+\
 	"have one!"},
-	{'side':'female_smile.png'},
-	{"female": "Thank you so much for bearing with me!"},
+	{"female": "Okay, thank you so much for bearing with me!"},
 	{"fadeout":2},
 	{'bgm': ''},
 	{"GDscene": vn.ending_scene_path}

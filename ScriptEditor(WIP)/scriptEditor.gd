@@ -1,6 +1,5 @@
 extends ColorRect
 
-var floatText = preload("res://GodetteVN/fundamentals/details/floatText.tscn")
 var fname = ""
 
 func _ready():
@@ -33,11 +32,11 @@ func save_as_txt(ctrlS=false):
 	else:
 		var error = file.open(vn.SCRIPT_DIR + fname + '.txt', File.WRITE)
 		if error == OK:
-			file.store_line($TextEdit.text)
+			var new_text = $TextEdit.text.replace("\t","")
+			file.store_line(new_text)
 			if ctrlS:
-				var ft = floatText.instance()
-				ft.display("[color=#ff0000]Saved[/color].", 1,1,Vector2(1000,200))
-				add_child(ft)
+				# If control + S short cut is used...
+				return
 			else:
 				$AcceptDialog.dialog_text = "Saved as .txt successfully. You can find the text in "+\
 				"the VNscript folder."

@@ -37,6 +37,7 @@ func change_expression(e : String) -> bool:
 		if fade_on_change and prev_exp != "":
 			var dummy = Sprite.new()
 			dummy.name = "_dummy"
+			dummy.scale = self.scale
 			dummy.position = self.position
 			dummy.texture = expFrames.get_frame(prev_exp,0)
 			stage.add_child(dummy)

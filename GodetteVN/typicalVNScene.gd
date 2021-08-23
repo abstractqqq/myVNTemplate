@@ -41,15 +41,8 @@ func _ready():
 		
 		# When you're in development mode, it's a good idea to be able to skip around without constraint.
 		
-		# Theoretically, given the structure of dialogs being used here, it is possible
-		# to start the dialog from any point in the dialog file.
-		# However, that is not ideal because if you do that, you might run into bugs
-		# like calling character action with character hasn't joined the stage or like
-		# bg not initialized. That defeats the purpose of testing.
-		# So I think it's always a good idea to start from the start. 
-		
-		# Once you call the function fileRelated.spoiler_proof_dialog(..,..) once
+
+		# Once you call the function fileRelated.make_spoilerproof once
 		# Then even if you erase this function, this dialog will still be spoiler proof.
-		# So to revert this, (to make all dialogs in this scene freely skippable again), 
-		# you will need to go to GodetteVN/config.json and manually delete the 
-		# dictionary which has key == this scene path.
+		# So to revert this, call reset_spoilerproof(scene_path:String)
+		# in fileRelate.gd

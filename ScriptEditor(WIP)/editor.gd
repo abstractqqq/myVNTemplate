@@ -92,6 +92,7 @@ func character_action(lead:String, sub:String):
 		"fadein": set_line(lineNum, "chara :: %s fadein ; loc :: ; expression :: default ; time :: 1 ;" % [lead])
 		"shake": set_line(lineNum, "chara :: %s shake ; amount :: 250 ; time :: 2 ;" % [lead])
 		"fadeout": set_line(lineNum, "chara :: %s fadeout ; time :: 1 ;" % [lead])
+		"add": set_line(lineNum, "chara :: %s add ; path :: /ur/path/to/ur/scene.tscn ; at :: point;" % [lead])
 		"spin": set_line(lineNum, "chara :: %s spin ; deg :: 360 ; time :: 1 ; type :: linear ; sdir :: 1 ;" % [lead])
 		"leave": set_line(lineNum, "chara :: %s leave ;" % [lead])
 		"vpunch": set_line(lineNum, "chara :: %s vpunch ;" % [lead])

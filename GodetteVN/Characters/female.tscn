@@ -10,3 +10,6 @@ script = ExtResource( 2 )
 display_name = "A"
 unique_id = "female"
 name_color = Color( 0.498039, 0.0431373, 0.0431373, 1 )
+
+[node name="_head" type="Node2D" parent="."]
+position = Vector2( 80.8174, -336.739 )

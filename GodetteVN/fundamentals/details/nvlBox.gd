@@ -31,7 +31,10 @@ func _ready():
 	autoTimer.stop()
 	timer.stop()
 
-func set_dialog(uid : String, words : String, cps = vn.cps):
+func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false):
+	if suppress_name: # if name should not be shown, as in the center case treat it as if it is the narrator
+		uid = ""
+		
 	if (uid != last_uid):
 		last_uid = uid
 		if uid == "":

@@ -29,21 +29,23 @@ const SAVE_DIR = "user://save/"
 const SCRIPT_DIR = "res://VNScript/"
 const THUMBNAIL_DIR = "user://temp/"
 const FONT_DIR = "res://fonts/"
-# Import screen paths
+# Important screen paths
 const SETTING_PATH = "res://GodetteVN/fundamentals/settings.tscn"
 const LOAD_PATH = "res://GodetteVN/fundamentals/loadScreen.tscn"
 const SAVE_PATH = "res://GodetteVN/fundamentals/saveScreen.tscn"
 const SAVESLOT = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
 const HIST_PATH = "res://GodetteVN/fundamentals/historyScreen.tscn"
-
-# size of thumbnail on save slot. Has to manually adjust the TextureRect's size as well
+# Important small things
+const DEFAULT_CHOICE = "res://GodetteVN/fundamentals/choiceBar.tscn"
+const DEFAULT_FLOAT = 'res://GodetteVN/fundamentals/details/floatText.tscn'
+const DEFAULT_NVL = "res://GodetteVN/fundamentals/details/nvlBox.tscn"
+# size of thumbnail on save slot. Has to manually adjust the TextureRect's size 
+# in textBoxInHistory as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 110
 # Encryption password used for saves
 const PASSWORD = "nanithefuck"
 
-# Should float text be recorded in history?
-const FLOAT_HIS = false
 
 # Dim color
 const DIM = Color(0.86,0.86,0.86,1)
@@ -53,7 +55,7 @@ const NVL_DIM = Color(0.2,0.2,0.2,1)
 # Other constants used throughout the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 # Bad names for dvar
-const BAD_NAMES = ["nw", "nl", "sm", 'dc']
+const BAD_NAMES = ["nw", "nl", "sm", 'dc','color']
 # Bad uids for characters
 const BAD_UIDS = ['all', '']
 

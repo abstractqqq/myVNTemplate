@@ -1,9 +1,26 @@
 extends RichTextLabel
+class_name FloatText
 
-func set_font(font_path:String):
-	self.add_font_override("normal_font", load(font_path))
+var speed = 30
+var dir = Vector2()
+var move = false
 
-func display(tx:String, t:float, in_t:float, loc: Vector2):
+func set_movement(d:Vector2, sp:float = 30):
+	dir = d.normalized()
+	speed = sp
+	move = true
+	
+func _process(delta):
+	if move:
+		rect_position += speed*delta*dir
+
+
+func set_font(font:String):
+	self.add_font_override("normal_font", load(font))
+
+func display(tx:String, t:float, in_t:float, loc: Vector2, font:String = ''):
+	if font != '':
+		self.add_font_override("normal_font", load(font))
 	self.rect_position = loc
 	self.bbcode_text = tx
 	var anim_player = get_node("AnimationPlayer")

@@ -38,8 +38,7 @@ var nvl_text = ''
 # Current characters on stage together w/ their expressions 
 
 
-var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'camera':{'zoom':Vector2(1,1), 'offset':Vector2(0,0)}, 'screen':{}, 'charas':[],\
- 'nvl': ''}
+var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'charas':[], 'nvl': ''}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()

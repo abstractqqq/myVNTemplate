@@ -30,8 +30,9 @@ func get_character_info(uid:String):
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
-func reset_sideImage():
+func reset_sideImage(sc:Vector2 = Vector2(1,1)):
 	$other/sideImage.texture = null
+	$other/sideImage.scale = sc
 
 
 func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
@@ -97,8 +98,6 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 			c.position = location
 			c.fadein(time)
 			c.change_expression(expression)
-	
-
 
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
@@ -197,7 +196,7 @@ func all_on_stage():
 			
 	return output
 
-func _remove_on_rollback(arr):
+func remove_on_rollback(arr):
 	for n in $characters.get_children():
 		if not (n.unique_id in arr ):
 			n.call_deferred('free')

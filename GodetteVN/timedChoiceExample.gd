@@ -31,7 +31,7 @@ var main_block = [
 	# if out of time, then QM is turned on in out_of_time block, same with fried rice.
 	 
 	{"female": "It's quite easy, right?"},
-	{"female": "There are some technical details you need to take care of, like disabling save or hiding quick menu."},
+	{"female": "There are some technical details you need to consider, like whether you should disable save or hide quick menu."},
 	{"female":"But otherwise, it is pretty straight forward."},
 	{"female":"Thank you."},
 	{"fadeout":2},

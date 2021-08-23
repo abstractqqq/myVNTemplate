@@ -58,7 +58,9 @@
 				"time": 4,
 				"loc": "400 400",
 				"fadein": 1,
-				"font": "/fonts/ARegular.tres"
+				"font": "/fonts/ARegular.tres",
+				"dir": "R",
+				"speed": 100
 			},
 			{
 				"float": "[color=#ff0000]Hello World[/color]",
@@ -66,7 +68,8 @@
 				"time": 4,
 				"loc": "400 500",
 				"fadein": 1,
-				"font": "default"
+				"font": "default",
+				"dir": "right"
 			},
 			{
 				"female": "Let me tint the screen"

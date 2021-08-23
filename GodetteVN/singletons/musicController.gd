@@ -1,5 +1,7 @@
 extends Node
 
+var bgm = ''
+
 func play_bgm(path : String, vol = 0):
 	finish_anim()
 	$bgm1.stop()
@@ -9,6 +11,7 @@ func play_bgm(path : String, vol = 0):
 	
 func fadeout(time: float):
 	finish_anim()
+	bgm = ''
 	var vol = $bgm1.volume_db
 	var animation = Animation.new()
 	var track_index = animation.add_track(Animation.TYPE_VALUE)
@@ -49,6 +52,7 @@ func stop_voice():
 	$voice.stop()
 
 func stop_bgm():
+	bgm = ''
 	$bgm1.stop()
 	
 func pause_bgm():
