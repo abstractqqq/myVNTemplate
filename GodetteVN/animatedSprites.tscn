@@ -8,6 +8,7 @@
 [node name="animationTest" type="Node2D"]
 script = ExtResource( 1 )
 debug_mode = true
+float_text = "res://GodetteVN/fundamentals/details/floatText.tscn"
 
 [node name="background" parent="." instance=ExtResource( 4 )]
 

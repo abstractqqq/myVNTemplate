@@ -5,8 +5,8 @@ export(String, FILE, "*.json") var dialog_json
 export(bool) var debug_mode
 export(String) var scene_description
 
-export(String, FILE, "*.tscn") var choice_bar = vn.DEFAULT_CHOICE
-export(String, FILE, "*.tscn") var float_text = vn.DEFAULT_FLOAT
+export(String, FILE, "*.tscn") var choice_bar = ''
+export(String, FILE, "*.tscn") var float_text = ''
 
 # Core data
 var current_index : int = 0
