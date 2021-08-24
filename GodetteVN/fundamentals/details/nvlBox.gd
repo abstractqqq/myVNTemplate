@@ -115,7 +115,7 @@ func clear():
 func _on_autoTimer_timeout():
 	if vn.skipping:
 		force_finish()
-		skipCounter = (skipCounter + 1)%2
+		skipCounter = (skipCounter + 1)%(vn.SKIP_SPEED)
 		if skipCounter == 1:
 			emit_signal("load_next")
 	else:

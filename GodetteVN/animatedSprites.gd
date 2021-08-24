@@ -7,7 +7,7 @@ extends generalDialog
 var main_block = [
 	
 	# start of content
-	{"fadein": 1},
+	{"fadein": 2},
 	{'chara': "gt join", "loc": "1600 650"},
 	{"gt":"Suppose I am very confused right now."},
 	{"chara":"gt add", "path":"/GodetteVN/sfxScenes/questionMark.tscn", "at":"head"},

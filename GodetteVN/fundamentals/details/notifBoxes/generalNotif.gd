@@ -57,7 +57,7 @@ func _on_yesButton_pressed():
 			stage.reset_sideImage()
 			stage.remove_chara('absolute_all')
 			#----------------------------------------
-			var error = get_tree().change_scene(vn.ROOT_DIR + vn.main_menu_path)
+			var error = get_tree().change_scene(vn.ROOT_DIR + vn.title_screen_path)
 			if error == OK:
 				vn.reset_states()
 		"override":

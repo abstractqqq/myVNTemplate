@@ -17,6 +17,7 @@ var main_block = [
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
 	"attribute for any talking characters in characterManager.gd."},
 	{'chara': "female join", "loc": "R"},
+	{'wait':3},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
 	{"female":"In case you haven't noticed, I am joining the scene at location R, which stands for random."},
 	{"female":"This is a new feature. For all events with the field loc, you can put R for a random position."},
