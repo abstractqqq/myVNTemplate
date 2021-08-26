@@ -7,12 +7,10 @@ func _notification(what):
 	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
 		notif.clear()
 		notif.show("quit")
-		reset_auto()
-		reset_skip()
+		reset_auto_skip()
 
 func _on_SettingButton_pressed():
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 	var setting = load(vn.SETTING_PATH)
 	get_parent().add_child(setting.instance())
 
@@ -54,15 +52,13 @@ func _on_mainButton_mouse_exited():
 	vn.noMouse = false
 
 func _on_historyButton_pressed():
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 	var hist = load(vn.HIST_PATH)
 	get_parent().add_child(hist.instance())
 
 
 func _on_saveButton_pressed():
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 	fun.create_thumbnail()
 	var save = load(vn.SAVE_PATH)
 	get_parent().add_child(save.instance())
@@ -71,14 +67,12 @@ func _on_saveButton_pressed():
 func _on_quitButton_pressed():
 	notif.clear()
 	notif.show("quit")
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 	
 func _on_mainButton_pressed():
 	notif.clear()
 	notif.show("main")
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 
 
 func _on_autoButton_pressed():
@@ -126,6 +120,8 @@ func reset_skip():
 	sk.disabled = false
 	sk.modulate = Color(1,1,1,1)
 	vn.skipping = false
+	
+
 
 func _on_loadButton_mouse_entered():
 	vn.noMouse = true
@@ -134,15 +130,16 @@ func _on_loadButton_mouse_exited():
 	vn.noMouse = false
 
 func _on_loadButton_pressed():
-	reset_auto()
-	reset_skip()
+	reset_auto_skip()
 	var loading = load(vn.LOAD_PATH)
 	get_parent().add_child(loading.instance())
 
-
-func disable_skip_auto():
+func reset_auto_skip():
 	reset_auto()
 	reset_skip()
+
+func disable_skip_auto():
+	reset_auto_skip()
 	get_node("autoButton").disabled = true
 	get_node("skipButton").disabled = true
 	

@@ -32,7 +32,7 @@ var main_block = [
 	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
 	{"chara":"gt move", "loc": Vector2(200,650), "time":2, 'type': "expo"},
 	{'wait':3},
-	{'fadeout':1},
+	{"screen":"fade in", 'time':1},
 	{"GDscene": vn.ending_scene_path}
 	# end of content
 ]

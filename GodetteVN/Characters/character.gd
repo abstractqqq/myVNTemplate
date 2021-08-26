@@ -34,21 +34,7 @@ func change_expression(e : String) -> bool:
 		var prev_exp = current_expression
 		play(e)
 		current_expression = e
-		if fade_on_change and prev_exp != "":
-			var dummy = Sprite.new()
-			dummy.name = "_dummy"
-			dummy.scale = self.scale
-			dummy.position = self.position
-			dummy.texture = expFrames.get_frame(prev_exp,0)
-			stage.add_child(dummy)
-			var tween = Tween.new()
-			tween.connect("tween_completed", self, "clear_dummy")
-			dummy.add_child(tween)
-			var m = self.modulate
-			tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
-				Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-			tween.start()
-		
+		_dummy_fadeout(expFrames, prev_exp)
 		return true
 	else:
 		print("Warning: " + e + ' not found for character with uid ' + unique_id)
@@ -103,6 +89,7 @@ func fadeout(time : float):
 	tween.queue_free()
 	self.queue_free()
 	
+	
 func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 	if sdir > 0:
 		sdir = 1
@@ -116,6 +103,23 @@ func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
 	rotation_degrees = 0
+
+func _dummy_fadeout(expFrames, prev_exp:String):
+	if fade_on_change and prev_exp != "":
+		var dummy = Sprite.new()
+		dummy.name = "_dummy"
+		dummy.scale = self.scale
+		dummy.position = self.position
+		dummy.texture = expFrames.get_frame(prev_exp,0)
+		stage.add_child(dummy)
+		var tween = Tween.new()
+		tween.connect("tween_completed", self, "clear_dummy")
+		dummy.add_child(tween)
+		var m = self.modulate
+		tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
+			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+		tween.start()
+
 
 #----------------------------------------------------------------------------
 # Explanation on this somewhat awkward character movement code

@@ -19,7 +19,7 @@ extends GeneralDialog
 var main_block = [
 	
 	# start of content
-	{"fadein": 1},
+	{"screen":"fade out", 'time':1}, # fade out means out from dark to normal
 	{'chara': "gt join", "loc": "1600 650"},
 	{"gt": "Here we demonstrate parallax background and show that it is compatible with all character actions."},
 	{"gt": "You can look at the top left corner to see the events controlling everything."},
@@ -40,7 +40,7 @@ var main_block = [
 	{"chara":"gt move", "loc": Vector2(200,650), "time":2, 'type': "expo"},
 	{"gt":"Thanks a lot to saukgp on itch who provides these parallax backgrounds for free!"},
 	{'wait':3},
-	{'fadeout':1},
+	{"screen":"fade in", 'time':1}, # fade in means fade into darkness
 	{"GDscene": vn.ending_scene_path}
 	# end of content
 ]

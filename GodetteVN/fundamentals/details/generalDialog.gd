@@ -58,8 +58,7 @@ func set_bg_path(node_path:String):
 func _input(ev):
 	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting \
 	and not vn.inNotif and not vn.skipping:
-		QM.reset_auto()
-		QM.reset_skip()
+		QM.reset_auto_skip()
 		if game.rollback_records.size() >= 1:
 			waiting_acc = false
 			idle = false
@@ -103,8 +102,7 @@ func _input(ev):
 		if ev.is_action_pressed('vn_accept'):
 			if vn.auto_on or vn.skipping:
 				if not vn.noMouse:
-					QM.reset_auto()
-					QM.reset_skip()
+					QM.reset_auto_skip()
 				else:
 					return
 			else:
@@ -112,8 +110,7 @@ func _input(ev):
 					check_dialog()
 		else: # not mouse
 			if vn.auto_on or vn.skipping:
-				QM.reset_auto()
-				QM.reset_skip()
+				QM.reset_auto_skip()
 			elif not vn.inNotif and not vn.inSetting:
 				check_dialog()
 	
@@ -154,8 +151,6 @@ func interpret_events(event):
 				continue
 			else: # condition fails.
 				auto_load_next()
-		{"fadein"}: fadein(ev["fadein"])
-		{"fadeout"}: fadeout(ev["fadeout"])
 		{"screen",..}: screen_effects(ev)
 		{"bg",..}: change_background(ev)
 		{"chara",..}: character_event(ev)
@@ -180,7 +175,7 @@ func interpret_events(event):
 		{'history', ..}: history_manipulation(ev)
 		{'float', 'wait',..}: flt_text(ev)
 		{'voice'}:voice(ev['voice'])
-		{'id'}:auto_load_next()
+		{'id'}, {}:auto_load_next()
 		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
@@ -217,6 +212,7 @@ func auto_load_next():
 	current_index += 1
 	game.currentIndex = current_index
 	if vn.skipping:
+		yield(get_tree(), "idle_frame")
 		if not game.checkSkippable():
 			vn.skipping = false
 			QM.reset_skip()
@@ -498,38 +494,15 @@ func change_background(ev : Dictionary) -> void:
 			push_error("Unknown transition type given in bg change event.")
 			
 		var eff_dur = ev[eff_name]/2 # transition effect total duration / 2
-		var t_data = null
-		if eff_name != "fade" and eff_name != "pixelate":
-			t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
-			t_data.duration = eff_dur
-			if ev.has('color'): t_data.color = ev['color']
-		
-		if t_data != null and t_data is eh_TransitionData:
-			screen.change_transition_data_oneshot(t_data)
-	
+		var color = Color.black
+		if ev.has('color'): color = ev['color']
 		clear_boxes()
 		hide_boxes()
 		QM.visible = false
-		if eff_name == "fade":
-			if ev.has('color'):
-				screen.play_fade_in(ev['color'],eff_dur)
-			else:
-				screen.play_fade_in(Color.black,eff_dur)
-		elif eff_name == "pixelate":
-			screen.pixel_in(eff_dur)
-		else:
-			screen.play_transition_in()
+		screen.in_transition(eff_name, color, eff_dur)
 		yield(screen, "transition_mid_point_reached")
 		bg.bg_change(path)
-		if eff_name == "fade":
-			if ev.has('color'):
-				screen.play_fade_out(ev['color'],eff_dur)
-			else:
-				screen.play_fade_out(Color.black,eff_dur)
-		elif eff_name == "pixelate":
-			screen.pixel_out(eff_dur)
-		else:
-			screen.play_transition_out()
+		screen.out_transition(eff_name, color, eff_dur)
 		yield(screen, "transition_finished")
 		show_boxes()
 		if not QM.hiding: QM.visible = true
@@ -541,10 +514,8 @@ func change_background(ev : Dictionary) -> void:
 func change_scene_to(path : String):
 	stage.remove_chara('absolute_all')
 	stage.reset_sideImage()
-	# music.stop_voice()
 	change_weather('', false)
-	QM.reset_auto()
-	QM.reset_skip()
+	QM.reset_auto_skip()
 	fileRelated.write_to_config()
 	if path == vn.title_screen_path:
 		game.rollback_records = []
@@ -559,8 +530,6 @@ func change_scene_to(path : String):
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
 			self.queue_free()
-		else:
-			vn.error('p')
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
@@ -646,7 +615,8 @@ func _a_what_b(is_or:bool, a:bool, b:bool)->bool:
 		return (a and b)
 #--------------- Related to transition and other screen effects-----------------
 func screen_effects(ev: Dictionary):
-	var ef = ev['screen']
+	var temp = ev['screen'].split(" ")
+	var ef = temp[0]
 	match ef:
 		"", "off": 
 			screen.removeLasting()
@@ -654,7 +624,22 @@ func screen_effects(ev: Dictionary):
 		"tint": tint(ev)
 		"tintwave": tint(ev)
 		"flashlight": flashlight(ev)
-		_: vn.error('Unknown screen effect.' , ev)
+		_:
+			if temp.size()==2 and not vn.skipping:
+				var mode = temp[1]
+				var c = Color.black
+				var t = 1
+				if ev.has('time'): t = ev['time']
+				if ev.has('color'): c = ev['color']
+				if ef in vn.TRANSITIONS:
+					if mode == "in":
+						screen.in_transition(ef,c,t)
+						yield(screen, "transition_mid_point_reached")
+					elif mode == "out":
+						screen.out_transition(ef,c,t)
+						yield(screen, "transition_finished")
+						
+				screen.reset()
 	
 	if !vn.inLoading:
 		auto_load_next()
@@ -665,27 +650,27 @@ func flashlight(ev:Dictionary):
 	screen.flashlight(sc)
 	game.playback_events['screen'] = ev
 
-func fadein(time : float, auto_forw:bool = true) -> void:
-	clear_boxes()
-	if not self.nvl: show_boxes()
-	QM.visible = false
-	if not vn.skipping:
-		screen.play_fade_in(Color.black, time)
-		yield(get_tree().create_timer(time), "timeout")
+#func fadein(time : float, auto_forw:bool = true) -> void:
+#	clear_boxes()
+#	if not self.nvl: show_boxes()
+#	QM.visible = false
+#	if not vn.skipping:
+#		screen.play_fade_in(Color.black, time)
+#		yield(get_tree().create_timer(time), "timeout")
+#	
+#	if not QM.hiding: QM.visible = true
+#	if auto_forw: auto_load_next()
 	
-	if not QM.hiding: QM.visible = true
-	if auto_forw: auto_load_next()
-	
-func fadeout(time : float, auto_forw:bool = true) -> void:
-	clear_boxes()
-	hide_boxes()
-	QM.visible = false
-	if not vn.skipping:
-		screen.play_fade_out(Color.black, time)
-		yield(get_tree().create_timer(time), "timeout")
-	if not QM.hiding: QM.visible = true
-	if not self.nvl: show_boxes()
-	if auto_forw: auto_load_next()
+#func fadeout(time : float, auto_forw:bool = true) -> void:
+#	clear_boxes()
+#	hide_boxes()
+#	QM.visible = false
+#	if not vn.skipping:
+#		screen.play_fade_out(Color.black, time)
+#		yield(get_tree().create_timer(time), "timeout")
+#	if not QM.hiding: QM.visible = true
+#	if not self.nvl: show_boxes()
+#	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
 	var time = 1
@@ -713,11 +698,11 @@ func sfx_player(ev : Dictionary) -> void:
 		var anim = target_scene.get_node('AnimationPlayer')
 		if anim.has_animation(ev['anim']):
 			anim.play(ev['anim'])
-			auto_load_next()
 		else:
-			vn.error('Animation not found.', ev)
-	else: # Animation is not specified, that means it will automatically play
-		auto_load_next()
+			vn.error("Animation not found.", ev)
+			assert(false)
+
+	auto_load_next()
 
 func camera_effect(ev : Dictionary) -> void:
 	var ef_name = ev['camera']
@@ -1304,8 +1289,7 @@ func system(ev : Dictionary):
 			# at current index - 1 because at current index, the event is sys:auto_save
 			fun.make_a_save("[Auto Save] ",0,1)
 		"make_save", "MS":
-			QM.reset_skip()
-			QM.reset_auto()
+			QM.reset_auto_skip()
 			notif.show("make_save")
 			var cur_notif = notif.get_current_notif()
 			yield(cur_notif, "clicked")

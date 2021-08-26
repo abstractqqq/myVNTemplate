@@ -11,19 +11,24 @@ var food_choices = [
 var main_block = [
 	
 	# start of content
-	{"bg": "condo.jpg", 'pixelate':2},
+	{"bg": "condo.jpg"},
+	{'screen':'pixelate out'},
 	{"vo": "This is vo talking."},
 	{"bg": "condo.jpg", 'sweep_right':2, 'color':Color.blueviolet},
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
 	"attribute for any talking characters in characterManager.gd."},
 	{"bg": "condo.jpg", 'circular_close':2, 'color':Color.pink},
-	{'chara': "female join", "loc": "1600 600"},
+	{'chara': "female fadein", "loc": "1600 600",'time':0.5},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
-	{"bg": "condo.jpg", 'curtain_left':2},
-	{'chara': "female move", "loc": "R", 'type':'instant'},
-	{"female":"In case you haven't noticed, I am joining the scene at location R, which stands for random."},
+	{"screen": "curtain_left in", 'time':1},
+	{'chara': "female move", "loc": "R", 'type':'quad', 'time':0.4},
+	{"screen": "curtain_left out", 'time':1},
+	{"female":"In case you haven't noticed, I am moving to location R, which stands for random."},
 	{"female":"This is a new feature. For all events with the field loc, you can put R for a random position."},
-	{"bg": "condo.jpg", 'fade':2},
+	{"chara":"female fadeout", 'time':0.5},
+	{"screen": "fade in", 'time':1},
+	{"chara":"female fadein", "loc": "500 600",'time':0.5},
+	{"screen": "fade out", 'time':1},
 	{"female":"This is certainly not ideal for character's joining location, but this is just an example."},
 	{'female smile1': 'Let me show you a cool new feature.'},
 	{'female': "Suppose I am very confused now."},
@@ -61,7 +66,7 @@ var main_block = [
 	"scene will be the title screen. But don't forget to change it to your actual ending if you "+\
 	"have one!"},
 	{"female": "Okay, thank you so much for bearing with me!"},
-	{"fadeout":2},
+	{"screen":"fade in", 'time':2},
 	{'bgm': ''},
 	{"GDscene": vn.ending_scene_path}
 	

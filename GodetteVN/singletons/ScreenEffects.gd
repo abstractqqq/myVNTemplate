@@ -86,6 +86,39 @@ func flashlight(sc : Vector2):
 	
 func clear_debug()->void:
 	get_node("debugger").text = ''
+	
+func in_transition(eff_name:String, color:Color, eff_dur:float):
+	if eff_name in vn.TRANSITIONS:
+		if eff_name == "fade":
+			play_fade_in(color, eff_dur)
+		elif eff_name == "pixelate":
+			pixel_in(eff_dur)
+		else:
+			var t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
+			t_data.duration = eff_dur
+			t_data.color = color
+			if t_data != null and t_data is eh_TransitionData:
+				change_transition_data_oneshot(t_data)
+			
+			play_transition_in()
+		
+func out_transition(eff_name:String, color:Color, eff_dur:float):
+	if eff_name in vn.TRANSITIONS:
+		if eff_name == "fade":
+			play_fade_out(color, eff_dur)
+		elif eff_name == "pixelate":
+			pixel_out(eff_dur)
+		else:
+			var t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
+			t_data.duration = eff_dur
+			t_data.color = color
+			if t_data != null and t_data is eh_TransitionData:
+				change_transition_data_oneshot(t_data)
+			
+			play_transition_out()
+			
+func reset():
+	_color_panel.visible = false
 
 ### eh's Public Methods --------------------------------------------------------------------------------
 
@@ -132,7 +165,6 @@ func play_fade_transition(color: Color = Color.black, duration: float = 0.5) -> 
 	play_fade_in(color, duration)
 	yield(self, "transition_mid_point_reached")
 	play_fade_out(color, duration)
-
 
 func change_transition_data_oneshot(data: eh_TransitionData) -> void:
 	var backup_transition: eh_TransitionData = transition_data

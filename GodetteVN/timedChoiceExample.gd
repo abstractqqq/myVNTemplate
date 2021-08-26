@@ -12,7 +12,7 @@ var main_block = [
 	
 	# start of content
 	{"bg": "condo.jpg"},
-	{"fadein": 2},
+	{"screen":"fade out", 'time':2},
 	{'chara': "female join", "loc": "1600 600", "expression":""},
 	{"female": "Let me show you how to do a timed choice in this example."},
 	
@@ -22,6 +22,8 @@ var main_block = [
 	
 	# optional
 	{"sys":"QM off"}, # hide quick menu to prevent player from saving during a timed choice
+	# If you don't do this, then the player can save during the timed choice,
+	# and when they load back the choice will no longer be timed
 	
 	# passing a Godot variable like this only works when your sfx scene has a variable 
 	# called params
@@ -34,7 +36,7 @@ var main_block = [
 	{"female": "There are some technical details you need to consider, like whether you should disable save or hide quick menu."},
 	{"female":"But otherwise, it is pretty straight forward."},
 	{"female":"Thank you."},
-	{"fadeout":2},
+	{"screen":"fade in", 'time':2},
 	{'bgm': ''},
 	{"GDscene": vn.ending_scene_path}
 	
