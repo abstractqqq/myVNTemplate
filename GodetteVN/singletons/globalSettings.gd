@@ -55,6 +55,11 @@ const NVL_DIM = Color(0.2,0.2,0.2,1)
 #Skip speed, multiple of 0.05
 const SKIP_SPEED:int = 2 # means skip is 1 left-click per 0.1s
 
+# Transitions
+const TRANSITIONS_DIR = "res://GodetteVN/fundamentals/details/transitions_data/"
+const TRANSITIONS = ['fade','sweep_left','sweep_right','sweep_up','sweep_down',
+	'curtain_left','curtain_right','circular_close','circular_open','pixelate']
+
 # Other constants used throughout the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 # Bad names for dvar

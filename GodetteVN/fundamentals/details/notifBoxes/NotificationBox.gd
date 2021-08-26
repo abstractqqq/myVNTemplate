@@ -1,5 +1,5 @@
 extends TextureRect
-class_name notificaionBox
+class_name NotificaionBox
 
 
 var type : String
@@ -51,8 +51,9 @@ func _on_yesButton_pressed():
 	match type:
 		"main":
 			fileRelated.write_to_config()
-			screenEffects.removeLasting()
-			screenEffects.weather_off()
+			screen.removeLasting()
+			screen.weather_off()
+			screen.clear_debug()
 			music.stop_bgm()
 			stage.reset_sideImage()
 			stage.remove_chara('absolute_all')

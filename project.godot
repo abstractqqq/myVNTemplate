@@ -9,6 +9,11 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "AnimatedSprite",
+"class": "Character",
+"language": "GDScript",
+"path": "res://GodetteVN/Characters/Character.gd"
+}, {
 "base": "Node2D",
 "class": "FakeWalker",
 "language": "GDScript",
@@ -19,30 +24,30 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/floatText.gd"
 }, {
+"base": "Node2D",
+"class": "GeneralDialog",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/GeneralDialog.gd"
+}, {
+"base": "TextureRect",
+"class": "NotificaionBox",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/notifBoxes/NotificationBox.gd"
+}, {
 "base": "Timer",
 "class": "ObjectTimer",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/helpClasses/ObjectTimer.gd"
-}, {
-"base": "AnimatedSprite",
-"class": "character",
-"language": "GDScript",
-"path": "res://GodetteVN/Characters/character.gd"
 }, {
 "base": "TextureButton",
 "class": "clickableObject",
 "language": "GDScript",
 "path": "res://GodetteVN/clickableObjects/clickableObject.gd"
 }, {
-"base": "Node2D",
-"class": "generalDialog",
+"base": "Resource",
+"class": "eh_TransitionData",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/generalDialog.gd"
-}, {
-"base": "TextureRect",
-"class": "notificaionBox",
-"language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.gd"
+"path": "res://GodetteVN/fundamentals/details/transitions_data/eh_TransitionData.gd"
 }, {
 "base": "Control",
 "class": "saveSlot",
@@ -55,13 +60,14 @@ _global_script_classes=[ {
 "path": "res://GodetteVN/fundamentals/details/stringCalculator.gd"
 } ]
 _global_script_class_icons={
+"Character": "",
 "FakeWalker": "",
 "FloatText": "",
+"GeneralDialog": "",
+"NotificaionBox": "",
 "ObjectTimer": "",
-"character": "",
 "clickableObject": "",
-"generalDialog": "",
-"notificaionBox": "",
+"eh_TransitionData": "",
 "saveSlot": "",
 "stringCalculator": ""
 }
@@ -75,15 +81,15 @@ config/icon="res://icon.png"
 
 [autoload]
 
-fileRelated="*res://GodetteVN/singletons/fileRelated.gd"
-vn="*res://GodetteVN/singletons/globalSettings.gd"
-game="*res://GodetteVN/singletons/gameProgress.gd"
-fun="*res://GodetteVN/singletons/globalFunctions.gd"
-chara="*res://GodetteVN/singletons/characterManager.gd"
-stage="*res://GodetteVN/singletons/characterStage.tscn"
-notif="*res://GodetteVN/singletons/notification.tscn"
-music="*res://GodetteVN/singletons/musicController.tscn"
-screenEffects="*res://GodetteVN/singletons/screenEffects.tscn"
+fileRelated="*res://GodetteVN/singletons/FileRelated.gd"
+vn="*res://GodetteVN/singletons/GlobalSettings.gd"
+game="*res://GodetteVN/singletons/GameProgress.gd"
+fun="*res://GodetteVN/singletons/GlobalFunctions.gd"
+chara="*res://GodetteVN/singletons/CharacterManager.gd"
+stage="*res://GodetteVN/singletons/CharacterStage.tscn"
+notif="*res://GodetteVN/singletons/Notification.tscn"
+music="*res://GodetteVN/singletons/MusicController.tscn"
+screen="*res://GodetteVN/singletons/ScreenEffects.tscn"
 
 [display]
 

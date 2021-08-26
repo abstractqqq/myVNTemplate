@@ -1,4 +1,4 @@
-extends generalDialog
+extends GeneralDialog
 
 
 #---------------------------------- Choices ---------------------------------------

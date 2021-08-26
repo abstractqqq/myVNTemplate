@@ -1,4 +1,4 @@
-extends generalDialog
+extends GeneralDialog
 
 var starter = [
 	{'bg':'condo.jpg'},

@@ -1,1 +1,1 @@
-extends character
+extends Character

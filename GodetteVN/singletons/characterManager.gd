@@ -40,7 +40,8 @@ func _ready():
 	set_dvar("le",0)
 	set_dvar("tt", true)
 	
-	# Suppose for vo, we do not want name box at all (no name display + no namebox texture)
+	# Suppose for vo, we do not want name box at all 
+	# (no name display + no namebox texture)
 	set_noname("vo")
 	
 	# Used in clickable test

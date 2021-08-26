@@ -23,6 +23,14 @@ A link to the [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL
 
 If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
 
+The great transition effects are integrated from eh-jogos project, which you can find [here](https://github.com/eh-jogos/eh_Transitions)
+
+Video Showcases:
+[Parallax and Sprite Sheet Animation](https://www.youtube.com/watch?v=sG7tDFsk4HE)
+[General Gameplay](https://www.youtube.com/watch?v=uODpTQz6Vu0&t=43s)
+
+Other examples like timed choice, investigation scene, can be found in the folder /GodetteVN/
+
 Projects done with this template:
 [My O2A2 entry](https://tqqq.itch.io/o2a2-elegy-of-a-songbird)
 

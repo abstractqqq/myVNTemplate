@@ -1,4 +1,4 @@
-extends generalDialog
+extends GeneralDialog
 
 
 # Typically you do not want to use any background change events in a parallax

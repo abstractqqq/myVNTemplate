@@ -7,14 +7,13 @@ extends Node
 #-------------------------------------------------------------------------
 # Premade event sections:
 # What are premade events? If you have an event like
-# {chara : j fadein, loc : 1600 900, time : 3}
+# {chara : j fadein, loc : '1600 900', time : 1}
 # which you know you will be using many times, then you can make it 
 # into an premade event putting it here with a unique key so that you
 # can retrieve it anytime without typing all the commands. All you need 
-# to type is that {premade: your_key_name_for_the_event }
+# to type is that {premade: your_name_for_the_event }
 var premade_events = {
 	"EXAMPLE" : {"" : "Hello World!"},
-	"EXPRCHG" : {"express": "female surprised"}
 }
 
 

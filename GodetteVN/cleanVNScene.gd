@@ -1,4 +1,4 @@
-extends generalDialog
+extends GeneralDialog
 
 # It is possible to use your own choice bar or float text
 # For choice bar, it is recommended that you use the node structure

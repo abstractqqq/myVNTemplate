@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
-[ext_resource path="res://gui/default_notification_box.png" type="Texture" id=2]
-[ext_resource path="res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.gd" type="Script" id=3]
+[ext_resource path="res://GodetteVN/fundamentals/details/notifBoxes/NotificationBox.gd" type="Script" id=2]
+[ext_resource path="res://gui/default_notification_box.png" type="Texture" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 size = 30
@@ -21,8 +21,8 @@ margin_left = -200.0
 margin_top = -100.0
 margin_right = 200.0
 margin_bottom = 100.0
-texture = ExtResource( 2 )
-script = ExtResource( 3 )
+texture = ExtResource( 3 )
+script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }

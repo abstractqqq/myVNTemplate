@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-var general = preload("res://GodetteVN/fundamentals/details/notifBoxes/generalNotif.tscn")
+var general = preload("res://GodetteVN/fundamentals/details/notifBoxes/NotificationBox.tscn")
 const notifList = ["quit", "main", "override", 'rollback', 'make_save']
 
 

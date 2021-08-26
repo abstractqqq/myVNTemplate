@@ -1,5 +1,5 @@
 extends Node2D
-class_name generalDialog
+class_name GeneralDialog
 
 export(String, FILE, "*.json") var dialog_json 
 export(bool) var debug_mode
@@ -63,8 +63,8 @@ func _input(ev):
 		if game.rollback_records.size() >= 1:
 			waiting_acc = false
 			idle = false
-			screenEffects.removeLasting()
-			screenEffects.weather_off()
+			screen.removeLasting()
+			screen.weather_off()
 			sideImageChange({},false)
 			camera.reset_zoom()
 			waiting_cho = false
@@ -132,7 +132,7 @@ func interpret_events(event):
 	# Also keep the number of cases small. Try to repeat the use of key words.
 	var ev = event.duplicate(true)
 	if debug_mode: 
-		var debugger = vnui.get_node('debugger')
+		var debugger = screen.get_node('debugger')
 		var msg = "Debug :" + str(ev)
 		debugger.text = msg 
 		print(msg)
@@ -180,6 +180,7 @@ func interpret_events(event):
 		{'history', ..}: history_manipulation(ev)
 		{'float', 'wait',..}: flt_text(ev)
 		{'voice'}:voice(ev['voice'])
+		{'id'}:auto_load_next()
 		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
@@ -227,12 +228,14 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 	if typeof(ev['nvl']) == 1:
 		self.nvl = ev['nvl']
 		if self.nvl:
-			nvl_on()
+			if ev.has('font'):
+				nvl_on(ev['font'])
+			else:
+				nvl_on()
 		else:
 			nvl_off()
 		
 		if auto_forw: auto_load_next()
-		return
 	elif ev['nvl'] == 'clear':
 		nvlBox.clear()
 		if auto_forw: auto_load_next()
@@ -241,7 +244,10 @@ func set_nvl(ev: Dictionary, auto_forw = true):
 	
 func set_center(ev: Dictionary):
 	self.centered = true
-	set_nvl({'nvl': true}, false)
+	if ev.has('font'):
+		set_nvl({'nvl': true,'font':ev['font']}, false)
+	else:
+		set_nvl({'nvl': true}, false)
 	var u = ''
 	if ev.has('who'): u = ev['who']
 	if ev.has('speed'):
@@ -336,6 +342,8 @@ func generate_choices(ev: Dictionary):
 		choice.connect("choice_made", self, "on_choice_made")
 		choiceContainer.add_child(choice)
 		# waiting for user choice
+		
+	choiceContainer.visible = true # make it visible now
 	
 func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	var temp = combine.split(" ") # temp[0] = uid, temp[1] = expression
@@ -351,7 +359,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 		if just_loaded:
 			just_loaded = false
 			if centered:
-				nvlBox.set_dialog(temp[0], words, cps)
+				nvlBox.set_dialog(temp[0], words, cps, true)
 			else:
 				nvlBox.visible_characters = nvlBox.text.length()
 		else:
@@ -391,6 +399,7 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	wait_for_accept(ques)
 	
 	# If this is a question, then displaying the text is all we need.
+
 func wait_for_accept(ques:bool = false):
 	if not ques:
 		yield(self, "player_accept")
@@ -473,33 +482,57 @@ func voice(path:String, auto_forw:bool = true) -> void:
 	if auto_forw: auto_load_next()
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
-# I will need to refactor this...
+
 func change_background(ev : Dictionary) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg.bg_change(path)
-	elif ev.has('fade'):
-		var t = float(ev['fade'])/2
-		fadeout(t, false)
-		yield(get_tree().create_timer(t), 'timeout')
-		bg.bg_change(path)
-		fadein(t, false)
-		yield(get_tree().create_timer(t), 'timeout')
-	elif ev.has('pixelate'):
-		var t = float(ev['pixelate'])/2
-		screenEffects.pixel_out(t)
+	else:
+		var eff_name = 'wwttff'
+		for n in ev.keys():
+			if n in vn.TRANSITIONS:
+				eff_name = n
+				break
+		if eff_name == 'wwttff':
+			print("Error at " + str(ev))
+			push_error("Unknown transition type given in bg change event.")
+			
+		var eff_dur = ev[eff_name]/2 # transition effect total duration / 2
+		var t_data = null
+		if eff_name != "fade" and eff_name != "pixelate":
+			t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
+			t_data.duration = eff_dur
+			if ev.has('color'): t_data.color = ev['color']
+		
+		if t_data != null and t_data is eh_TransitionData:
+			screen.change_transition_data_oneshot(t_data)
+	
 		clear_boxes()
 		hide_boxes()
 		QM.visible = false
-		yield(get_tree().create_timer(t), 'timeout')
+		if eff_name == "fade":
+			if ev.has('color'):
+				screen.play_fade_in(ev['color'],eff_dur)
+			else:
+				screen.play_fade_in(Color.black,eff_dur)
+		elif eff_name == "pixelate":
+			screen.pixel_in(eff_dur)
+		else:
+			screen.play_transition_in()
+		yield(screen, "transition_mid_point_reached")
 		bg.bg_change(path)
-		screenEffects.pixel_in(t)
-		yield(get_tree().create_timer(t), 'timeout')
+		if eff_name == "fade":
+			if ev.has('color'):
+				screen.play_fade_out(ev['color'],eff_dur)
+			else:
+				screen.play_fade_out(Color.black,eff_dur)
+		elif eff_name == "pixelate":
+			screen.pixel_out(eff_dur)
+		else:
+			screen.play_transition_out()
+		yield(screen, "transition_finished")
 		show_boxes()
 		if not QM.hiding: QM.visible = true
-	
-	else:
-		vn.error("Unknown bg transition effect.", ev)
 	
 	if !vn.inLoading:
 		game.playback_events['bg'] = ev
@@ -616,7 +649,7 @@ func screen_effects(ev: Dictionary):
 	var ef = ev['screen']
 	match ef:
 		"", "off": 
-			screenEffects.removeLasting()
+			screen.removeLasting()
 			game.playback_events.erase('screen')
 		"tint": tint(ev)
 		"tintwave": tint(ev)
@@ -629,7 +662,7 @@ func screen_effects(ev: Dictionary):
 func flashlight(ev:Dictionary):
 	var sc = Vector2(1,1) # Default value
 	if ev.has('scale'): sc = ev['scale']
-	screenEffects.flashlight(sc)
+	screen.flashlight(sc)
 	game.playback_events['screen'] = ev
 
 func fadein(time : float, auto_forw:bool = true) -> void:
@@ -637,7 +670,7 @@ func fadein(time : float, auto_forw:bool = true) -> void:
 	if not self.nvl: show_boxes()
 	QM.visible = false
 	if not vn.skipping:
-		screenEffects.fadein(time)
+		screen.play_fade_in(Color.black, time)
 		yield(get_tree().create_timer(time), "timeout")
 	
 	if not QM.hiding: QM.visible = true
@@ -648,7 +681,7 @@ func fadeout(time : float, auto_forw:bool = true) -> void:
 	hide_boxes()
 	QM.visible = false
 	if not vn.skipping:
-		screenEffects.fadeout(time)
+		screen.play_fade_out(Color.black, time)
 		yield(get_tree().create_timer(time), "timeout")
 	if not QM.hiding: QM.visible = true
 	if not self.nvl: show_boxes()
@@ -660,9 +693,9 @@ func tint(ev : Dictionary) -> void:
 		time = ev['time']
 	if ev.has('color'):
 		if ev['screen'] == 'tintwave':
-			screenEffects.tintWave(ev['color'], time)
+			screen.tintWave(ev['color'], time)
 		elif ev['screen'] == 'tint':
-			screenEffects.tint(ev['color'], time)
+			screen.tint(ev['color'], time)
 			# When saving to playback, no need to replay the fadein effect
 			ev['time'] = 0.05
 		
@@ -880,7 +913,7 @@ func character_spin(uid:String, ev:Dictionary):
 	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):
-	screenEffects.show_weather(we) # If given weather doesn't exist, nothing will happen
+	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
 		if we == "":
 			game.playback_events.erase('weather')
@@ -1018,6 +1051,7 @@ func on_choice_made(ev : Dictionary, allow_rollback = true) -> void:
 		# in thing... It's not impossible but not right now.)
 		game.makeSnapshot()
 	waiting_cho = false
+	choiceContainer.visible = false
 	if ev.size() == 0:
 		auto_load_next()
 	else:
@@ -1035,7 +1069,6 @@ func on_rollback():
 	game.playback_events = last['playback']
 	current_index = game.currentIndex
 	current_block = all_blocks[game.currentBlock]
-	# print(game.playback_events)
 	load_playback(game.playback_events, true)
 	load_event_at_index(current_index)
 
@@ -1162,7 +1195,7 @@ func nvl_off():
 	stage.set_modulate_4_all(Color(0.86,0.86,0.86,1))
 	self.nvl = false
 
-func nvl_on():
+func nvl_on(center_font:String=''):
 	stage.set_modulate_4_all(vn.DIM)
 	if centered: nvl_off()
 	clear_boxes()
@@ -1174,6 +1207,8 @@ func nvl_on():
 	nvlBox.get_node('autoTimer').start()
 	if centered:
 		nvlBox.center_mode()
+		if center_font != '':
+			nvlBox.add_font_override('normal_font', load(vn.ROOT_DIR+center_font))
 		get_node('background').modulate = vn.CENTER_DIM
 		stage.set_modulate_4_all(vn.CENTER_DIM)
 	else:

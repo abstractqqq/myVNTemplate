@@ -1,4 +1,4 @@
-extends generalDialog
+extends GeneralDialog
 # Notice for any scene to be a VN scene, you must extend
 # generalDialog. (In the future, more options will be given.)
 

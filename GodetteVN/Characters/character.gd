@@ -1,5 +1,5 @@
 extends AnimatedSprite
-class_name character
+class_name Character
 
 
 # Exports

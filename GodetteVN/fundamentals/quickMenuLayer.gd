@@ -158,9 +158,8 @@ func _on_QsaveButton_mouse_exited():
 	vn.noMouse = false
 
 func _on_QsaveButton_pressed():
-	var rt = get_parent().get_parent()
 	var flt = load(vn.DEFAULT_FLOAT).instance()
-	rt.add_child(flt)
+	screen.add_child(flt)
 	flt.display("Quick save made.", 2, 0.5, Vector2(60,60), 'res://fonts/ARegular.tres')
 	fun.make_a_save("[Quick Save] ")
 
