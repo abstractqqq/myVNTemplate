@@ -19,20 +19,24 @@ For basic dialog for RPG games, then [Dialogic](https://github.com/coppolaemilio
 because this framework is solely focused on the making of Visual/Graphic Novel. Renpy is also a good 
 alternative if your game doesn't include advanced features or complicated minigames.
 
-A link to the [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
-
-If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
-
-The great transition effects are integrated from eh-jogos project, which you can find [here](https://github.com/eh-jogos/eh_Transitions)
+Transition system is integrated from eh-jogos's project. You can find it [here](https://github.com/eh-jogos/eh_Transitions)
 
 Video Showcases:
+
 [Parallax and Sprite Sheet Animation](https://www.youtube.com/watch?v=sG7tDFsk4HE)
+
 [General Gameplay](https://www.youtube.com/watch?v=uODpTQz6Vu0&t=43s)
 
 Other examples like timed choice, investigation scene, can be found in the folder /GodetteVN/
 
 Projects done with this template:
 [My O2A2 entry](https://tqqq.itch.io/o2a2-elegy-of-a-songbird)
+
+------------------------------------------------------------------------------------------------------------------------------
+
+A link to the [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
+
+If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
 
 If you want to contact me:
 Discord: T.Q#8863
