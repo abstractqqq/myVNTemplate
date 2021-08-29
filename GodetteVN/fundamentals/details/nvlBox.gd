@@ -24,7 +24,7 @@ const center_pos = Vector2(410,400)
 var last_uid = ''
 var new_dialog = ''
 
-var bblength = 0 # Only used in timer to make the condition checking faster
+var leng = 0 # Only used in timer to make the condition checking faster
 signal load_next
 
 func _ready():
@@ -55,15 +55,15 @@ func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = fals
 	else:
 		self.bbcode_text += " "
 	
-	self.visible_characters = self.text.length()
-	self.new_dialog = words
-	self.bbcode_text += words
-	bblength = self.text.length() # latest bbcode_text.length()
+	visible_characters = self.text.length()
+	new_dialog = words
+	bbcode_text += words
+	leng = self.text.length() # latest bbcode_text.length()
 	
 	match cps:
 		25: timer.wait_time = 0.04
 		0:
-			self.visible_characters = bblength
+			self.visible_characters = leng
 			adding = false
 			if nw:
 				nw = false
@@ -77,7 +77,7 @@ func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = fals
 	
 func force_finish():
 	if adding:
-		self.visible_characters = bblength
+		self.visible_characters = leng
 		adding = false
 		timer.stop()
 		if nw:
@@ -87,7 +87,7 @@ func force_finish():
 
 func _on_Timer_timeout():
 	self.visible_characters += 1
-	if self.visible_characters >= bblength:
+	if self.visible_characters >= leng:
 		adding = false
 		timer.stop()
 		if nw:

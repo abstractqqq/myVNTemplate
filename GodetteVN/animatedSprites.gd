@@ -7,9 +7,10 @@ extends GeneralDialog
 var main_block = [
 	
 	# start of content
-	{"screen":"fade out", 'time':1},
+	{"screen":"fade in", 'time':1},
 	{'chara': "gt join", "loc": "1600 650"},
 	{"gt": "Here we demonstrate how to do animations (spritesheet)."},
+	{"chara": "gt add", "at":"head", "path":"/GodetteVN/sfxScenes/questionMark.tscn"},
 	{"gt cry": "As long as you have the spritesheet ready, animation is as easy as drag and drop."},
 	{"gt": "You can look at the top left corner to see the events controlling everything."},
 	{"express": "gt crya"},
@@ -30,7 +31,7 @@ var main_block = [
 	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
 	{"chara":"gt move", "loc": Vector2(200,650), "time":2, 'type': "expo"},
 	{'wait':3},
-	{"screen":"fade in", 'time':1},
+	{"screen":"fade out", 'time':1},
 	{"GDscene": vn.ending_scene_path}
 	# end of content
 ]

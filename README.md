@@ -12,8 +12,7 @@ There are 3 core components in this framework.
 3. A core dialog system (basically a json interpreter, mostly stable)  
 
 Core dialog system can be found in /scenes/fundamental/details/generalDialog.gd
-To see how spritesheet animation is integrated into VNs, go to 
-/GodetteVN/Characters/gt.tscn to check it out.
+To see how spritesheet animation is integrated into VNs, go to /GodetteVN/Characters/gt.tscn to check it out.
 
 For basic dialog for RPG games, then [Dialogic](https://github.com/coppolaemilio/dialogic) might be a better addon than this, 
 because this framework is solely focused on the making of Visual/Graphic Novel. Renpy is also a good 
@@ -30,11 +29,20 @@ Video Showcases:
 Other examples like timed choice, investigation scene, can be found in the folder /GodetteVN/
 
 Projects done with this template:
+
 [My O2A2 entry](https://tqqq.itch.io/o2a2-elegy-of-a-songbird)
+
+More in the making ~
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-A link to the [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
+### Known issues:
+
+Mac export cannot be played (Not sure why...). However, windows and html exports work fine. Haven't tested on Linux.
+
+### Documentations
+
+A link to the not so well-written [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
 
 If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
 

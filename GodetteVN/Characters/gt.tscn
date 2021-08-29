@@ -9,5 +9,8 @@ frames = ExtResource( 1 )
 script = ExtResource( 2 )
 display_name = "Godette"
 unique_id = "gt"
-name_color = Color( 0.0352941, 0.172549, 0.470588, 1 )
+name_color = Color( 0.141176, 0.258824, 0.729412, 1 )
 fade_on_change = true
+
+[node name="_head" type="Node2D" parent="."]
+position = Vector2( 57.5763, -403.978 )

@@ -162,6 +162,7 @@ func interpret_events(event):
 		{'dvar'}: set_dvar(ev)
 		{'sfx',..}: sfx_player(ev)
 		{'then',..}: then(ev)
+		#{'extend', ..}:extend(ev)
 		{'premade'}:
 			if debug_mode: print("PREMADE EVENT:")
 			interpret_events(fun.call_premade_events(ev['premade']))
@@ -395,6 +396,23 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 	wait_for_accept(ques)
 	
 	# If this is a question, then displaying the text is all we need.
+
+
+func extend(ev:Dictionary):
+	return
+	
+	## get previous speaker from history
+	#var prev_speaker = game.history[game.history.size()-1][0]
+	# you will get an error by using extend as the first sentence
+	#var words = preprocess(ev['extend'])
+	
+	
+	#if ev.has('voice'):
+	#	latest_voice = ev['voice']
+	#	game.history.push_back([prev_speaker, dialogbox.get_text(), latest_voice])
+	#else:
+	#	latest_voice = null
+	#	game.history.push_back([prev_speaker, dialogbox.get_text()])
 
 func wait_for_accept(ques:bool = false):
 	if not ques:
@@ -632,10 +650,11 @@ func screen_effects(ev: Dictionary):
 				if ev.has('time'): t = ev['time']
 				if ev.has('color'): c = ev['color']
 				if ef in vn.TRANSITIONS:
-					if mode == "in":
+					if mode == "out": # this might be a bit counter-intuitive
+						# but we have to stick with this
 						screen.in_transition(ef,c,t)
 						yield(screen, "transition_mid_point_reached")
-					elif mode == "out":
+					elif mode == "in":
 						screen.out_transition(ef,c,t)
 						yield(screen, "transition_finished")
 						

@@ -7,6 +7,8 @@ var skipCounter = 0
 var adding = false
 var nw = false
 
+var leng = 0
+
 var FONTS = {}
 const ft = ['normal', 'bold', 'italics', 'bold_italics']
 
@@ -28,11 +30,16 @@ func set_chara_fonts(ev:Dictionary):
 		if ev[key] != '':
 			add_font_override(key, load(ev[key]))
 
-func set_dialog(words : String, cps = vn.cps):
-	self.bbcode_text = "" # always clear it when new dialog is happening
-	self.visible_characters = 0
+func set_dialog(words : String, cps = vn.cps, extend = false):
 	# words will be already preprocessed
-	self.bbcode_text = words
+	if extend:
+		visible_characters = self.text.length()
+		bbcode_text += words
+	else:
+		visible_characters = 0
+		bbcode_text = words
+		
+	leng = self.text.length()
 	
 	match cps:
 		25: timer.wait_time = 0.04
@@ -51,7 +58,7 @@ func set_dialog(words : String, cps = vn.cps):
 	
 func force_finish():
 	if adding:
-		self.visible_characters = -1
+		self.visible_characters = leng
 		adding = false
 		timer.stop()
 		if nw:
@@ -61,7 +68,7 @@ func force_finish():
 
 func _on_Timer_timeout():
 	self.visible_characters += 1
-	if self.visible_characters >= self.text.length():
+	if self.visible_characters >= leng:
 		adding = false
 		timer.stop()
 		if nw:

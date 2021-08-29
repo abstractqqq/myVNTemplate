@@ -15,12 +15,12 @@ var params = 0
 
 
 # This scene should be put immediately before a choice (*)
-var currentInd = 0
-var currentBname = ""
+var initialInd = 0
+var initialBname = ""
 
 func _ready():
-	currentInd = game.currentIndex
-	currentBname = game.currentBlock
+	initialInd = game.currentIndex
+	initialBname = game.currentBlock
 	$Label.text = str(params)
 	var obj_timer = ObjectTimer.new(self,params,1,"_do")
 	add_child(obj_timer)
@@ -31,7 +31,7 @@ func _process(_delta):
 	# 2. The choice leads to the next event in your current block
 	# which means |currentInd - game.currentIndex | > 1
 	
-	if currentBname != game.currentBlock:
+	if initialBname != game.currentBlock:
 		# player has reached another block, the choice must have been made
 		
 		# this line is necessary if u do not want your choice to be rolled back
@@ -44,7 +44,7 @@ func _process(_delta):
 		# in the same block, but index difference is > 1, that means the player
 		# must have made a choice and proceeded down the same block. This
 		# explains why I need (*)
-		if abs(currentInd - game.currentIndex) > 1:
+		if abs(initialInd - game.currentIndex) > 1:
 			
 			# this line is necessary if u do not want your choice to be rolled back
 			# Note: if it is rolled back, the choice will no longer be timed
@@ -55,7 +55,8 @@ func _process(_delta):
 
 
 # This function will be called by obj_timer, and that means
-# 1 sec has been passed.
+# 1 sec has been passed. The argument will not be used. (It's an argument
+# passed in by objectTimer.)
 func _do(_params):
 	params -= 1
 	$Label.text = str(params)

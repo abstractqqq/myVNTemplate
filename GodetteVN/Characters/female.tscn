@@ -9,7 +9,8 @@ frames = ExtResource( 1 )
 script = ExtResource( 2 )
 display_name = "A"
 unique_id = "female"
-name_color = Color( 0.498039, 0.0431373, 0.0431373, 1 )
+name_color = Color( 0.737255, 0.419608, 0.835294, 1 )
+fade_on_change = true
 
 [node name="_head" type="Node2D" parent="."]
-position = Vector2( 80.8174, -336.739 )
+position = Vector2( 106, -328 )
