@@ -38,7 +38,9 @@ More in the making ~
 
 ### Known issues:
 
-Mac export cannot be played (Not sure why...). However, windows and html exports work fine. Haven't tested on Linux.
+1. Mac export cannot be played (Not sure why...). However, windows and html exports work fine. Haven't tested on Linux.
+2. Circular_open and circular_close transitions don't work well in exported project.
+
 
 ### Documentations
 
