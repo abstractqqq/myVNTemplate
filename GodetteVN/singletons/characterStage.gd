@@ -137,11 +137,6 @@ func add_to_chara_at(uid:String, pt_name:String, path:String):
 				break
 
 func set_highlight(uid : String) -> void:
-	# I didn't use find_chara_on_stage only for this function because
-	# it might be the case that the speaking character hasn't joined
-	# the stage yet. In that case, find character will give me null
-	# and print the error message. I do not want that to happen because
-	# this might happen every once in a while.
 	var info = chara.all_chara[uid]
 	if info.has('path'):
 		for n in $characters.get_children():

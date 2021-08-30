@@ -20,25 +20,14 @@ var currentSaveDesc = ""
 #---------------------------------Important-------------------------------------
 
 # Playback/lasting events are defined as events that should be remembered when loading
-# back from a save.
-
-# Current playback_events:
-# text in nvl mode
+# back from a save. 
 
 # If player saves in the middle of nvl mode,
 # then when loading back, we need to restore all the nvl text.
 var nvl_text = ''
 
-# Last bgm, bg change
-# Last lasting screen effects (currently all lasting screen effects are
-# exclusive, meaning if one is on, the other will override the previous one.)
-# Only two lasting screen effects now: tint, and tintWave
 
-
-# Current characters on stage together w/ their expressions 
-
-
-var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'charas':[], 'nvl': ''}
+var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':''}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()

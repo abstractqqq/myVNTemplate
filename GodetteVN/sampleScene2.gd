@@ -18,7 +18,12 @@ var main_block = [
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
 	"attribute for any talking characters in characterManager.gd."},
 	{"bg": "condo.jpg", 'circular_close':2, 'color':Color.pink},
+	{'female':'Hello, hello, is it time for me to show up?'},
 	{'chara': "female fadein", "loc": "1600 600",'time':0.5},
+	{'extend': 'This is an extend statement~'},
+	{'wait':5},
+	{'extend':'As you can see, extend works for anything in between.'},
+	{'extend':'The only imperfection is that the statements are saved separately in history.'},
 	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
 	{"screen": "curtain_left out", 'time':1},
 	{'chara': "female move", "loc": "R", 'type':'quad', 'time':0.4},

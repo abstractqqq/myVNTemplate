@@ -162,7 +162,7 @@ func interpret_events(event):
 		{'dvar'}: set_dvar(ev)
 		{'sfx',..}: sfx_player(ev)
 		{'then',..}: then(ev)
-		#{'extend', ..}:extend(ev)
+		{'extend', ..}:extend(ev)
 		{'premade'}:
 			if debug_mode: print("PREMADE EVENT:")
 			interpret_events(fun.call_premade_events(ev['premade']))
@@ -342,16 +342,13 @@ func generate_choices(ev: Dictionary):
 		
 	choiceContainer.visible = true # make it visible now
 	
-func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
+func say(combine : String, words : String, cps = 50, ques = false) -> void:
 	var temp = combine.split(" ") # temp[0] = uid, temp[1] = expression
-	var wspeaker = chara.all_chara[temp[0]]
 	if temp.size() == 2:
 		stage.change_expression(temp[0], temp[1])
-	
-	_hide_namebox(temp[0])
+		
 	words = preprocess(words)
 	if vn.skipping: cps = 0
-	waiting_acc = true
 	if self.nvl:
 		if just_loaded:
 			just_loaded = false
@@ -371,48 +368,82 @@ func say(combine : String, words : String, cps = vn.cps, ques = false) -> void:
 			else:
 				game.history.push_back([temp[0], nvlBox.get_text(), latest_voice])
 	else:
-		speaker.set("custom_colors/default_color", wspeaker["name_color"])
-		speaker.bbcode_text = wspeaker["display_name"]
-		if wspeaker['font'] and not nvl and not one_time_font_change:
-			var fonts = {'normal_font':wspeaker['normal_font'],
-			'bold_font': wspeaker['bold_font'],
-			'italics_font':wspeaker['italics_font'],
-			'bold_italics_font':wspeaker['bold_italics_font']}
-			dialogbox.set_chara_fonts(fonts)
-		elif not one_time_font_change:
-			dialogbox.reset_fonts()
+		if not _hide_namebox(temp[0]):
+			var info = chara.all_chara[temp[0]]
+			speaker.set("custom_colors/default_color", info["name_color"])
+			speaker.bbcode_text = info["display_name"]
+			if info['font'] and not nvl and not one_time_font_change:
+				var fonts = {'normal_font': info['normal_font'],
+				'bold_font': info['bold_font'],
+				'italics_font':info['italics_font'],
+				'bold_italics_font':info['bold_italics_font']}
+				dialogbox.set_chara_fonts(fonts)
+			elif not one_time_font_change:
+				dialogbox.reset_fonts()
+		
 		dialogbox.set_dialog(words, cps)
 		if just_loaded:
 			just_loaded = false
 		else:
+			var new_text = dialogbox.get_text()
 			if latest_voice == null:
-				game.history.push_back([temp[0], dialogbox.get_text()])
+				game.history.push_back([temp[0], new_text])
 			else:
-				game.history.push_back([temp[0], dialogbox.get_text(), latest_voice])
+				game.history.push_back([temp[0], new_text, latest_voice])
+				
+			game.playback_events['speech'] = new_text
 		
 		stage.set_highlight(temp[0])
-		
 	# wait for ui_accept if this is not a question
+	waiting_acc = true
 	wait_for_accept(ques)
-	
 	# If this is a question, then displaying the text is all we need.
 
 
 func extend(ev:Dictionary):
-	return
-	
-	## get previous speaker from history
-	#var prev_speaker = game.history[game.history.size()-1][0]
-	# you will get an error by using extend as the first sentence
-	#var words = preprocess(ev['extend'])
-	
-	
-	#if ev.has('voice'):
-	#	latest_voice = ev['voice']
-	#	game.history.push_back([prev_speaker, dialogbox.get_text(), latest_voice])
-	#else:
-	#	latest_voice = null
-	#	game.history.push_back([prev_speaker, dialogbox.get_text()])
+	# Cannot use extend with a choice, extend doesn't support font
+	if game.playback_events['speech'] == '' or self.nvl:
+		print("Warning: you're getting his warning either because you're in nvl mode")
+		print("Or because you're using extend without a previous speech event.")
+		print("In either case, nothing is done.")
+		auto_load_next()
+	else:
+		# get previous speaker from history
+		# you will get an error by using extend as the first sentence
+		var prev_speaker = game.history[game.history.size()-1][0]
+		if not _hide_namebox(prev_speaker):
+			var info = chara.all_chara[prev_speaker]
+			speaker.set("custom_colors/default_color", info["name_color"])
+			speaker.bbcode_text = info["display_name"]
+			
+		var words = preprocess(ev['extend'])
+		var cps = 50
+		if ev.has('speed'):
+			if (ev['speed'] in cps_dict.keys()):
+				cps = cps_dict[ev['speed']]
+		
+		
+		if ev.has('voice'):
+			latest_voice = ev['voice']
+			voice(latest_voice, false)
+			game.history.push_back([prev_speaker, words, latest_voice])
+		else:
+			latest_voice = null
+			game.history.push_back([prev_speaker, words])
+			
+		if just_loaded:
+			just_loaded = false
+			dialogbox.set_dialog(game.playback_events['speech'], cps)
+			game.history.pop_back()
+		else:
+			dialogbox.bbcode_text = game.playback_events['speech']
+			dialogbox.set_dialog(words, cps, true)
+			game.playback_events['speech'] += " " + words
+			
+		stage.set_highlight(prev_speaker)
+		# wait for accept
+		waiting_acc = true
+		wait_for_accept(false)
 
 func wait_for_accept(ques:bool = false):
 	if not ques:
@@ -514,7 +545,6 @@ func change_background(ev : Dictionary) -> void:
 		var eff_dur = ev[eff_name]/2 # transition effect total duration / 2
 		var color = Color.black
 		if ev.has('color'): color = ev['color']
-		clear_boxes()
 		hide_boxes()
 		QM.visible = false
 		screen.in_transition(eff_name, color, eff_dur)
@@ -1032,6 +1062,9 @@ func clear_boxes():
 	dialogbox.bbcode_text = ''
 
 func wait(time : float) -> void:
+	if just_loaded:
+		just_loaded = false
+	
 	if vn.skipping:
 		auto_load_next()
 		return
@@ -1276,6 +1309,9 @@ func _hide_namebox(uid:String):
 		var info = chara.all_chara[uid]
 		if info.has('no_nb') and info['no_nb']:
 			get_node('VNUI/nameBox').visible = false
+			return true
+			
+	return false
 	
 
 func dimming(c : Color):

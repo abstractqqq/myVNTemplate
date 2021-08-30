@@ -34,7 +34,7 @@ func set_dialog(words : String, cps = vn.cps, extend = false):
 	# words will be already preprocessed
 	if extend:
 		visible_characters = self.text.length()
-		bbcode_text += words
+		bbcode_text += " " +words
 	else:
 		visible_characters = 0
 		bbcode_text = words

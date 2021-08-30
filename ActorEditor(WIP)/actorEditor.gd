@@ -143,7 +143,7 @@ func _on_charaGenPopup_confirmed():
 		return
 	else:
 		var packed_scene = PackedScene.new()
-		var ch = (load("res://GodetteVN/Characters/characterTemplate.tscn")).instance()
+		var ch = (load("res://GodetteVN/Characters/CharacterTemplate.tscn")).instance()
 		var expSheet = SpriteFrames.new()
 		for ex in temp_dict.keys():
 			var t = load(vn.CHARA_DIR + temp_dict[ex])

@@ -58,6 +58,7 @@ func readSave(save : saveSlot) -> bool:
 		file.close()
 	else:
 		# load save failed. The save is corrupted or removed.
+		print(error)
 		vn.error('Loading failed for unknown reasons.')
 		save.queue_free()
 	
