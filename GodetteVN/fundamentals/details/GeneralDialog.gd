@@ -1424,6 +1424,11 @@ func parse_loc(loc, ev = {}) -> Vector2:
 func parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
 		return vn.DIRECTION[dir]
+	elif typeof(dir) == 4 and dir == "R":
+		var rng = RandomNumberGenerator.new()
+		rng.randomize()
+		var rndv = Vector2(rng.randf_range(-1, 1),rng.randf_range(-1, 1))
+		return rndv
 	else:
 		return parse_loc(dir, ev)
 
