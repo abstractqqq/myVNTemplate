@@ -178,6 +178,7 @@ func interpret_events(event):
 		{'voice'}:voice(ev['voice'])
 		{'id'}, {}:auto_load_next()
 		{'center',..}: set_center(ev)
+		{'signal',..}: send_signal(ev)
 		_: speech_parse(ev)
 				
 			
@@ -1111,7 +1112,7 @@ func on_rollback():
 
 
 func load_playback(play_back, RBM = false): # Roll Back Mode
-	print(play_back)
+	# print(play_back)
 	vn.inLoading = true
 	if play_back['bg'].size() > 0:
 		interpret_events(play_back['bg'])
@@ -1317,6 +1318,23 @@ func _hide_namebox(uid:String):
 func dimming(c : Color):
 	get_node('background').modulate = c
 	stage.set_modulate_4_all(c)
+
+func send_signal(ev:Dictionary):
+	var found = false
+	var communicator = null
+	for n in get_children():
+		if n.name == "signals":
+			found = true
+			communicator = n
+			break
+	
+	if found:
+		if ev.has('params'):
+			communicator.emit_signal(ev['signal'], ev['params'])
+		else:
+			communicator.emit_signal(ev['signal'])
+			
+	auto_load_next()
 
 func system(ev : Dictionary):
 	if ev.size() != 1:

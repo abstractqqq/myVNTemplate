@@ -32,8 +32,15 @@ var main_block = [
 	{"chara": "gt jump"},
 	{"chara": "gt move", "loc": "1000 650"},
 	{'gt': "But someone doesn't see me..."},
-	{"gt": "Hey!"},
-	{"gt stara": "LOLOLOL"},
+	{'signal':'speed_change', 'params':[-65,-35]},
+	{"gt default": "Did you notice the background moving speed has changed?"},
+	{"gt":'You can use signals to communicator with exterior components.'},
+	{"gt":'However, most consequences of a signal will not be saved by the system, because '+\
+	"there is no way to predict what kind of changes will the signal make."},
+	{"gt":"So if there are things you want to save, you need to think harder and write the logic " +\
+	"in your signal trigger function. You might even need to make changes to the save system."},
+	{"gt":"So be careful about signals. Depending on what your signals change, rollback may not "+\
+	"work well either (because mainly signals work with exterior components)."},
 	{'gt': "Let me do my signature jump!"},
 	{"chara": "gt jump", "amount":800, "time":2},
 	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
@@ -60,4 +67,5 @@ func _ready():
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
 	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)
+	
 	

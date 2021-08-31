@@ -5,7 +5,24 @@ var uniform_speed = -25
 # Everything but moonLayer will have speed -25
 
 # If you want, you can choose a different self-moving speed for all your layers
-# in your parallax. Here every layer is moving at the same speed.
+# in your parallax. Here every layer is moving at the same speed except moon.
+
+# If you want to use signals, you need to create a subnode called signals.
+# Make your signal there.
+# Write your own code for signal connection, and effects.
+# Think about whether or not the consequence of the signal should be saved, or
+# is some lasting effect.
+
+
+func _ready():
+	var communicator = null
+	for n in get_parent().get_children():
+		if n.name == "signals":
+			communicator = n
+			break
+			
+	var _error = communicator.connect('speed_change', self, "receive_signal")
+
 
 func _process(delta)->void:
 	for p in get_children():
@@ -13,3 +30,9 @@ func _process(delta)->void:
 			p.motion_offset.x += moon_speed * delta
 		else:
 			p.motion_offset.x += uniform_speed * delta
+
+
+func receive_signal(params):
+	# In this case I know that params is going to be a size 2 array
+	uniform_speed = params[0]
+	moon_speed = params[1]
