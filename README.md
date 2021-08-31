@@ -26,6 +26,8 @@ Video Showcases:
 
 [General Gameplay](https://www.youtube.com/watch?v=uODpTQz6Vu0&t=43s)
 
+[Floating Text](https://www.youtube.com/watch?v=2KSO_qQ8pqw)
+
 Other examples like timed choice, investigation scene, can be found in the folder /GodetteVN/
 
 Projects done with this template:
@@ -39,7 +41,6 @@ More in the making ~
 ### Known issues:
 
 1. Mac export cannot be played (Not sure why...). However, windows and html exports work fine. Haven't tested on Linux.
-2. Circular_open and circular_close transitions don't work well in exported project.
 
 
 ### Documentations
