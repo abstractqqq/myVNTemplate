@@ -14,7 +14,7 @@ var main_block = [
 	{"bg": "condo.jpg"},
 	{'screen':'pixelate in'},
 	{"vo": "This is vo talking."},
-	{"bg": "condo.jpg", 'sweep_right':2, 'color':Color.blueviolet},
+	{"bg": "condo.jpg", 'spiral':2, 'color':Color.blueviolet},
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
 	"attribute for any talking characters in characterManager.gd."},
 	{"bg": "condo.jpg", 'sweep_down':2, 'color':Color.pink},
