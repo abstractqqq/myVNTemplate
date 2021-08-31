@@ -7,12 +7,12 @@ var uniform_speed = -25
 # If you want, you can choose a different self-moving speed for all your layers
 # in your parallax. Here every layer is moving at the same speed except moon.
 
-# If you want to use signals, you need to create a subnode called signals.
-# Make your signal there.
-# Write your own code for signal connection, and effects.
-# Think about whether or not the consequence of the signal should be saved, or
-# is some lasting effect.
-
+# If you want to use signals
+# 1. You need to create a subnode called signals.
+# 2. Make your signal there.
+# 3. Write your own code for signal connection, and effects.
+# 4. Think about whether or not the consequence of the signal should be saved.
+# 5. There is no formula for this, you do need to be very careful in general.
 
 func _ready():
 	var communicator = null
