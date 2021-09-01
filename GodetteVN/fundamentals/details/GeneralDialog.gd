@@ -461,13 +461,12 @@ func wait_for_accept(ques:bool = false):
 
 
 #------------------------ Related to Music and Sound ---------------------------
-func play_bgm(ev : Dictionary) -> void:
+func play_bgm(ev : Dictionary, auto_forw=true) -> void:
 	var path = ev['bgm']
 	if (path == "" or path == "off") and ev.size() == 1:
 		music.stop_bgm()
 		game.playback_events['bgm'] = {'bgm':''}
-		if not vn.inLoading:
-			auto_load_next()
+		if auto_forw: auto_load_next()
 		return
 		
 	#if path == "pause":
@@ -484,7 +483,7 @@ func play_bgm(ev : Dictionary) -> void:
 		if ev.has('fadeout'):
 			music.fadeout(ev['fadeout'])
 			game.playback_events['bgm'] = {}
-			auto_load_next()
+			if auto_forw: auto_load_next()
 			return
 		else:
 			vn.error('If fadeout is intended, please supply a time. Otherwise, unknown '+\
@@ -499,15 +498,13 @@ func play_bgm(ev : Dictionary) -> void:
 	if not ev.has('fadein'): # has path or volume
 		music.play_bgm(music_path, vol)
 		game.playback_events['bgm'] = ev
-		if !vn.inLoading:
-			auto_load_next()
+		if auto_forw: auto_load_next()
 		return
 			
 	if ev.has('fadein'):
 		music.fadein(music_path, ev['fadein'], vol)
 		game.playback_events['bgm'] = ev
-		if !vn.inLoading:
-			auto_load_next()
+		if auto_forw: auto_load_next()
 		return
 	else:
 		vn.error('If fadein is intended, please supply a time. Otherwise, unknown '+\
@@ -529,7 +526,7 @@ func voice(path:String, auto_forw:bool = true) -> void:
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
 
-func change_background(ev : Dictionary) -> void:
+func change_background(ev : Dictionary, auto_forw=true) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg.bg_change(path)
@@ -556,8 +553,8 @@ func change_background(ev : Dictionary) -> void:
 		show_boxes()
 		if not QM.hiding: QM.visible = true
 	
-	if !vn.inLoading:
-		game.playback_events['bg'] = ev
+	if !vn.inLoading and auto_forw:
+		game.playback_events['bg'] = path
 		auto_load_next()
 
 func change_scene_to(path : String):
@@ -663,7 +660,7 @@ func _a_what_b(is_or:bool, a:bool, b:bool)->bool:
 	else:
 		return (a and b)
 #--------------- Related to transition and other screen effects-----------------
-func screen_effects(ev: Dictionary):
+func screen_effects(ev: Dictionary, auto_forw=true):
 	var temp = ev['screen'].split(" ")
 	var ef = temp[0]
 	match ef:
@@ -688,11 +685,9 @@ func screen_effects(ev: Dictionary):
 					elif mode == "in":
 						screen.out_transition(ef,c,t)
 						yield(screen, "transition_finished")
-						
 				screen.reset()
 	
-	if !vn.inLoading:
-		auto_load_next()
+	if !vn.inLoading and auto_forw: auto_load_next()
 
 func flashlight(ev:Dictionary):
 	var sc = Vector2(1,1) # Default value
@@ -723,6 +718,7 @@ func flashlight(ev:Dictionary):
 #	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
+	game.playback_events['screen'] = ev
 	var time = 1
 	if ev.has('time'): 
 		time = ev['time']
@@ -734,7 +730,6 @@ func tint(ev : Dictionary) -> void:
 			# When saving to playback, no need to replay the fadein effect
 			ev['time'] = 0.05
 		
-		game.playback_events['screen'] = ev
 	else:
 		vn.error("Tint or tintwave requires the color field.", ev)
 
@@ -1114,17 +1109,17 @@ func on_rollback():
 func load_playback(play_back, RBM = false): # Roll Back Mode
 	# print(play_back)
 	vn.inLoading = true
-	if play_back['bg'].size() > 0:
-		interpret_events(play_back['bg'])
+	if play_back.has('bg'):
+		bg.bg_change(play_back['bg'])
 	if play_back['bgm'].size() > 0:
+		var bgm = play_back['bgm']
 		if RBM:
-			var bgm = play_back['bgm']
 			if _cur_bgm != bgm['bgm']:
-				interpret_events(bgm)
+				play_bgm(bgm, false)
 		else:
-			interpret_events(play_back['bgm'])
+			play_bgm(play_back['bgm'], false)
 	if play_back.has('screen'):
-		interpret_events(play_back['screen'])
+		screen_effects(play_back['screen'], false)
 	if play_back.has('camera'):
 		camera.set_camera(play_back['camera'])
 	if play_back.has('weather'):
