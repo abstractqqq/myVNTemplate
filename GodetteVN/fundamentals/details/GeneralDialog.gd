@@ -162,12 +162,11 @@ func interpret_events(event):
 		{'dvar'}: set_dvar(ev)
 		{'sfx',..}: sfx_player(ev)
 		{'then',..}: then(ev)
-		{'extend', ..}:extend(ev)
+		{'extend', ..}, {'ext', ..}:extend(ev)
 		{'premade'}:
 			if debug_mode: print("PREMADE EVENT:")
 			interpret_events(fun.call_premade_events(ev['premade']))
-		{"system"}: system(ev)
-		{"sys"}: system(ev)
+		{"system"},{"sys"}: system(ev)
 		{'side'}: sideImageChange(ev)
 		{'choice',..}: generate_choices(ev)
 		{'wait'}: wait(ev['wait'])
@@ -417,7 +416,13 @@ func extend(ev:Dictionary):
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
 			
-		var words = preprocess(ev['extend'])
+		var ext = 'extend'
+		for k in ev.keys():
+			if k == "ext":
+				ext = 'ext'
+				break
+		
+		var words = preprocess(ev[ext])
 		var cps = 50
 		if ev.has('speed'):
 			if (ev['speed'] in cps_dict.keys()):
