@@ -545,7 +545,7 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 			print("Error at " + str(ev))
 			push_error("Unknown transition type given in bg change event.")
 			
-		var eff_dur = ev[eff_name]/2 # transition effect total duration / 2
+		var eff_dur = float(ev[eff_name])/2 # transition effect total duration / 2
 		var color = Color.black
 		if ev.has('color'): color = ev['color']
 		hide_boxes()
