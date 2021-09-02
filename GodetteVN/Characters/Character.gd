@@ -26,7 +26,7 @@ var loc = Vector2()
 var current_expression : String
 
 #-------------------------------------------------------------------------------
-
+	
 func change_expression(e : String) -> bool:
 	if e == "": e = 'default'
 	var expFrames = self.get_sprite_frames()

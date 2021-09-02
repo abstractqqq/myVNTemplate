@@ -1,6 +1,6 @@
 extends Node2D
 
-# You can use the OG Godot timer. The object timer will save you a few 
+# You can use the original Godot timer. The object timer will save you a few 
 # lines of code though, but it is harder to understand. 
 # It is a helper class I made to assist me with some other stuff.
 # It turns out we can use it here too
@@ -67,10 +67,17 @@ func _do(_params):
 		
 		
 		# false is needed if you do not want your choice to be rolled back
-		# Note: if it is rolled back, the choice will no longer be timed
+		# Note: if it is rolled back, the choice will no longer be timed unless
+		# the player rolls back before the sfx.
 		par.on_choice_made({'then':'out_of_time'} , true)
 		# If you want to go to another scene, like YOU FAILED SCENE, you can use directly
 		# get_tree().change_scene_to() here
+		
+		# The 'out_of_time' name here can be part of the params, (if you're using
+		# GDScript, then params can be an array. See how is params passed in
+		# from GeneralDialog in sfx_player.) 
+		# That will make this example scene reusable for many different
+		# timed choices leading to different blocks.
 		
 		
 		# Don't forget to clear itself

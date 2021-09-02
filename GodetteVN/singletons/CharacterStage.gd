@@ -168,6 +168,8 @@ func set_modulate_4_all(c : Color):
 		if n.apply_highlight:
 			n.modulate = c
 
+
+
 func find_chara_on_stage(uid:String):
 	for n in $characters.get_children():
 		if n.unique_id == uid:
@@ -186,7 +188,7 @@ func is_on_stage(uid : String) -> bool:
 func all_on_stage():
 	var output = []
 	for n in $characters.get_children():
-		var temp = {n.unique_id: n.current_expression, 'loc': n.loc}
+		var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'stats':n.stats}
 		output.append(temp)
 			
 	return output
