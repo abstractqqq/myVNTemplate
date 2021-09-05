@@ -1,0 +1,218 @@
+[gd_scene load_steps=5 format=2]
+
+[ext_resource path="res://addons/VNScriptEditor/popupTheme.tres" type="Theme" id=1]
+[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/VNScriptEditor/scriptEditor.gd" type="Script" id=3]
+[ext_resource path="res://addons/VNScriptEditor/actualEditor.gd" type="Script" id=4]
+
+[node name="editor" type="MarginContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -640.0
+margin_bottom = -360.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+custom_constants/margin_right = 10
+custom_constants/margin_top = 10
+custom_constants/margin_left = 10
+custom_constants/margin_bottom = 10
+script = ExtResource( 3 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1270.0
+margin_bottom = 710.0
+custom_constants/separation = 30
+
+[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer"]
+margin_right = 1260.0
+margin_bottom = 700.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/HSplitContainer"]
+margin_right = 1260.0
+margin_bottom = 700.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+custom_constants/separation = 20
+
+[node name="head" type="HBoxContainer" parent="HBoxContainer/HSplitContainer/VBoxContainer"]
+margin_right = 1260.0
+margin_bottom = 43.0
+custom_constants/separation = 30
+
+[node name="tlLabel" type="Label" parent="HBoxContainer/HSplitContainer/VBoxContainer/head"]
+margin_top = 5.0
+margin_right = 117.0
+margin_bottom = 38.0
+custom_fonts/font = ExtResource( 2 )
+text = "Timeline:"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="tlname" type="LineEdit" parent="HBoxContainer/HSplitContainer/VBoxContainer/head"]
+margin_left = 147.0
+margin_right = 229.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color = Color( 0.498039, 0.407843, 0.407843, 1 )
+caret_blink = true
+caret_blink_speed = 0.5
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="manual" type="Button" parent="HBoxContainer/HSplitContainer/VBoxContainer/head"]
+margin_left = 259.0
+margin_right = 492.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "User Manual (NA)"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="buttons" type="HBoxContainer" parent="HBoxContainer/HSplitContainer/VBoxContainer/head"]
+margin_left = 522.0
+margin_right = 999.0
+margin_bottom = 43.0
+custom_constants/separation = 50
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="newButton" type="Button" parent="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons"]
+margin_right = 70.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "New"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="saveButton" type="Button" parent="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons"]
+margin_left = 120.0
+margin_right = 192.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "Save"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="loadButton" type="Button" parent="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons"]
+margin_left = 242.0
+margin_right = 317.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "Load"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="jsonButton" type="Button" parent="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons"]
+margin_left = 367.0
+margin_right = 477.0
+margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "To .json"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="TextEdit" type="TextEdit" parent="HBoxContainer/HSplitContainer/VBoxContainer"]
+margin_top = 63.0
+margin_right = 1260.0
+margin_bottom = 700.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_fonts/font = ExtResource( 2 )
+custom_constants/line_spacing = 4
+text = "-DIALOG-starter
+
+
+-END
+
+
+-CHOICE-
+
+
+-END
+
+
+-CONDITIONS-
+
+
+-END"
+highlight_current_line = true
+syntax_highlighting = true
+show_line_numbers = true
+wrap_enabled = true
+caret_blink = true
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+field_val_color = Color( 0.0196078, 0.47451, 0.356863, 1 )
+line_comment_color = Color( 0.607843, 0.658824, 0.513726, 1 )
+
+[node name="AcceptDialog" type="AcceptDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1270.0
+margin_bottom = 710.0
+theme = ExtResource( 1 )
+window_title = ""
+dialog_text = "
+To Json success! You can find it in the VNScript folder."
+dialog_autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1270.0
+margin_bottom = 710.0
+rect_min_size = Vector2( 150, 52.5 )
+input_pass_on_modal_close_click = false
+theme = ExtResource( 1 )
+popup_exclusive = true
+window_title = "Open a File"
+mode = 0
+filters = PoolStringArray( "*.txt", "*.json" )
+current_dir = "res://VNScript"
+current_file = "VNScript"
+current_path = "res://VNScript/VNScript"
+
+[node name="helperPopup" type="AcceptDialog" parent="."]
+margin_left = 10.0
+margin_top = 10.0
+margin_right = 1270.0
+margin_bottom = 710.0
+window_title = ""
+
+[node name="richText" type="RichTextLabel" parent="helperPopup"]
+margin_left = 8.0
+margin_top = 8.0
+margin_right = 1252.0
+margin_bottom = 646.0
+bbcode_enabled = true
+
+[connection signal="text_changed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/tlname" to="." method="_on_tlname_text_changed"]
+[connection signal="pressed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons/newButton" to="." method="_on_newButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons/saveButton" to="." method="_on_saveButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons/loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/buttons/jsonButton" to="." method="_on_jsonButton_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

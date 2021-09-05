@@ -39,6 +39,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/helpClasses/ObjectTimer.gd"
 }, {
+"base": "Node",
+"class": "StringCalculator",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/stringCalculator.gd"
+}, {
 "base": "TextureButton",
 "class": "clickableObject",
 "language": "GDScript",
@@ -53,11 +58,6 @@ _global_script_classes=[ {
 "class": "saveSlot",
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/saveSlot.gd"
-}, {
-"base": "Node",
-"class": "stringCalculator",
-"language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/stringCalculator.gd"
 } ]
 _global_script_class_icons={
 "Character": "",
@@ -66,10 +66,10 @@ _global_script_class_icons={
 "GeneralDialog": "",
 "NotificaionBox": "",
 "ObjectTimer": "",
+"StringCalculator": "",
 "clickableObject": "",
 "eh_TransitionData": "",
-"saveSlot": "",
-"stringCalculator": ""
+"saveSlot": ""
 }
 
 [application]
@@ -97,6 +97,10 @@ window/size/width=1920
 window/size/height=1080
 window/stretch/mode="2d"
 window/stretch/aspect="keep"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "res://addons/VNScriptEditor/plugin.cfg" )
 
 [global]
 
@@ -133,11 +137,6 @@ vn_upscroll={
 "events": [ Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"button_mask":0,"position":Vector2( 0, 0 ),"global_position":Vector2( 0, 0 ),"factor":1.0,"button_index":4,"pressed":false,"doubleclick":false,"script":null)
  ]
 }
-script_tab={
-"deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"unicode":0,"echo":false,"script":null)
- ]
-}
 script_save={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
@@ -146,6 +145,11 @@ script_save={
 vn_rollback={
 "deadzone": 0.5,
 "events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
+ ]
+}
+script_tab={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777218,"unicode":0,"echo":false,"script":null)
  ]
 }
 

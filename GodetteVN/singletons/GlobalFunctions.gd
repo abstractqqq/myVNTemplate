@@ -47,8 +47,6 @@ func movement_type(type:String)-> int:
 		
 	return m
 
-
-
 #----------------------------------------------------------------
 
 func break_line(line:String , s:String):
@@ -62,7 +60,8 @@ func break_line(line:String , s:String):
 
 func calculate(what:String):
 	# what means what to calculate, should be an algebraic expression
-	var calculator = stringCalculator.new()
+	# only dvars are allowed
+	var calculator = StringCalculator.new()
 	var result =  calculator.calculate(what)
 	calculator.call_deferred('free')
 	return result
@@ -88,11 +87,14 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		file.store_var(thumbnail.get_data())
 		file.close()
 
+# sl.make_save only works for standard VN saves. That means if you're 
+# adding extra info, you will have to modify sl.make_save first.
 func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
+	delay = abs(delay)
 	if delay > 0:
 		yield(get_tree().create_timer(delay), 'timeout')
 		
-	create_thumbnail()
+	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
 	var slot = load(vn.SAVESLOT)
 	var sl = slot.instance()
 	var temp = game.currentSaveDesc

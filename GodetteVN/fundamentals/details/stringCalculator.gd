@@ -1,5 +1,5 @@
 extends Node
-class_name stringCalculator
+class_name StringCalculator
 
 # converts evaluates string of arithmetic expression
 

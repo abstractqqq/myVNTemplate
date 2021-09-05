@@ -188,7 +188,7 @@ func is_on_stage(uid : String) -> bool:
 func all_on_stage():
 	var output = []
 	for n in $characters.get_children():
-		var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'stats':n.stats}
+		var temp = {n.unique_id: n.current_expression, 'loc': n.loc}
 		output.append(temp)
 			
 	return output

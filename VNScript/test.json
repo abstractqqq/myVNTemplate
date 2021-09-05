@@ -1,0 +1,29 @@
+{
+	"Dialogs": {
+		"starter": [
+			{
+				"chara": "a join",
+				"loc": "",
+				"expression": "default"
+			},
+			{
+				"chara": "a jump",
+				"amount": 80,
+				"time": 0.25,
+				"dir": "up"
+			}
+		]
+	},
+	"Choices": {
+		"c1": [
+			{
+				"Yes": {
+
+				}
+			}
+		]
+	},
+	"Conditions": {
+
+	}
+}

@@ -7,7 +7,7 @@ var food_choices = [
 	{'Ramen': {'then' : 'block2'}}
 ]
 
-#---------------------------------- Core Dialog ---------------------------------------
+#---------------------------------- Dialogs ---------------------------------------
 var main_block = [
 	
 	# start of content
@@ -90,7 +90,7 @@ var block2 = [
 # If you change the key word 'starter', you will have to go to generalDialog.gd
 # and find start_scene, under if == 'new_game', change to blocks['starter'].
 # Other key word you can change at will as long as you're refering to them correctly.
-var conversation_blocks = {'starter' : main_block, 'block2' : block2}
+var dialog_blocks = {'starter' : main_block, 'block2' : block2}
 
 var choice_blocks = {'food': food_choices}
 
@@ -100,6 +100,6 @@ func _ready():
 	game.currentSaveDesc = scene_description
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
-	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)
+	start_scene(dialog_blocks, choice_blocks, {}, game.load_instruction)
 	
 	

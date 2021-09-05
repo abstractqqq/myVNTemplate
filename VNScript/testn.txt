@@ -1,0 +1,21 @@
+-DIALOG-starter
+chara::female join ; loc ::	1600 600 ;
+chara :: female jump ; amount :: 80 ; time :: 0.25 ; dir :: up ;
+
+
+
+
+-END
+
+
+-CHOICE-
+
+
+-END
+
+
+-CONDITIONS-
+
+
+-END
+

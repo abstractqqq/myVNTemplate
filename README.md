@@ -40,7 +40,7 @@ More in the making ~
 
 ### Known issues:
 
-1. Mac export cannot be played (Not sure why...). However, windows and html exports work fine. Haven't tested on Linux.
+1. Mac export will be considered corrupted. Most likely you will need to do the command line trick to run it.
 
 
 ### Documentations

@@ -1,10 +1,10 @@
 extends Node
 
 # Constants
+const max_history_size = 300 # Max number of history entries
+const max_rollback_steps = 50 # Max steps of rollback to keep
+# It is recommended that max_rollback_steps is kept to a small number (say <500).
 
-# History and rollback
-const max_dialog_display:int = 200 # only display 200 history entries
-const max_rollback_steps:int = 100 # allow users to rollback at most this num of steps
 
 # Narrator
 const narrator_display_name:String = ''
@@ -12,8 +12,11 @@ const narrator_display_name:String = ''
 const title_screen_path:String = "/GodetteVN/titleScreen.tscn"
 const start_scene_path:String = '/GodetteVN/typicalVNScene.tscn'
 const credit_scene_path:String = "" # if you have one
-const ending_scene_path:String = "/GodetteVN/titleScreen.tscn" # by default, ending scene = go back to main
-#
+const ending_scene_path:String = "/GodetteVN/titleScreen.tscn" 
+# by default, ending scene = go back to title
+
+# Directories will contain res:/ part, paths above won't, paths below
+# will have full paths.
 
 # default directories
 const ROOT_DIR:String = "res:/"
@@ -33,32 +36,38 @@ const FONT_DIR:String = "res://fonts/"
 const SETTING_PATH:String = "res://GodetteVN/fundamentals/settings.tscn"
 const LOAD_PATH:String = "res://GodetteVN/fundamentals/loadScreen.tscn"
 const SAVE_PATH:String = "res://GodetteVN/fundamentals/saveScreen.tscn"
-const SAVESLOT:String = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
 const HIST_PATH:String = "res://GodetteVN/fundamentals/historyScreen.tscn"
 # Important small things
+const SAVESLOT:String = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
 const DEFAULT_CHOICE:String = "res://GodetteVN/fundamentals/choiceBar.tscn"
 const DEFAULT_FLOAT:String = 'res://GodetteVN/fundamentals/details/floatText.tscn'
 const DEFAULT_NVL:String = "res://GodetteVN/fundamentals/details/nvlBox.tscn"
+
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size 
 # in textBoxInHistory as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 110
+# If you change these values, then there is a chance that there will be a bug
+# when loading saves. In that case, you probably want to look into currentFormat in
+# GameProgress.gd. It has somethign to do with the format of the image file that is 
+# saved in your game save.
+
 # Encryption password used for saves
 const PASSWORD = "nanithefuck"
 
-
 # Dim color
-const DIM = Color(0.86,0.86,0.86,1)
-const CENTER_DIM = Color(0.7,0.7,0.7,1)
-const NVL_DIM = Color(0.2,0.2,0.2,1)
+const DIM = Color(0.86,0.86,0.86,1) # Dimming of non talking characters
+const CENTER_DIM = Color(0.7,0.7,0.7,1) # Dimming in center mode
+const NVL_DIM = Color(0.2,0.2,0.2,1) # Dimming in NVL mode
 
 #Skip speed, multiple of 0.05
-const SKIP_SPEED:int = 2 # means skip is 1 left-click per 0.1s
+const SKIP_SPEED:int = 2 # means skip is 1 left-click per 2 * 0.05 = 0.1 s
 
 # Transitions
 const TRANSITIONS_DIR = "res://GodetteVN/fundamentals/details/transitions_data/"
 const TRANSITIONS = ['fade','sweep_left','sweep_right','sweep_up','sweep_down',
 	'curtain_left','curtain_right','pixelate','diagonal']
+const PHYSICAL_TRANSITIONS = []
 
 # Other constants used throughout the engine
 const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
@@ -90,12 +99,22 @@ var dvar = {}
 
 # ------------------------- Game State Variables--------------------------------
 
-# Special game state variables, don't need to save.
-var inLoading = false
-var inNotif = false
-var inSetting = false
-var noMouse = false
-var skipping = false
+# Special game state variables
+var inLoading = false # Is the game being loaded from the save now? (Only used
+# in the load system and in the rollback system.)
+
+var inNotif = false # Is there a notification?
+
+var inSetting = false # Is the player in an external menu? Setting/history/save/load
+# / your menu
+
+var noMouse = false # Used when your mouse hovers over buttons on quickmenu
+# When you click the quickmenu button, because noMouse is turned on, the same
+# click will not register as 'continue dialog'.
+# This is important when you do scenes like an investigation where players will
+# click different objects.
+
+var skipping = false # Is the player skipping right now?
 
 func reset_states():
 	inLoading = false
@@ -130,3 +149,7 @@ func error(message, ev = {}):
 			
 	push_error(message)
 	get_tree().quit()
+
+#------------------------------------------------------------------------------------
+# Private
+#------------------------------------------------------------------------------------

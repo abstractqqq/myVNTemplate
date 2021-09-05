@@ -85,7 +85,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="gui_input" from="." to="." method="_on_back2MainBox_gui_input"]
+[connection signal="gui_input" from="." to="." method="_on_notifBox_gui_input"]
 [connection signal="pressed" from="noButton" to="." method="_on_noButton_pressed"]
 [connection signal="pressed" from="okButton" to="." method="_on_okButton_pressed"]
 [connection signal="pressed" from="yesButton" to="." method="_on_yesButton_pressed"]

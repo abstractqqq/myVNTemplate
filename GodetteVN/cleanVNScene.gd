@@ -1,35 +1,42 @@
 extends GeneralDialog
+#---------------------------------- Choices ---------------------------------------
+var food_choices = [
+	{'Sushi': {'then':'b1'}},
+	{'Ramen': {'then':'b2'}}
+]
 
-# It is possible to use your own choice bar or float text
-# For choice bar, it is recommended that you use the node structure
-# textureButton
-# |-----RichTextLabel
-# 
-# and the script should have the same function names
+#---------------------------------- Dialogs ---------------------------------------
+var main_block = [
+	{"": "This is the narrator speaking."},
+	{"": "What should I eat today?"},
+	{'choice':'food', 'id':0},
+	{"":'Thank you for trying out the system!'},
+	{'GDscene': vn.ending_scene_path}
+]
 
-#extends TextureButton
-#signal choice_made(event)
-#var choice_action = null
-#func setup_choice_event(t: String, ev: Dictionary):
-#   get_node('text').bbcode_text = "[center]" + t + "[/center]"
-#   choice_action = ev
-#func _on_choiceBar_pressed():
-#   emit_signal("choice_made", choice_action)
+var b1_block = [
+	{"":"I like sushi."},
+	{'then':'starter', 'target id':0}
+]
 
-#If you're new to programming, it is better if you simply go to the choiceBar.tscn
-#scene and only change the appearance of the default choiceBar.
-#
+var b2_block = [
+	{"":"I like Ramen."},
+	{'then':'starter', 'target id':0}
+]
 
-# For custom float text,
-# You should have the structure
-# richTextLabel
-# |--- AnimationPlayer
-# you can have your richTextLabel extend from FloatText class, which is a class
-# I defined for this purpose. The base functionalities will be inherited
-# and you can write your own functions like shaking or flying in circles or
-# whatever you want. (Those effects should be called in _ready 
-# and if you want your custom event with float text, then you will have to 
-# make changes to generalDialog.gd's script. If you want, go to the 
-# flt_text() and take a look. 
-# Currently, generalDialog.gd is quite a mess. )
-#
+
+#--------------------- Create Dialog, Choice, Condition blocks -----------------------------
+var dialog_blocks = {'starter' : main_block, 'b1':b1_block,'b2':b2_block}
+
+var choice_blocks = {'food': food_choices}
+
+var cond_blocks = {
+	
+}
+
+#---------------------------------------------------------------------
+func _ready():
+	game.currentSaveDesc = scene_description
+	game.currentNodePath = get_tree().current_scene.filename
+	get_tree().set_auto_accept_quit(false)
+	start_scene(dialog_blocks, choice_blocks, cond_blocks, game.load_instruction)

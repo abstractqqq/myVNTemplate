@@ -16,11 +16,9 @@ var currentIndex = null
 # Current save description, if there is one
 var currentSaveDesc = ""
 
-
-#---------------------------------Important-------------------------------------
-
 # Playback/lasting events are defined as events that should be remembered when loading
-# back from a save. 
+# back from a save. Example: weather effects. If it's raining and player saves, then when
+# loading back, the player should see the rain too.
 
 # If player saves in the middle of nvl mode,
 # then when loading back, we need to restore all the nvl text.
@@ -38,25 +36,20 @@ func get_latest_nvl():
 
 #-------------------------------------------------------------------------------
 # "new_game" = start from new
-# "load_game" = start from time line and index
+# "load_game" = start from given dialog block and index
 var load_instruction = "new_game"
 #-------------------------------------------------------------------------------
 
-
-# Do not touch unless you will change the current save and load system, 
-# This is only used in the process of save and load and 
-# has something to do with the thumbnail.
+# Do not touch unless you will change the thumbnail size in the save/load screens, 
 var currentFormat = null # save current format. Used for thumbnail creation
 
-
-#-------------Important--------------------------------
-# I am still debating whether to remove the max dialog variable
 #------------------------------------------------------
+# List of history entries
 var history = []
 
 
 #-------------Rollback Helper---------------------------
-# Unused now.
+# List of rollback records
 var rollback_records = []
 
 #------------------------------------------------------
@@ -64,8 +57,8 @@ var rollback_records = []
 
 # Textbox is an array [unique id, text, voice(optional)]
 func updateHistory(textbox):
-	if (history.size() > vn.max_dialog_display):
-		history.pop_front()
+	if (history.size() > vn.max_history_size):
+		history.remove(0)
 		# will be slow if this array gets too long
 		
 	textbox[1] = textbox[1].strip_edges()

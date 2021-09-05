@@ -13,7 +13,8 @@ signal decision(yes)
 # Used every time, convenience signal when yielding for notification
 signal clicked
 
-func _on_back2MainBox_gui_input(event):
+
+func _on_notifBox_gui_input(event):
 	if event is InputEventMouseButton:
 		if event.get_button_index() == 1:
 			following = !following
@@ -75,3 +76,6 @@ func _on_yesButton_pressed():
 func _on_okButton_pressed():
 	emit_signal("clicked")
 	notif.hide()
+
+
+

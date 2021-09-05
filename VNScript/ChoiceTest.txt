@@ -1,0 +1,18 @@
+-DIALOG-starter
+
+
+-END
+
+
+-CHOICE-c1
+yes:: 	{"then": "starter"}; condition::	money >= 50 ;
+no:: 	{"then": "starter", "target id" : 100};
+
+-END
+
+
+-CONDITIONS-
+
+
+-END
+

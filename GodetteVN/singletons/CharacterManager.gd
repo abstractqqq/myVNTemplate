@@ -112,12 +112,15 @@ func get_character_info(uid:String):
 
 func set_dvar(v:String, value):
 	if not v.is_valid_identifier():
-		vn.error("A valid dvar name should only contain letters, digits, and underscores and the "+\
+		push_error("A valid dvar name should only contain letters, digits, and underscores and the "+\
 		"first character should not be a digit.")
 	
 	for bad in vn.BAD_NAMES:
 		if bad == v:
-			vn.error("The name %s cannot be used as a dvar name." % [bad])
+			push_error("The name %s cannot be used as a dvar name." % [bad])
+	
+	if "%" in v:
+		push_error("The percentage sign % is not allowed in the name of your dvar.")
 		
 	vn.dvar[v] = value
 	print("Successfully set %s to value %s." % [v, value])
@@ -126,4 +129,4 @@ func set_noname(uid:String):
 	if all_chara.has(uid):
 		all_chara[uid]['no_nb'] = true
 	else:
-		vn.error("The uid %s is not regiestered. Might be a typo." % [uid])
+		push_error("The uid %s has not been regiestered when this line is executed. Might also be a typo." % [uid])

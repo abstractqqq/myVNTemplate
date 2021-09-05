@@ -1,4 +1,6 @@
-extends Node2D
+extends TextureRect
+
+const image_exts = ['png', 'jpg', 'jpeg']
 
 onready var uid_edit = $editOptions/main/LineEdit
 onready var display_edit = $editOptions/displayName/displayName
@@ -7,7 +9,6 @@ onready var anim_options = $editOptions/animInfo/animOptions
 onready var bg_options = $editOptions/bgInfo/bgOptions
 onready var xscale = $editOptions/main/xLabel/xScale
 onready var yscale = $editOptions/main/yLabel/yScale
-
 
 var cur_uid = ""
 var dname = ""
@@ -20,6 +21,7 @@ var _ready_to_generate = false
 var counter = 0
 var speed = 30
 var displacement = Vector2()
+var sp = null
 
 func get_input():
 	displacement = Vector2()
@@ -49,8 +51,9 @@ func _input(_ev):
 			get_node('editOptions').visible = true
 
 func _ready():
+	bg_options.remove_item(0)
 	bg_options.add_item("No BG")
-	var bg_lists = fileRelated.get_backgrounds()
+	var bg_lists = _get_backgrounds()
 	for b in bg_lists:
 		bg_options.add_item(b)
 
@@ -66,7 +69,7 @@ func _on_Button_pressed():
 	anim_dict = {}
 	# Expression data
 	var index = 0
-	var exp_list = fileRelated.get_chara_sprites(cur_uid)
+	var exp_list = _get_chara_sprites(cur_uid)
 	for i in range(exp_list.size()):
 		var temp = exp_list[i].split(".")[0]
 		temp = temp.split("_")
@@ -79,7 +82,7 @@ func _on_Button_pressed():
 	$sprite.position = Vector2(1200,600)
 	sprite_options.select(index)
 	
-	var anim_lists = fileRelated.get_chara_sprites(cur_uid, "anim")
+	var anim_lists = _get_chara_sprites(cur_uid, "anim")
 	for e in anim_lists:
 		var temp = e.split(".")[0]
 		temp = temp.split("_")
@@ -114,9 +117,9 @@ func _on_yScale_value_changed(value):
 
 func _on_bgOptions_item_selected(index):
 	if index == 0:
-		$bg.texture = null
+		self.texture = null
 	else:
-		$bg.texture = load(vn.BG_DIR + bg_options.get_item_text(index))
+		self.texture = load(vn.BG_DIR + bg_options.get_item_text(index))
 
 
 func _on_generateButton_pressed():
@@ -179,3 +182,64 @@ func _on_charaGenPopup_confirmed():
 			print("Some error occurred when trying to save as scene.")
 		
 		_ready_to_generate = false
+
+
+# -------------------------------------------------------------------------
+func _get_backgrounds():
+	# This method should only be used in development phase.
+	# The exported project won't work with dir calls depending on
+	# what kind of paths are passed.
+	var bgs = []
+	var dir = Directory.new()
+	if !dir.dir_exists(vn.BG_DIR):
+		dir.make_dir_recursive(vn.BG_DIR)
+	
+	dir.open(vn.BG_DIR)
+	dir.list_dir_begin()
+	
+	while true:
+		var pic = dir.get_next()
+		if pic == "":
+			break
+		elif not pic.begins_with("."):
+			var temp = pic.split(".")
+			var ext = temp[temp.size()-1]
+			if ext in image_exts:
+				bgs.append(pic)
+				
+	dir.list_dir_end()
+	return bgs
+	
+func _get_chara_sprites(uid, which = "sprite"):
+	# This method should only be used in development phase.
+	# The exported project won't work with dir calls depending on
+	# what kind of paths are passed.
+	var sprites = []
+	var dir = Directory.new()
+	if which == "anim" or which == "animation" or which == "spritesheet":
+		which = vn.CHARA_ANIM
+	elif which == "side" or which == "side_image" or which == "side image":
+		which = vn.CHARA_SIDE
+	else:
+		which = vn.CHARA_DIR
+		
+	if !dir.dir_exists(which):
+		dir.make_dir_recursive(which)
+	
+	dir.open(which)
+	dir.list_dir_begin()
+	
+	while true:
+		var pic = dir.get_next()
+		if pic == "":
+			break
+		elif not pic.begins_with("."):
+			var temp = pic.split(".")
+			var ext = temp[temp.size()-1]
+			if ext in image_exts:
+				var pic_id = (temp[0].split("_"))[0]
+				if pic_id == uid:
+					sprites.append(pic)
+				
+	dir.list_dir_end()
+	return sprites
