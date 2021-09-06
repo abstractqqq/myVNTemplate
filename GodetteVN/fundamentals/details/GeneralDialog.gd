@@ -40,12 +40,13 @@ onready var QM = vnui.get_node('quickMenu')
 onready var dialogbox = vnui.get_node('textBox/dialog')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
-onready var camera = get_node('camera')
+onready var camera = screen.get_node('camera')
 
 var nvlBox = null
 #-----------------------
 # signals
 signal player_accept(npv)
+signal dvar_set
 
 #--------------------------------------------------------------------------------
 func _ready():
@@ -136,6 +137,7 @@ func interpret_events(event):
 	
 	# Pre-parse, keep this at minimum
 	if ev.has('loc'): ev['loc'] = parse_loc(ev['loc'], ev)
+	if ev.has('params'): ev['params'] = parse_params(ev['params'],ev)
 	if ev.has('color'): ev['color'] = parse_color(ev['color'], ev)
 	if ev.has('nvl'):
 		if (typeof(ev['nvl'])!=1) and ev['nvl'] != 'clear': 
@@ -201,7 +203,7 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 		current_block = all_blocks[game.currentBlock]
 		load_playback(game.playback_events)
 	else:
-		vn.error('Unknown loading instruction.')
+		push_error("Unknow loading instruction")
 	
 	if music.bgm != '':
 		_cur_bgm = music.bgm
@@ -602,6 +604,7 @@ func set_dvar(ev : Dictionary) -> void:
 	else:
 		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
+	emit_signal("dvar_set")
 	auto_load_next()
 	
 func check_condition(cond_list) -> bool:
@@ -795,7 +798,8 @@ func camera_effect(ev : Dictionary) -> void:
 				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc']}
 				yield(get_tree().create_timer(time), 'timeout')
 			else:
-				vn.error("Camera move expects a loc and time, and type (optional)", ev)
+				print("Wrong camera event format: " + str(ev))
+				push_error("Camera move expects a loc and time, and type (optional)")
 		"shake":
 			if not vn.skipping:
 				var amount = 250
@@ -804,7 +808,8 @@ func camera_effect(ev : Dictionary) -> void:
 				if ev.has('time'): time = ev['time']
 				camera.shake(amount, time)
 		_:
-			vn.error("Camera effect not found.", ev)
+			print("Unknown camera event: " + str(ev))
+			push_error("Camera effect not found.")
 			
 	auto_load_next()
 #----------------------------- Related to Character ----------------------------
@@ -1488,6 +1493,21 @@ func parse_true_false(truth, ev = {}) -> bool:
 		print("Error event: " + str(ev))
 		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
+
+func parse_params(p, ev = {}): # If params has a string which is a dvar,
+	# then this will be replaced by the value of a dvar
+	var t = typeof(p)
+	if t == TYPE_REAL or t == TYPE_INT:
+		return p
+	if t == TYPE_STRING and vn.dvar.has(p):
+		return vn.dvar[p]
+	if t == TYPE_ARRAY:
+		var temp = p
+		for i in range(temp.size()):
+			if typeof(temp[i]) == TYPE_STRING and vn.dvar.has(temp[i]):
+				temp[i] = vn.dvar[temp[i]]
+		return temp
+
 
 func _dialog_state_reset():
 	if nvl:

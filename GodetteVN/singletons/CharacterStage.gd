@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Node2D
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
@@ -10,6 +10,10 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 # in a custom movie scene via code. 
 # 2. It makes each part of VN more independent, since
 # characters are so important, they deserve their own stage.
+# 3. Think of this as a universal manager for your character sprites
+# and actions. (Notice the z index.You might need to bump it up depending
+# on ur project.)
+#
 
 # Some recurring code comments:
 

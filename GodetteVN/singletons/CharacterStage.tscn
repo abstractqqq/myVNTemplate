@@ -2,8 +2,8 @@
 
 [ext_resource path="res://GodetteVN/singletons/CharacterStage.gd" type="Script" id=1]
 
-[node name="stage" type="CanvasLayer"]
-layer = 0
+[node name="stage" type="Node2D"]
+z_index = 1
 script = ExtResource( 1 )
 __meta__ = {
 "_editor_description_": ""
