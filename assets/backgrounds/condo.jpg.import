@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/p2.png-d56fa8bc477f54b84b91a5d4978cd3b2.stex"
+path="res://.import/condo.jpg-0b0832afb867d1af71348d3edb490eb7.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/p2.png"
-dest_files=[ "res://.import/p2.png-d56fa8bc477f54b84b91a5d4978cd3b2.stex" ]
+source_file="res://assets/backgrounds/condo.jpg"
+dest_files=[ "res://.import/condo.jpg-0b0832afb867d1af71348d3edb490eb7.stex" ]
 
 [params]
 

@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/roadside.jpg-7146a94e86178d8e86da263a017bd81b.stex"
+path="res://.import/p7.png-07c51f05be42a04253599aa020dd922d.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/background/roadside.jpg"
-dest_files=[ "res://.import/roadside.jpg-7146a94e86178d8e86da263a017bd81b.stex" ]
+source_file="res://assets/backgrounds/p7.png"
+dest_files=[ "res://.import/p7.png-07c51f05be42a04253599aa020dd922d.stex" ]
 
 [params]
 
