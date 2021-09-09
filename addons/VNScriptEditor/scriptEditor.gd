@@ -49,11 +49,13 @@ func save_as_txt(shortCut=false):
 
 
 func _on_loadButton_pressed():
+	return
 	$FileDialog.popup_centered()
 	$FileDialog.deselect_items()
 
 
 func _on_jsonButton_pressed():
+	return
 	script_to_json()
 
 
@@ -74,7 +76,9 @@ func _on_tlname_text_changed(new_text):
 	fname = new_text
 
 func _on_saveButton_pressed():
+	return
 	save_as_txt()
 
 func _on_newButton_pressed():
+	return
 	edit.text = "-DIALOG-starter\n\n\n-END\n\n\n-CHOICE-\n\n\n-END\n\n\n-CONDITIONS-\n\n\n-END"

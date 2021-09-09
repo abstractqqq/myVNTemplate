@@ -32,15 +32,11 @@ var main_block = [
 	{"chara": "gt jump"},
 	{"chara": "gt move", "loc": "1000 650"},
 	{'gt': "But someone doesn't see me..."},
-	{'signal':'speed_change', 'params':[-65,-35]},
+	{'dvar':'parallax_speed = -100'},
 	{"gt default": "Did you notice the background moving speed has changed?"},
-	{"gt":'You can use signals to communicator with exterior components.'},
-	{"gt":'However, most consequences of a signal will not be saved by the system, because '+\
-	"there is no way to predict what kind of changes will the signal make."},
-	{"gt":"So if there are things you want to save, you need to think harder and write the logic " +\
-	"in your signal trigger function. You might even need to make changes to the save system."},
-	{"gt":"So be careful about signals. Depending on what your signals change, rollback may not "+\
-	"work well either (because mainly signals work with exterior components)."},
+	{"gt":'This is done by using a dvar to control the moving speed and a function which gets called '+\
+	"whenever this dvar is changed."},
+	{"gt": "See comment 1 in the code if you're curious."},
 	{'gt': "Let me do my signature jump!"},
 	{"chara": "gt jump", "amount":800, "time":2},
 	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
@@ -65,7 +61,29 @@ var choice_blocks = {}
 func _ready():
 	game.currentSaveDesc = scene_description
 	game.currentNodePath = get_tree().current_scene.filename
+	register_dvar_propagation("parallax_speed_change", "parallax_speed")
+	# See comment 1 below
 	get_tree().set_auto_accept_quit(false)
 	start_scene(conversation_blocks, choice_blocks, {}, game.load_instruction)
 	
-	
+# Comment 1:
+# register_dvar_propagation: here we're associating the dvar
+# parallax_speed with the method parallax_speed_change
+# The default behavior is as follows: whenever the dvar parallax_speed is changed,
+# The node will fire a propagate_call (look it up in Godot documentation if you are
+# not familiar) and every subnode that has the function parallax_speed_change will
+# be called automatically, and if a parent node and a child node both have this
+# function, then the parent node will be called first.
+# Moreover, because this is a change according to a dvar value, whenever you rollback,
+# a propagate_call will also be fired.
+# The format is: register_dvar_propagation("name_of_func", "dvar")
+# And this dvar will be passed into the function name_of_func as argument
+
+# You can only change one dvar at a time, so you can only associate one dvar
+# in one registeration. If you have multiple functions that depend on the same
+# dvar, simply register twice. If your function depends on two dvars, try to 
+# separate it into two functions. (Maybe this is not the best approach?)
+
+# Dvar propagation can be used to control the exterior scenes like this. 
+# (Parallax background is exterior to the vn system. 
+# Exterior: something that is not directly controlled by GeneralDialog)

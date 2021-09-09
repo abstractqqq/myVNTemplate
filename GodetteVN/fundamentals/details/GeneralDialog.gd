@@ -31,6 +31,8 @@ var hide_vnui : bool = false
 var no_scroll : bool = false
 var no_right_click : bool = false
 var one_time_font_change : bool = false
+#
+var _propagate_dvar_list = {}
 #----------------------
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Important components
@@ -42,7 +44,7 @@ onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = screen.get_node('camera')
 
-var nvlBox = null
+var nvlBox = null # dynamic. The NVL component is only instanced when in nvl mode.
 #-----------------------
 # signals
 signal player_accept(npv)
@@ -179,7 +181,6 @@ func interpret_events(event):
 		{'voice'}:voice(ev['voice'])
 		{'id'}, {}:auto_load_next()
 		{'center',..}: set_center(ev)
-		{'signal',..}: send_signal(ev)
 		_: speech_parse(ev)
 				
 			
@@ -587,8 +588,7 @@ func change_scene_to(path : String):
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
 	var splitted = fun.break_line(ev['dvar'], '=')
-	var left = splitted[0]
-	left = left.replace(" ","")
+	var left = splitted[0].strip_edges()
 	var right = splitted[1].strip_edges()
 	if vn.dvar.has(left):
 		if typeof(vn.dvar[left])== TYPE_STRING:
@@ -605,6 +605,7 @@ func set_dvar(ev : Dictionary) -> void:
 		vn.error("Dvar {0} not found".format({0:left}) ,ev)
 	
 	emit_signal("dvar_set")
+	propagate_dvar_calls(left)
 	auto_load_next()
 	
 func check_condition(cond_list) -> bool:
@@ -1107,6 +1108,7 @@ func _yield_check(npy : bool): # npy = nullily_previous_yield ?
 func on_rollback():
 	var last = game.rollback_records.pop_back()
 	vn.dvar = last['dvar']
+	propagate_dvar_calls()
 	game.currentSaveDesc = last['currentSaveDesc']
 	game.currentIndex = last['currentIndex']
 	game.currentBlock = last['currentBlock']
@@ -1325,26 +1327,29 @@ func dimming(c : Color):
 	get_node('background').modulate = c
 	stage.set_modulate_4_all(c)
 
-func send_signal(ev:Dictionary):
-	var found = false
-	var communicator = null
-	for n in get_children():
-		if n.name == "signals":
-			found = true
-			communicator = n
-			break
-	
-	if found:
-		if ev.has('params'):
-			communicator.emit_signal(ev['signal'], ev['params'])
-		else:
-			communicator.emit_signal(ev['signal'])
-			
-	auto_load_next()
+
+func register_dvar_propagation(method_name:String, dvar_name:String):
+	if vn.dvar.has(dvar_name):
+		_propagate_dvar_list[method_name] = dvar_name
+	else:
+		print("The dvar %s cannot be found. Nothing is done." % [dvar_name])
+
+func propagate_dvar_calls(dvar_name:String=''):
+	# propagate to call all methods that should be called when a dvar
+	# is changed. 
+	if dvar_name == '':
+		for k in _propagate_dvar_list.keys():
+			propagate_call(k, [vn.dvar[_propagate_dvar_list[k]]], true)
+	else:
+		for k in _propagate_dvar_list.keys():
+			if _propagate_dvar_list[k] == dvar_name:
+				propagate_call(k, [vn.dvar[dvar_name]], true)
+				
 
 func system(ev : Dictionary):
 	if ev.size() != 1:
-		vn.error("System event only receives one field.")
+		print("Warning: wrong system event format for " + str(ev))
+		push_error("System event only receives one field.")
 	
 	var k = ev.keys()[0]
 	var temp = ev[k].split(" ")
@@ -1494,7 +1499,7 @@ func parse_true_false(truth, ev = {}) -> bool:
 		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
 
-func parse_params(p, ev = {}): # If params has a string which is a dvar,
+func parse_params(p, _ev = {}): # If params has a string which is a dvar,
 	# then this will be replaced by the value of a dvar
 	var t = typeof(p)
 	if t == TYPE_REAL or t == TYPE_INT:

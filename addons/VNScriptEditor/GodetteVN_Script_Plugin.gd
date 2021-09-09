@@ -9,6 +9,9 @@ func _enter_tree():
 	# shard_library_editor_instance.base_control = get_editor_interface().get_base_control()
 	get_editor_interface().get_editor_viewport().add_child(editor_instance)
 	make_visible(false)
+	
+	#
+	# add_custom_type("GodetteVN_Edit", "TextEdit", "", null)
 
 
 func _exit_tree():

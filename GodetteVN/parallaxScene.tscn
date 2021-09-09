@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://GodetteVN/fundamentals/details/background.tscn" type="PackedScene" id=2]
 [ext_resource path="res://GodetteVN/fundamentals/VNUI.tscn" type="PackedScene" id=3]
@@ -11,7 +11,6 @@
 [ext_resource path="res://assets/background/p7.png" type="Texture" id=10]
 [ext_resource path="res://assets/background/p8.png" type="Texture" id=11]
 [ext_resource path="res://GodetteVN/ParallaxBackground.gd" type="Script" id=12]
-[ext_resource path="res://GodetteVN/signals.gd" type="Script" id=13]
 
 [node name="parallaxScene" type="Node2D"]
 script = ExtResource( 4 )
@@ -80,6 +79,3 @@ centered = false
 visible = false
 
 [node name="VNUI" parent="." instance=ExtResource( 3 )]
-
-[node name="signals" type="Node" parent="."]
-script = ExtResource( 13 )

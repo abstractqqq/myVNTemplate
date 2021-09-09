@@ -1,15 +1,14 @@
 [gd_scene load_steps=5 format=2]
 
-[ext_resource path="res://addons/VNScriptEditor/popupTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
-[ext_resource path="res://addons/VNScriptEditor/scriptEditor.gd" type="Script" id=3]
-[ext_resource path="res://addons/VNScriptEditor/actualEditor.gd" type="Script" id=4]
+[ext_resource path="res://addons/VNScriptEditor/editorBlockContainer.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/VNScriptEditor/testRun.gd" type="Script" id=4]
 
 [node name="editor" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -640.0
-margin_bottom = -360.0
+margin_right = -320.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 1 )
@@ -17,7 +16,7 @@ custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
-script = ExtResource( 3 )
+script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -25,26 +24,26 @@ __meta__ = {
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 710.0
+margin_right = 1590.0
+margin_bottom = 1070.0
 custom_constants/separation = 30
 
 [node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer"]
-margin_right = 1260.0
-margin_bottom = 700.0
+margin_right = 1580.0
+margin_bottom = 1060.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/HSplitContainer"]
-margin_right = 1260.0
-margin_bottom = 700.0
+margin_right = 1580.0
+margin_bottom = 1060.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme = ExtResource( 1 )
-custom_constants/separation = 20
+custom_constants/separation = 25
 
 [node name="head" type="HBoxContainer" parent="HBoxContainer/HSplitContainer/VBoxContainer"]
-margin_right = 1260.0
+margin_right = 1580.0
 margin_bottom = 43.0
 custom_constants/separation = 30
 
@@ -130,47 +129,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextEdit" type="TextEdit" parent="HBoxContainer/HSplitContainer/VBoxContainer"]
-margin_top = 63.0
-margin_right = 1260.0
-margin_bottom = 700.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-custom_fonts/font = ExtResource( 2 )
-custom_constants/line_spacing = 4
-text = "-DIALOG-starter
+[node name="separationLine" type="ColorRect" parent="HBoxContainer/HSplitContainer/VBoxContainer"]
+margin_top = 68.0
+margin_right = 1580.0
+margin_bottom = 72.0
+rect_min_size = Vector2( 0, 4 )
+color = Color( 0.266667, 0.266667, 0.266667, 1 )
 
-
--END
-
-
--CHOICE-
-
-
--END
-
-
--CONDITIONS-
-
-
--END"
-highlight_current_line = true
-syntax_highlighting = true
-show_line_numbers = true
-wrap_enabled = true
-caret_blink = true
-script = ExtResource( 4 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-field_val_color = Color( 0.0196078, 0.47451, 0.356863, 1 )
-line_comment_color = Color( 0.607843, 0.658824, 0.513726, 1 )
+[node name="notebook" parent="HBoxContainer/HSplitContainer/VBoxContainer" instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_top = 97.0
+margin_right = 1580.0
+margin_bottom = 1060.0
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 710.0
+margin_right = 1590.0
+margin_bottom = 1070.0
 theme = ExtResource( 1 )
 window_title = ""
 dialog_text = "
@@ -183,8 +160,8 @@ __meta__ = {
 [node name="FileDialog" type="FileDialog" parent="."]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 710.0
+margin_right = 1590.0
+margin_bottom = 1070.0
 rect_min_size = Vector2( 150, 52.5 )
 input_pass_on_modal_close_click = false
 theme = ExtResource( 1 )
@@ -199,15 +176,15 @@ current_path = "res://VNScript/VNScript"
 [node name="helperPopup" type="AcceptDialog" parent="."]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1270.0
-margin_bottom = 710.0
+margin_right = 1590.0
+margin_bottom = 1070.0
 window_title = ""
 
 [node name="richText" type="RichTextLabel" parent="helperPopup"]
 margin_left = 8.0
 margin_top = 8.0
-margin_right = 1252.0
-margin_bottom = 646.0
+margin_right = 1572.0
+margin_bottom = 1002.0
 bbcode_enabled = true
 
 [connection signal="text_changed" from="HBoxContainer/HSplitContainer/VBoxContainer/head/tlname" to="." method="_on_tlname_text_changed"]

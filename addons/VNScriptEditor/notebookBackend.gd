@@ -37,7 +37,7 @@ func _ready():
 	add_color_region("-CONDITIONS-", "", label_color, true)
 	add_color_region("-CHOICE-", "", label_color, true)
 	add_color_region("-END", "", label_color, true)
-	self.text = "-DIALOG-starter\n\n\n-END\n\n\n-CHOICE-\n\n\n-END\n\n\n-CONDITIONS-\n\n\n-END"
+	# self.text = "-DIALOG-starter\n\n\n-END\n\n\n-CHOICE-\n\n\n-END\n\n\n-CONDITIONS-\n\n\n-END"
 	
 	cursor_set_line(1)
 

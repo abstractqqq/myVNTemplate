@@ -97,8 +97,7 @@ func _eval_a(ex_arr) -> float:
 		if e.is_valid_float():
 			stack.push_back(float(e))
 		elif vn.dvar.has(e):
-			if typeof(vn.dvar[e]) == 3 or typeof(vn.dvar[e]) == 2: 
-				# 3 = real numbers, 2 = integers
+			if typeof(vn.dvar[e]) == TYPE_REAL or typeof(vn.dvar[e]) == TYPE_INT:
 				stack.push_back(vn.dvar[e])
 			else:
 				vn.error("The type of dvar {0} is not float. Cannot evaluate.".format({0:e}))
@@ -109,7 +108,10 @@ func _eval_a(ex_arr) -> float:
 				stack.push_back(first+second)
 				#print("Doing {0}+{1}".format({0:first,1:second}))
 			elif e == "-":
-				stack.push_back(first-second)
+				if first == null:
+					stack.push_back(-second)
+				else:
+					stack.push_back(first-second)
 				#print("Doing {0}-{1}".format({0:first,1:second}))
 			elif e == "*":
 				stack.push_back(first*second)

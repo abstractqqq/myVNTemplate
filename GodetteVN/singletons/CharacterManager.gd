@@ -39,6 +39,7 @@ func _ready():
 	set_dvar("mo", 50)
 	set_dvar("le",0)
 	set_dvar("tt", true)
+	set_dvar("parallax_speed", -25)
 	
 	# Suppose for vo, we do not want name box at all 
 	# (no name display + no namebox texture)

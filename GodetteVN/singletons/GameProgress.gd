@@ -25,7 +25,7 @@ var currentSaveDesc = ""
 var nvl_text = ''
 
 
-var playback_events = {'bg':{'bg':''}, 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':''}
+var playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':''}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()

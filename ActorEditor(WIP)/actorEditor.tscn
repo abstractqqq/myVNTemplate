@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://ActorEditor(WIP)/actorEditor.gd" type="Script" id=2]
-[ext_resource path="res://addons/VNScriptEditor/popupTheme.tres" type="Theme" id=3]
+[ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=3]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=4]
 
 [node name="editor" type="TextureRect"]
