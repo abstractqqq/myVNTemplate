@@ -12,11 +12,11 @@
 [ext_resource path="res://addons/VNScriptEditor/VN_Edit.gd" type="Script" id=10]
 
 [node name="conditionBlock" type="Panel"]
-margin_right = 1540.0
+margin_right = 1340.0
 margin_bottom = 340.0
-rect_min_size = Vector2( 1540, 340 )
+rect_min_size = Vector2( 1340, 340 )
 mouse_filter = 1
-size_flags_horizontal = 3
+size_flags_horizontal = 4
 theme = ExtResource( 9 )
 custom_styles/panel = ExtResource( 8 )
 script = ExtResource( 7 )
@@ -25,16 +25,16 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="VBoxContainer" parent="."]
-margin_right = 1540.0
+margin_right = 1340.0
 margin_bottom = 340.0
-rect_min_size = Vector2( 1540, 340 )
+rect_min_size = Vector2( 1340, 340 )
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="header" type="HBoxContainer" parent="HBoxContainer"]
-margin_right = 1540.0
+margin_right = 1340.0
 margin_bottom = 60.0
 rect_min_size = Vector2( 0, 60 )
 custom_constants/separation = 10
@@ -54,6 +54,7 @@ size_flags_vertical = 6
 text = "Conditions:"
 
 [node name="blockName" type="LineEdit" parent="HBoxContainer/header"]
+visible = false
 margin_left = 220.0
 margin_top = 7.0
 margin_right = 360.0
@@ -64,15 +65,15 @@ size_flags_vertical = 4
 max_length = 30
 
 [node name="noticeBar" type="Label" parent="HBoxContainer/header"]
-margin_left = 370.0
-margin_right = 1375.0
+margin_left = 220.0
+margin_right = 1170.0
 margin_bottom = 60.0
-rect_min_size = Vector2( 1005, 60 )
+rect_min_size = Vector2( 950, 60 )
 theme = ExtResource( 9 )
 
 [node name="list" type="HBoxContainer" parent="HBoxContainer/header"]
-margin_left = 1385.0
-margin_right = 1517.0
+margin_left = 1180.0
+margin_right = 1312.0
 margin_bottom = 60.0
 custom_constants/separation = 18
 
@@ -107,15 +108,17 @@ margin_bottom = 46.0
 rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 4
 size_flags_vertical = 4
+disabled = true
 texture_normal = ExtResource( 6 )
 texture_hover = ExtResource( 2 )
+texture_disabled = ExtResource( 2 )
 expand = true
 
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 margin_top = 64.0
-margin_right = 1540.0
+margin_right = 1340.0
 margin_bottom = 334.0
-rect_min_size = Vector2( 1540, 270 )
+rect_min_size = Vector2( 1340, 270 )
 custom_constants/margin_right = 10
 custom_constants/margin_top = 0
 custom_constants/margin_left = 10
@@ -123,7 +126,7 @@ custom_constants/margin_bottom = 10
 
 [node name="TextEdit" type="TextEdit" parent="HBoxContainer/MarginContainer"]
 margin_left = 10.0
-margin_right = 1530.0
+margin_right = 1330.0
 margin_bottom = 260.0
 highlight_current_line = true
 syntax_highlighting = true
