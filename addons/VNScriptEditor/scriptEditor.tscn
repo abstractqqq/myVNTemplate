@@ -1,8 +1,7 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
-[ext_resource path="res://addons/VNScriptEditor/editorBlockContainer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/VNScriptEditor/newEditor.gd" type="Script" id=4]
 
 [node name="editor" type="MarginContainer"]
@@ -140,12 +139,25 @@ margin_bottom = 72.0
 rect_min_size = Vector2( 0, 4 )
 color = Color( 0.266667, 0.266667, 0.266667, 1 )
 
-[node name="notebook" parent="HBoxContainer/VBoxContainer" instance=ExtResource( 3 )]
-anchor_right = 0.0
-anchor_bottom = 0.0
+[node name="notebook" type="ScrollContainer" parent="HBoxContainer/VBoxContainer"]
 margin_top = 97.0
 margin_right = 1520.0
 margin_bottom = 1060.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource( 1 )
+follow_focus = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="notebookOrganizer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/notebook"]
+margin_right = 1520.0
+margin_bottom = 1080.0
+rect_min_size = Vector2( 1520, 0 )
+size_flags_horizontal = 6
+size_flags_vertical = 3
+custom_constants/separation = 20
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 margin_left = 10.0
