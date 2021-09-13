@@ -33,9 +33,10 @@ var main_block = [
 	{"female":"This is a new feature. For all events with the field loc, you can put R for a random position."},
 	{"chara":"female fadeout", 'time':0.5},
 	{"bg": "condo.jpg", "fade": 1.5},
-	{"chara":"female fadein", "loc": "500 600",'time':0.25},
+	{"chara":"female fadein", "loc": "500 600",'time':0.5},
 	{"female":"This is certainly not ideal for character's joining location, but this is just an example."},
-	{'female smile1': 'Let me show you a cool new feature.'},
+	{'chara':'female move', 'loc':"1400 600", 'expression':'smile2'},
+	{'female': 'Let me show you a cool new feature.'},
 	{'female': "Suppose I am very confused now."},
 	{'chara':'female add', 'path':'/GodetteVN/sfxScenes/questionMark.tscn','at':'head'},
 	{'female':"If you look at the code, it says the special effect question mark should show up "+\

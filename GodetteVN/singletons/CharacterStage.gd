@@ -68,14 +68,16 @@ func spin(uid:String, degrees:float = 360.0, time:float = 1.0, sdir:int = 1, typ
 		var c = find_chara_on_stage(uid)
 		c.spin(sdir,degrees,time, type)
 
-func change_pos(uid:String, loc:Vector2): # instant position change.
+func change_pos(uid:String, loc:Vector2, expr:String=''): # instant position change.
 	var c = find_chara_on_stage(uid)
 	c.position = loc
 	c.loc = loc
+	if expr != '':
+		c.change_expression(expr)
 
-func change_pos_2(uid:String, loca:Vector2, time:float = 1, type = "linear"):
+func change_pos_2(uid:String, loca:Vector2, time:float = 1, type:String= "linear", expr:String=''):
 	var c = find_chara_on_stage(uid)
-	c.change_pos_2(loca, time, type)
+	c.change_pos_2(loca, time, type, expr)
 	
 func change_expression(uid:String, expression:String):
 	var info = chara.all_chara[uid]

@@ -61,7 +61,7 @@ const CENTER_DIM = Color(0.7,0.7,0.7,1) # Dimming in center mode
 const NVL_DIM = Color(0.2,0.2,0.2,1) # Dimming in NVL mode
 
 #Skip speed, multiple of 0.05
-const SKIP_SPEED:int = 2 # means skip is 1 left-click per 2 * 0.05 = 0.1 s
+const SKIP_SPEED:int = 3 # means skip is 1 left-click per 2 * 0.05 = 0.1 s
 
 # Transitions
 const TRANSITIONS_DIR = "res://GodetteVN/fundamentals/details/transitions_data/"

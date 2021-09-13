@@ -145,7 +145,7 @@ func _dummy_fadeout(expFrames, prev_exp:String):
 # involves a small amount of jump, like being shocked. So I think it's ok to not
 # implement a movement type for jump.
 
-func change_pos_2(loca:Vector2, time:float, type = "linear"):
+func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''):
 	self.loc = loca
 	var m = fun.movement_type(type)
 	var fake = FakeWalker.new()
@@ -159,6 +159,9 @@ func change_pos_2(loca:Vector2, time:float, type = "linear"):
 	add_child(_objTimer)
 	fake_tween.start()
 	fake_tween.connect("tween_completed", self, "clear_dummy")
+	if expr != '':
+		yield(get_tree().create_timer(time), 'timeout')
+		var _err = change_expression(expr)
 
 func _follow_fake(params):
 	var fake = params[0]

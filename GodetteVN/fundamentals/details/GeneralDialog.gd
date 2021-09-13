@@ -922,14 +922,16 @@ func character_fadeout(uid: String, ev:Dictionary):
 # This method is here to fill in default values
 func character_move(uid:String, ev:Dictionary):
 	var type = "linear"
+	var expr = ''
+	if ev.has('expression'): expr = ev['expression']
 	if ev.has('type'): type = ev['type']
 	if ev.has('loc'):
 		if type == 'instant' or vn.skipping:
-			stage.change_pos(uid, ev['loc'])
+			stage.change_pos(uid, ev['loc'], expr)
 		else:
 			var time = 1
 			if ev.has('time'):time = ev['time']
-			stage.change_pos_2(uid, ev['loc'], time, type)
+			stage.change_pos_2(uid, ev['loc'], time, type, expr)
 		auto_load_next()
 	else:
 		vn.error("Character move expects a loc.", ev)
