@@ -254,20 +254,11 @@ func set_center(ev: Dictionary):
 		say(u, ev['center'], ev['speed'])
 	else:
 		say(u, ev['center'])
-	if ev.has('voice'):
-		voice(ev['voice'], false)
-		latest_voice = ev['voice']
-	else:
-		latest_voice = null
+	var _has_voice = _check_latest_voice(ev) # not gonna be used, thus _
 
 func speech_parse(ev : Dictionary) -> void:
 	# Voice first
-	if ev.has('voice'):
-		latest_voice = ev['voice']
-		if not vn.skipping:
-			voice(ev['voice'], false)
-	else:
-		latest_voice = null
+	var _has_voice = _check_latest_voice(ev)
 	# one time font change
 	one_time_font_change = ev.has('font')
 	if one_time_font_change:
@@ -293,17 +284,14 @@ func speech_parse(ev : Dictionary) -> void:
 
 func generate_choices(ev: Dictionary):
 	# make a say event
-	if self.nvl:
-		nvl_off()
+	if self.nvl: nvl_off()
 	else:
 		dialogbox.text = ""
 		speaker.text = ""
 	if vn.auto_on or vn.skipping:
 		QM.disable_skip_auto()
-	if ev.has('voice'):
-		latest_voice = ev['voice']
-		voice(ev['voice'], false)
-	else: latest_voice = null
+	
+	var _has_voice = _check_latest_voice(ev)
 	one_time_font_change = ev.has('font')
 	if one_time_font_change:
 		var path = vn.FONT_DIR + ev['font']
@@ -315,7 +303,11 @@ func generate_choices(ev: Dictionary):
 			break
 	if combine != "":
 		say(combine, ev[combine], 0, true)
-		
+	
+	if ev['choice'] == '' or ev['choice'] == 'url': 
+		# This is for url (in-line, textbased) choices
+		return
+	# Actual choices
 	var options = all_choices[ev['choice']]
 	waiting_cho = true
 	for i in options.size():
@@ -384,10 +376,11 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 			elif not one_time_font_change:
 				dialogbox.reset_fonts()
 		
-		dialogbox.set_dialog(words, cps)
 		if just_loaded:
+			dialogbox.set_dialog(words, 50)
 			just_loaded = false
 		else:
+			dialogbox.set_dialog(words, cps)
 			var new_text = dialogbox.get_text()
 			if latest_voice == null:
 				game.history.push_back([temp[0], new_text])
@@ -431,18 +424,14 @@ func extend(ev:Dictionary):
 			if (ev['speed'] in cps_dict.keys()):
 				cps = cps_dict[ev['speed']]
 		
-		
-		if ev.has('voice'):
-			latest_voice = ev['voice']
-			voice(latest_voice, false)
+		if _check_latest_voice(ev):
 			game.history.push_back([prev_speaker, words, latest_voice])
 		else:
-			latest_voice = null
 			game.history.push_back([prev_speaker, words])
 			
 		if just_loaded:
 			just_loaded = false
-			dialogbox.set_dialog(game.playback_events['speech'], cps)
+			dialogbox.set_dialog(game.playback_events['speech'], 50)
 			game.history.pop_back()
 		else:
 			dialogbox.bbcode_text = game.playback_events['speech']
@@ -1220,15 +1209,13 @@ func flt_text(ev: Dictionary) -> void:
 	else:
 		f.display(ev['float'], wt, in_t, loc)
 	
+	var has_voice = _check_latest_voice(ev)
 	if ev.has('hist') and (parse_true_false(ev['hist'])):
 		var who = ''
 		if ev.has('who'): who = ev['who']
-		if ev.has('voice'):
-			latest_voice = ev['voice']
-			voice(ev['voice'], false)
+		if has_voice:
 			game.history.push_back([who, ev['float'], latest_voice])
 		else:
-			latest_voice = null
 			game.history.push_back([who, ev['float']])
 		
 	wait(wt)
@@ -1323,7 +1310,19 @@ func _hide_namebox(uid:String):
 			return true
 			
 	return false
+
+# Check this event for latest voice... If there is a voice field,
+# play the voice and then return true
+func _check_latest_voice(ev:Dictionary):
+	if ev.has('voice'):
+		latest_voice = ev['voice']
+		if not vn.skipping:
+			voice(ev['voice'], false)
+			return true
+	else:
+		latest_voice = null
 	
+	return false
 
 func dimming(c : Color):
 	get_node('background').modulate = c
@@ -1371,6 +1370,12 @@ func system(ev : Dictionary):
 		"rollback", "roll_back" ,"RB":
 			if temp[1] == "clear":
 				game.rollback_records = []
+			else:
+				var splitted = fun.break_line(temp[1], '_')
+				if splitted[0]=='clear' and splitted[1].is_valid_integer():
+					var n = int(splitted[1])
+					for _i in range(n):
+						game.rollback_records.pop_back()
 		"auto_save", "AS": # make a save, with 0 seconds delay, and save
 			# at current index - 1 because at current index, the event is sys:auto_save
 			fun.make_a_save("[Auto Save] ",0,1)

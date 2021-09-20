@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
+[ext_resource path="res://GodetteVN/test.gd" type="Script" id=2]
+
+[node name="Node2D" type="RichTextLabel"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme = ExtResource( 1 )
+bbcode_enabled = true
+bbcode_text = "
+
+
+[center][url=1%0000ff][color=#ff0000]Hello[/color][/url][/center]123"
+text = "
+
+
+Hello123"
+script = ExtResource( 2 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="meta_clicked" from="." to="." method="_on_Node2D_meta_clicked"]
+[connection signal="meta_hover_ended" from="." to="." method="_on_Node2D_meta_hover_ended"]
+[connection signal="meta_hover_started" from="." to="." method="_on_Node2D_meta_hover_started"]

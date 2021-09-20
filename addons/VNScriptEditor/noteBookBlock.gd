@@ -1,6 +1,9 @@
 tool
 extends Panel
 
+var last_y_size = self.rect_size.y
+var text_visible = true
+
 func _on_delete_pressed():
 	self.queue_free()
 
@@ -28,8 +31,7 @@ func set_content(t:String):
 	get_node("HBoxContainer/MarginContainer/TextEdit").text = t
 
 func get_type()->String:
-	var temp = get_node("HBoxContainer/header/whatBlock").text
-	temp = temp.replace(":",'')
+	var temp = get_node("HBoxContainer/header/whatBlock").text.replace(":",'')
 	return temp.to_upper()
 	
 func get_plain_text()->String:
@@ -40,3 +42,16 @@ func set_block_name(n:String):
 	
 func disable_name_edit():
 	get_node("HBoxContainer/header/blockName").editable = false
+
+func _on_visible_pressed():
+	text_visible = !text_visible
+	get_node("HBoxContainer/MarginContainer/TextEdit").visible = text_visible
+	if text_visible:
+		get_node("HBoxContainer/header/list/visible").texture_normal = load("res://addons/EditorGUI/GuiVisibilityVisible.png")
+		self.rect_min_size.y = self.last_y_size
+		self.rect_size.y = self.last_y_size
+	else:
+		get_node("HBoxContainer/header/list/visible").texture_normal = load("res://addons/EditorGUI/GuiVisibilityHidden.png")
+		self.rect_min_size.y = self.rect_min_size.y
+		self.rect_size.y = self.rect_min_size.y
+	

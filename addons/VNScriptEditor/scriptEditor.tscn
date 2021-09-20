@@ -35,12 +35,17 @@ size_flags_vertical = 3
 theme = ExtResource( 1 )
 custom_constants/separation = 25
 
-[node name="head" type="HBoxContainer" parent="HBoxContainer/VBoxContainer"]
+[node name="headLayers" type="VBoxContainer" parent="HBoxContainer/VBoxContainer"]
+margin_right = 1520.0
+margin_bottom = 102.0
+custom_constants/separation = 20
+
+[node name="head" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/headLayers"]
 margin_right = 1520.0
 margin_bottom = 43.0
 custom_constants/separation = 30
 
-[node name="tlLabel" type="Label" parent="HBoxContainer/VBoxContainer/head"]
+[node name="tlLabel" type="Label" parent="HBoxContainer/VBoxContainer/headLayers/head"]
 margin_top = 5.0
 margin_right = 117.0
 margin_bottom = 38.0
@@ -52,7 +57,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="tlname" type="LineEdit" parent="HBoxContainer/VBoxContainer/head"]
+[node name="tlname" type="LineEdit" parent="HBoxContainer/VBoxContainer/headLayers/head"]
 margin_left = 147.0
 margin_right = 229.0
 margin_bottom = 43.0
@@ -64,7 +69,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="manual" type="Button" parent="HBoxContainer/VBoxContainer/head"]
+[node name="manual" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/head"]
 margin_left = 259.0
 margin_right = 518.0
 margin_bottom = 43.0
@@ -74,58 +79,78 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="buttons" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/head"]
+[node name="newNBButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/head"]
 margin_left = 548.0
-margin_right = 1413.0
+margin_right = 755.0
 margin_bottom = 43.0
+custom_fonts/font = ExtResource( 2 )
+text = "New NoteBook"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="buttons" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/headLayers"]
+margin_top = 63.0
+margin_right = 1520.0
+margin_bottom = 102.0
 custom_constants/separation = 50
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newDialogButton" type="Button" parent="HBoxContainer/VBoxContainer/head/buttons"]
+[node name="newDialogButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
 margin_right = 159.0
-margin_bottom = 43.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
 text = "New Dialog"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newChoiceButton" type="Button" parent="HBoxContainer/VBoxContainer/head/buttons"]
+[node name="newChoiceButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
 margin_left = 209.0
 margin_right = 371.0
-margin_bottom = 43.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
 text = "New Choice"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="saveButton" type="Button" parent="HBoxContainer/VBoxContainer/head/buttons"]
+[node name="newCommentButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
 margin_left = 421.0
-margin_right = 568.0
-margin_bottom = 43.0
+margin_right = 622.0
+margin_bottom = 39.0
+custom_fonts/font = ExtResource( 2 )
+text = "New Comment"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="saveButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
+margin_left = 672.0
+margin_right = 819.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
 text = "Save as txt"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="loadButton" type="Button" parent="HBoxContainer/VBoxContainer/head/buttons"]
-margin_left = 618.0
-margin_right = 693.0
-margin_bottom = 43.0
+[node name="loadButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
+margin_left = 869.0
+margin_right = 944.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
 text = "Load"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="jsonButton" type="Button" parent="HBoxContainer/VBoxContainer/head/buttons"]
-margin_left = 743.0
-margin_right = 865.0
-margin_bottom = 43.0
+[node name="jsonButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
+margin_left = 994.0
+margin_right = 1116.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
 text = "To JSON"
 __meta__ = {
@@ -133,14 +158,14 @@ __meta__ = {
 }
 
 [node name="separationLine" type="ColorRect" parent="HBoxContainer/VBoxContainer"]
-margin_top = 68.0
+margin_top = 127.0
 margin_right = 1520.0
-margin_bottom = 72.0
+margin_bottom = 131.0
 rect_min_size = Vector2( 0, 4 )
 color = Color( 0.266667, 0.266667, 0.266667, 1 )
 
 [node name="notebook" type="ScrollContainer" parent="HBoxContainer/VBoxContainer"]
-margin_top = 97.0
+margin_top = 156.0
 margin_right = 1520.0
 margin_bottom = 1060.0
 size_flags_horizontal = 3
@@ -211,9 +236,11 @@ margin_right = 592.0
 margin_bottom = 342.0
 bbcode_enabled = true
 
-[connection signal="text_changed" from="HBoxContainer/VBoxContainer/head/tlname" to="." method="_on_tlname_text_changed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/head/buttons/newDialogButton" to="." method="_on_newDialogButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/head/buttons/newChoiceButton" to="." method="_on_newChoiceButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/head/buttons/saveButton" to="." method="_on_saveButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/head/buttons/loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="text_changed" from="HBoxContainer/VBoxContainer/headLayers/head/tlname" to="." method="_on_tlname_text_changed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/head/newNBButton" to="." method="_on_newNBButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newDialogButton" to="." method="_on_newDialogButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newChoiceButton" to="." method="_on_newChoiceButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newCommentButton" to="." method="_on_newCommentButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/saveButton" to="." method="_on_saveButton_pressed"]
+[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/loadButton" to="." method="_on_loadButton_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

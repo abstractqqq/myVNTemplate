@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/EditorGUI/ArrowDown_hover.png" type="Texture" id=1]
 [ext_resource path="res://addons/EditorGUI/Remove_hover.png" type="Texture" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://addons/VNScriptEditor/blockStyle.tres" type="StyleBox" id=8]
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=9]
 [ext_resource path="res://addons/VNScriptEditor/VN_Edit.gd" type="Script" id=10]
+[ext_resource path="res://addons/EditorGUI/GuiVisibilityVisible.png" type="Texture" id=12]
 
 [node name="choiceBlock" type="Panel"]
 margin_right = 1340.0
@@ -27,7 +28,7 @@ __meta__ = {
 [node name="HBoxContainer" type="VBoxContainer" parent="."]
 margin_right = 1340.0
 margin_bottom = 340.0
-rect_min_size = Vector2( 1340, 340 )
+rect_min_size = Vector2( 1340, 150 )
 size_flags_horizontal = 3
 __meta__ = {
 "_edit_use_anchors_": false
@@ -65,20 +66,31 @@ max_length = 30
 
 [node name="noticeBar" type="Label" parent="HBoxContainer/header"]
 margin_left = 315.0
-margin_right = 1170.0
+margin_right = 1130.0
 margin_bottom = 60.0
-rect_min_size = Vector2( 855, 60 )
+rect_min_size = Vector2( 815, 60 )
 theme = ExtResource( 9 )
 
 [node name="list" type="HBoxContainer" parent="HBoxContainer/header"]
-margin_left = 1180.0
-margin_right = 1312.0
+margin_left = 1140.0
+margin_right = 1322.0
 margin_bottom = 60.0
 custom_constants/separation = 18
 
-[node name="up" type="TextureButton" parent="HBoxContainer/header/list"]
+[node name="visible" type="TextureButton" parent="HBoxContainer/header/list"]
 margin_top = 14.0
 margin_right = 32.0
+margin_bottom = 46.0
+rect_min_size = Vector2( 32, 32 )
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture_normal = ExtResource( 12 )
+expand = true
+
+[node name="up" type="TextureButton" parent="HBoxContainer/header/list"]
+margin_left = 50.0
+margin_top = 14.0
+margin_right = 82.0
 margin_bottom = 46.0
 rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 4
@@ -88,9 +100,9 @@ texture_hover = ExtResource( 5 )
 expand = true
 
 [node name="down" type="TextureButton" parent="HBoxContainer/header/list"]
-margin_left = 50.0
+margin_left = 100.0
 margin_top = 14.0
-margin_right = 82.0
+margin_right = 132.0
 margin_bottom = 46.0
 rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 4
@@ -100,9 +112,9 @@ texture_hover = ExtResource( 1 )
 expand = true
 
 [node name="delete" type="TextureButton" parent="HBoxContainer/header/list"]
-margin_left = 100.0
+margin_left = 150.0
 margin_top = 14.0
-margin_right = 132.0
+margin_right = 182.0
 margin_bottom = 46.0
 rect_min_size = Vector2( 32, 32 )
 size_flags_horizontal = 4
@@ -132,6 +144,7 @@ highlight_all_occurrences = true
 wrap_enabled = true
 script = ExtResource( 10 )
 
+[connection signal="pressed" from="HBoxContainer/header/list/visible" to="." method="_on_visible_pressed"]
 [connection signal="pressed" from="HBoxContainer/header/list/up" to="." method="_on_up_pressed"]
 [connection signal="pressed" from="HBoxContainer/header/list/down" to="." method="_on_down_pressed"]
 [connection signal="pressed" from="HBoxContainer/header/list/delete" to="." method="_on_delete_pressed"]

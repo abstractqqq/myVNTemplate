@@ -4,6 +4,7 @@ onready var timer = $Timer
 onready var autoTimer = $autoTimer
 var autoCounter = 0
 var skipCounter = 0
+var absWaitTime = 0
 var adding = false
 var nw = false
 
@@ -44,7 +45,7 @@ func set_dialog(words : String, cps = vn.cps, extend = false):
 	match cps:
 		25: timer.wait_time = 0.04
 		0:
-			self.visible_characters = -1
+			visible_characters = -1
 			adding = false
 			if nw:
 				nw = false
@@ -58,7 +59,7 @@ func set_dialog(words : String, cps = vn.cps, extend = false):
 	
 func force_finish():
 	if adding:
-		self.visible_characters = leng
+		visible_characters = leng
 		adding = false
 		timer.stop()
 		if nw:
@@ -67,8 +68,8 @@ func force_finish():
 				emit_signal("load_next")
 
 func _on_Timer_timeout():
-	self.visible_characters += 1
-	if self.visible_characters >= leng:
+	visible_characters += 1
+	if visible_characters >= leng:
 		adding = false
 		timer.stop()
 		if nw:
@@ -77,7 +78,7 @@ func _on_Timer_timeout():
 
 
 
-# Call this after set_dialog, to get parsed words. (Pvars will be parsed
+# Call this after set_dialog, to get parsed words. (dvars will be parsed
 # into text.)
 func get_text():
 	return self.bbcode_text
