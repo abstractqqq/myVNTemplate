@@ -3,6 +3,7 @@ extends Node
 # name for this singleton in script is chara
 
 var all_chara = {}
+var chara_pointer = {}
 
 func _ready():
 	# Define all your game characters here.
@@ -65,8 +66,10 @@ func _ready():
 	
 	
 	
+	
 #----------------------------------------------------------------------------
-
+#BREAK
+# Do not delete this break line
 # Keep a record of the path to the scene of the stage character
 func stage_character(uid:String) -> void:
 	if uid in vn.BAD_UIDS:
@@ -125,7 +128,32 @@ func set_dvar(v:String, value):
 		
 	vn.dvar[v] = value
 	print("Successfully set %s to value %s." % [v, value])
+
+
+# Use case of point_uid_to
+# Suppose you have prepared a male ver and female ver of your protagonist's
+# character. The character scenes are named a.tscn and b.tscn, and male
+# has uid a, and female has uid b.
+# In your dialog script, you want to only use a.  
+# Before the first VN scenes starts, you ask the player to choose
+# male or female. Once the choice is given, in that script, you can call
+# chara.point_uid_to("a", "b")
+# From this point on, if you have a line like 
+# a happy: "Hello!"
+# It will be interpreted as b happy: "Hello!"
+# This works with save system, and will be different depending on the player's
+# choice in each save.
+func point_uid_to(uid:String, to:String):
+	chara_pointer[uid] = to
 	
+func forward_uid(uid:String):
+	if chara_pointer.has(uid):
+		return chara_pointer[uid]
+	else:
+		return uid
+#------------------------------------------------------------------------
+
+# Hide the name box when the character is speaking. 
 func set_noname(uid:String):
 	if all_chara.has(uid):
 		all_chara[uid]['no_nb'] = true

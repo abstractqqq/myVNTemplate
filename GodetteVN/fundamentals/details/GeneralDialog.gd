@@ -138,14 +138,14 @@ func interpret_events(event):
 		print(msg)
 	
 	# Pre-parse, keep this at minimum
-	if ev.has('loc'): ev['loc'] = parse_loc(ev['loc'], ev)
-	if ev.has('params'): ev['params'] = parse_params(ev['params'],ev)
-	if ev.has('color'): ev['color'] = parse_color(ev['color'], ev)
+	if ev.has('loc'): ev['loc'] = _parse_loc(ev['loc'], ev)
+	if ev.has('params'): ev['params'] = _parse_params(ev['params'],ev)
+	if ev.has('color'): ev['color'] = _parse_color(ev['color'], ev)
 	if ev.has('nvl'):
 		if (typeof(ev['nvl'])!=1) and ev['nvl'] != 'clear': 
-			ev['nvl'] = parse_true_false(ev['nvl'], ev)
-	if ev.has('scale'): ev['scale'] = parse_loc(ev['scale'], ev)
-	if ev.has('dir'): ev['dir'] = parse_dir(ev['dir'], ev)
+			ev['nvl'] = _parse_true_false(ev['nvl'], ev)
+	if ev.has('scale'): ev['scale'] = _parse_loc(ev['scale'], ev)
+	if ev.has('dir'): ev['dir'] = _parse_dir(ev['dir'], ev)
 	# End of pre-parse. Actual match event
 	match ev:
 		{"condition", "then", "else",..}: conditional_branch(ev)
@@ -339,8 +339,9 @@ func generate_choices(ev: Dictionary):
 	
 func say(combine : String, words : String, cps = 50, ques = false) -> void:
 	var temp = combine.split(" ") # temp[0] = uid, temp[1] = expression
+	var uid = chara.forward_uid(temp[0])
 	if temp.size() == 2:
-		stage.change_expression(temp[0], temp[1])
+		stage.change_expression(uid, temp[1])
 		
 	words = preprocess(words)
 	if vn.skipping: cps = 0
@@ -348,23 +349,23 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 		if just_loaded:
 			just_loaded = false
 			if centered:
-				nvlBox.set_dialog(temp[0], words, cps, true)
+				nvlBox.set_dialog(uid, words, cps, true)
 			else:
 				nvlBox.visible_characters = nvlBox.text.length()
 		else:
 			if centered:
-				nvlBox.set_dialog(temp[0], words, cps, true)
+				nvlBox.set_dialog(uid, words, cps, true)
 				game.nvl_text = ''
 			else:
-				nvlBox.set_dialog(temp[0], words, cps)
+				nvlBox.set_dialog(uid, words, cps)
 				game.nvl_text = nvlBox.bbcode_text
 			if latest_voice == null:
-				game.history.push_back([temp[0], nvlBox.get_text()])
+				game.history.push_back([uid, nvlBox.get_text()])
 			else:
-				game.history.push_back([temp[0], nvlBox.get_text(), latest_voice])
+				game.history.push_back([uid, nvlBox.get_text(), latest_voice])
 	else:
-		if not _hide_namebox(temp[0]):
-			var info = chara.all_chara[temp[0]]
+		if not _hide_namebox(uid):
+			var info = chara.all_chara[uid]
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
 			if info['font'] and not nvl and not one_time_font_change:
@@ -383,13 +384,13 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 			dialogbox.set_dialog(words, cps)
 			var new_text = dialogbox.get_text()
 			if latest_voice == null:
-				game.history.push_back([temp[0], new_text])
+				game.history.push_back([uid, new_text])
 			else:
-				game.history.push_back([temp[0], new_text, latest_voice])
+				game.history.push_back([uid, new_text, latest_voice])
 				
 			game.playback_events['speech'] = new_text
 		
-		stage.set_highlight(temp[0])
+		stage.set_highlight(uid)
 	# wait for ui_accept if this is not a question
 	waiting_acc = true
 	wait_for_accept(ques)
@@ -809,7 +810,7 @@ func character_event(ev : Dictionary) -> void:
 	var temp = ev['chara'].split(" ")
 	if temp.size() != 2:
 		vn.error('Expecting a uid and an effect name separated by a space.', ev)
-	var uid = temp[0] # uid of the character
+	var uid = chara.forward_uid(temp[0]) # uid of the character
 	var ef = temp[1] # what character effect
 	if uid == 'all' or stage.is_on_stage(uid):
 		match ef: # jump and shake will be ignored during skipping
@@ -881,12 +882,13 @@ func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
 
 func express(combine : String) -> void:
 	var temp = combine.split(" ")
+	var uid = chara.forward_uid(temp[0])
 	if temp.size() > 2 or temp.size() == 0:
 		vn.error("Wrong express format.")
 	elif temp.size() == 1:
 		temp.push_back("")
 	
-	stage.change_expression(temp[0],temp[1])
+	stage.change_expression(uid,temp[1])
 	auto_load_next()
 
 # This method is here to fill in default values
@@ -1140,7 +1142,7 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 		if RBM:
 			onStageCharas.push_back(uid)
 			if stage.is_on_stage(uid):
-				stage.change_pos(uid, parse_loc(loc))
+				stage.change_pos(uid, _parse_loc(loc))
 				stage.change_expression(uid, d[uid])
 			else:
 				interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
@@ -1210,7 +1212,7 @@ func flt_text(ev: Dictionary) -> void:
 		f.display(ev['float'], wt, in_t, loc)
 	
 	var has_voice = _check_latest_voice(ev)
-	if ev.has('hist') and (parse_true_false(ev['hist'])):
+	if ev.has('hist') and (_parse_true_false(ev['hist'])):
 		var who = ''
 		if ev.has('who'): who = ev['who']
 		if has_voice:
@@ -1439,7 +1441,7 @@ func system(ev : Dictionary):
 	auto_load_next()
 	
 #-------------------- Extra Preprocessing ----------------------
-func parse_loc(loc, ev = {}) -> Vector2:
+func _parse_loc(loc, ev = {}) -> Vector2:
 	if typeof(loc) == TYPE_VECTOR2: # 5 = Vector2
 		return loc
 	
@@ -1457,7 +1459,7 @@ func parse_loc(loc, ev = {}) -> Vector2:
 	
 	return Vector2(float(vec[0]), float(vec[1]))
 	
-func parse_dir(dir, ev = {}) -> Vector2:
+func _parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
 		return vn.DIRECTION[dir]
 	elif typeof(dir) == TYPE_STRING and dir == "R":
@@ -1466,9 +1468,9 @@ func parse_dir(dir, ev = {}) -> Vector2:
 		var rndv = Vector2(rng.randf_range(-1, 1),rng.randf_range(-1, 1))
 		return rndv
 	else:
-		return parse_loc(dir, ev)
+		return _parse_loc(dir, ev)
 
-func parse_color(color, ev = {}) -> Color:
+func _parse_color(color, ev = {}) -> Color:
 	if typeof(color) == TYPE_COLOR: # 14 = color
 		return color
 	if color.is_valid_html_color():
@@ -1494,7 +1496,7 @@ func parse_color(color, ev = {}) -> Color:
 			push_error("Expecting value of the form flaot1 float2 float3( float4) after color.")
 			return Color()
 
-func parse_true_false(truth, ev = {}) -> bool:
+func _parse_true_false(truth, ev = {}) -> bool:
 	if typeof(truth) == TYPE_BOOL: # 1 = bool
 		return truth
 	if truth == "true":
@@ -1506,7 +1508,7 @@ func parse_true_false(truth, ev = {}) -> bool:
 		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
 
-func parse_params(p, _ev = {}): # If params has a string which is a dvar,
+func _parse_params(p, _ev = {}): # If params has a string which is a dvar,
 	# then this will be replaced by the value of a dvar
 	var t = typeof(p)
 	if t == TYPE_REAL or t == TYPE_INT:

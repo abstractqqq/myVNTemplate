@@ -26,7 +26,8 @@ var loc = Vector2()
 var current_expression : String
 
 #-------------------------------------------------------------------------------
-	
+
+
 func change_expression(e : String) -> bool:
 	if e == "": e = 'default'
 	var expFrames = self.get_sprite_frames()
@@ -103,6 +104,10 @@ func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
 	rotation_degrees = 0
+	
+func swing(sdir:int, degrees:float, time:float, turns:int, type:String="linear"):
+	# time is time per swing
+	pass
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":

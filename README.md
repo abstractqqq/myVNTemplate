@@ -1,5 +1,7 @@
 # Godette VN, A Visual Novel Framework for Godot Users
 
+## Will be back updating possibly in mid-late October or early November.
+
 In the folder /GodetteVN/ , you can find sample projects to run.
 
 Before you run your own sample scene, make sure your character is created via the 
