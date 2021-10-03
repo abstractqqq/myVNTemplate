@@ -2,8 +2,17 @@ extends Node
 
 # name for this singleton in script is chara
 
-var all_chara = {}
+var all_chara = {
+	# Narrator
+	"":{"uid":'', "display_name":"","name_color":Color(0,0,0,1),'font':false}
+}
+
+
 var chara_pointer = {}
+var chara_name_patch = {}
+#--------------------------------------------------------------------
+
+
 
 func _ready():
 	# Define all your game characters here.
@@ -19,8 +28,15 @@ func _ready():
 	
 	
 	# To define a spriteless character, you do:
-	spriteless_character("", "") 
-	# This is the narrator. Do not delete this line.
+	# spriteless_character("", "") 
+	# This is the narrator. Notice the narrator is already defined in
+	# all_chara dictionary. So there is no need to do so again.
+	# Characters like the narrator are called 'pre-existing' characters
+	# because you do not need to declare them. Currently there is no
+	# difference between pre-existing and declared characters.
+	# If you know what are the necessary fields for a character,
+	# then you're welcomed to do whatever you want.
+	
 	# Format: (display_name, unique_id, Color (optional))
 	# Color should be declared as color in Godot, for instance
 	# Color(0,1,0) = Green
@@ -52,9 +68,7 @@ func _ready():
 	
 	
 	
-	
-	
-	
+
 	
 	
 	
@@ -159,3 +173,28 @@ func set_noname(uid:String):
 		all_chara[uid]['no_nb'] = true
 	else:
 		push_error("The uid %s has not been regiestered when this line is executed. Might also be a typo." % [uid])
+
+# set a new display name for a character
+# Warning: there is no problem if this change happens before the very
+# first dialog. However, if chara a with display name a says something 
+# in a dialog, and a's display name is changed to aa later by code, 
+# then in history, ALL a in the name slot will be replaced by aa.
+
+# There are some workarounds for this issue. If you want one character
+# with two names, you can simply use a different uid to refer to 
+# the other version of the same character with a duplicated character 
+# scene and change their display name there.
+
+func set_new_display_name(uid:String, new_dname:String):
+	if all_chara.has(uid):
+		all_chara[uid]['display_name'] = new_dname
+		chara_name_patch[uid] = new_dname
+	else:
+		push_error("The uid %s has not been regiestered when this line is executed. Might also be a typo." % [uid])
+		
+func patch_display_names():
+	# after loading a save, if chara_name_patch is non empty, then this
+	# will be run
+	if chara_name_patch.size()>0:
+		for uid in chara_name_patch.keys():
+			set_new_display_name(uid,chara_name_patch[uid])

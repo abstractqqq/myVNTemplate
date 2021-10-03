@@ -1106,6 +1106,8 @@ func on_rollback():
 	game.currentIndex = last['currentIndex']
 	game.currentBlock = last['currentBlock']
 	game.playback_events = last['playback']
+	chara.chara_name_patch = last['name_patches']
+	chara.patch_display_names()
 	current_index = game.currentIndex
 	current_block = all_blocks[game.currentBlock]
 	load_playback(game.playback_events, true)

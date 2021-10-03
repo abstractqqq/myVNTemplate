@@ -105,9 +105,7 @@ func spin(sdir:int,degrees:float,time:float,type:String="linear"):
 	tween.queue_free()
 	rotation_degrees = 0
 	
-func swing(sdir:int, degrees:float, time:float, turns:int, type:String="linear"):
-	# time is time per swing
-	pass
+
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":

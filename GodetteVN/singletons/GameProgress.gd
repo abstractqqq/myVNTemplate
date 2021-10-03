@@ -72,7 +72,8 @@ func updateRollback():
 	
 	var cur_playback = playback_events.duplicate(true)
 	var rollback_data = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
-	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar.duplicate()}
+	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar.duplicate(),
+	'name_patches':chara.chara_name_patch.duplicate()}
 	rollback_records.push_back(rollback_data)
 	
 

@@ -50,11 +50,9 @@ func _infix_postfix(ex:String):
 	if _paren_check(ex):
 		var regexMatch = "(\\d+\\.?\\d*)|(\\+)|(-)|(\\*)|(\\^)|(\\()|(\\))|(/)"
 		for v in vn.dvar.keys():
-			# Will be terribly slow if you have way too many dvars
-			# Also this will bug if there is a dvar called (a or something like that...
-			# Have to trust the user 
-			if v in ex:
-				regexMatch += "|("+v+")"
+			if typeof(vn.dvar[v]) == TYPE_INT or typeof(vn.dvar[v]) == TYPE_REAL:
+				if v in ex:
+					regexMatch += "|("+v+")"
 				
 		var regex = RegEx.new()
 		regex.compile(regexMatch)
@@ -125,5 +123,6 @@ func _eval_a(ex_arr) -> float:
 			else:
 				vn.error("Unrecognized operator " + e)
 		
-		
-	return stack.pop_back()
+	var result = stack.pop_back()
+	print(result)
+	return result

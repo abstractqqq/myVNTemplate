@@ -6,7 +6,7 @@
 				"pixelate": 2
 			},
 			{
-				"dvar": "mo = (mo+50)*10"
+				"dvar": "mo = (-mo+50)*10"
 			},
 			{
 				"chara": "female join",
