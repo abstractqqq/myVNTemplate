@@ -958,11 +958,13 @@ func change_weather(we:String, auto_forw = true):
 
 #--------------------------------- History -------------------------------------
 func history_manipulation(ev: Dictionary):
-	
+	# WARNING: 
+	# THIS DOES NOT WORK WELL WITH CURRENT IMPLEMENTATION OF ROLLBACK
 	var what = ev['history']
 	if what == "push":
 		if ev.size() != 2:
-			vn.error('History push got more than 2 fields.', ev)
+			print("History event format error " + str(ev))
+			push_error("History push should have only two fields.")
 		
 		for k in ev.keys():
 			if k != 'history':
@@ -972,7 +974,8 @@ func history_manipulation(ev: Dictionary):
 	elif what == "pop":
 		game.history.pop_back()
 	else:
-		vn.error('History expects either push or pop.', ev)
+		print("History event format error " + str(ev))
+		push_error("History expects only push or pop.")
 		
 	auto_load_next()
 	

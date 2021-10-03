@@ -8,8 +8,12 @@ func _ready():
 	for i in game.history.size():
 		var textbox = tb.instance()
 		var temp = game.history[i]
-		var c = chara.all_chara[temp[0]] # temp[0] = uid
-		textbox.setName(c["display_name"], c["name_color"])
+		
+		if chara.all_chara.has(temp[0]): # temp[0] = uid
+			var c = chara.all_chara[temp[0]] 
+			textbox.setName(c["display_name"], c["name_color"])
+		else:
+			textbox.setName(temp[0])
 		textbox.setText(temp[1])
 		if temp.size()>= 3:
 			textbox.setVoice(temp[2])
