@@ -68,7 +68,7 @@ func _input(ev):
 			screen.removeLasting()
 			screen.weather_off()
 			sideImageChange({},false)
-			camera.reset_zoom()
+			camera.reset()
 			waiting_cho = false
 			centered = false
 			nvl_off()
@@ -754,7 +754,7 @@ func camera_effect(ev : Dictionary) -> void:
 		"vpunch": if not vn.skipping: camera.vpunch()
 		"hpunch": if not vn.skipping: camera.hpunch()
 		"reset": 
-			camera.reset_zoom()
+			camera.reset()
 			game.playback_events.erase('camera')
 		"zoom":
 			QM.reset_skip()
@@ -769,7 +769,8 @@ func camera_effect(ev : Dictionary) -> void:
 					camera.zoom(ev['scale'], offset)
 				else:
 					camera.zoom_timed(ev['scale'], time, type,offset)
-				game.playback_events['camera'] = {'zoom':ev['scale'], 'offset':offset}
+				game.playback_events['camera'] = {'zoom':ev['scale'], 'offset':offset,\
+				'deg':camera.rotation_degrees}
 			else:
 				vn.error('Camera zoom expects a scale.', ev)
 		"move":
@@ -786,8 +787,8 @@ func camera_effect(ev : Dictionary) -> void:
 				else:
 					camera.camera_move(ev['loc'], time)
 				
-				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc']}
-				yield(get_tree().create_timer(time), 'timeout')
+				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc'], 'deg':camera.rotation_degrees}
+				# yield(get_tree().create_timer(time), 'timeout')
 			else:
 				print("Wrong camera event format: " + str(ev))
 				push_error("Camera move expects a loc and time, and type (optional)")
@@ -798,6 +799,27 @@ func camera_effect(ev : Dictionary) -> void:
 				if ev.has('amount'): amount = ev['amount']
 				if ev.has('time'): time = ev['time']
 				camera.shake(amount, time)
+		"spin":
+			if ev.has('deg'):
+				var type = 'linear'
+				var sdir = 1
+				if ev.has("sdir"): sdir = ev['sdir']
+				if ev.has('type'): type = ev['type']
+				if vn.skipping or type == "instant":
+					camera.rotation_degrees += (sdir*ev['deg'])
+					game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':camera.offset,\
+					'deg':camera.rotation_degrees}
+				else:
+					var t = 1.0
+					if ev.has('time'): t = ev['time']
+					camera.camera_spin(sdir,ev['deg'], t,type)
+					game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':camera.offset,\
+					 'deg':camera.rotation_degrees+(sdir*ev['deg'])}
+				
+			else:
+				print("Event format error: " + str(ev))
+				push_error("Camera spin event must have a 'deg' degree field.")
+				
 		_:
 			print("Unknown camera event: " + str(ev))
 			push_error("Camera effect not found.")

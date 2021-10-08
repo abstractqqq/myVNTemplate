@@ -323,3 +323,5 @@ __meta__ = {
 }
 
 [node name="camera" parent="." instance=ExtResource( 4 )]
+rotation = 0.0
+rotating = true

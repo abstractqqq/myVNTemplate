@@ -40,7 +40,6 @@ func shake(amount, time):
 	
 
 func vpunch():
-		
 	shake_amount = 600
 	shakeTimer.wait_time = 0.9
 	type = 1
@@ -48,9 +47,7 @@ func vpunch():
 	shakeTimer.start()
 	
 func hpunch():
-	
 	shake_amount = 600
-	#shake_limit = 300	
 	shakeTimer.wait_time = 0.9
 	type = 2
 	set_process(true)
@@ -63,6 +60,23 @@ func _on_Timer_timeout():
 	set_process(false)
 	self.offset = default_offset
 	
+func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
+	if sdir > 0:
+		sdir = 1
+	else:
+		sdir = -1
+	deg = (sdir*deg)
+	var m = fun.movement_type(mode)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, self.rotation_degrees+deg, t,
+		m, Tween.EASE_IN_OUT)
+	tween.start()
+	print("spin started")
+	yield(get_tree().create_timer(t), "timeout")
+	tween.queue_free()
+	print("spin ended")
+		
 	
 func camera_move(v:Vector2, t:float, mode = 'linear'):
 	if t <= 0.05:
@@ -100,12 +114,15 @@ func zoom(zm:Vector2, off = Vector2(1,1)):
 	self.offset = off
 	self.zoom = zm
 	
-func reset_zoom():
+func reset():
 	self.offset = self.default_offset
+	self.rotation_degrees = 0
 	self.zoom = Vector2(1,1)
 
 func get_camera_data() -> Dictionary:
-	return {'offset': self.offset, 'zoom': self.zoom}
+	return {'offset': self.offset, 'zoom': self.zoom, 'deg':self.rotation_degrees}
 	
 func set_camera(d: Dictionary):
 	zoom(d['zoom'], d['offset'])
+	if d.has('deg'):
+		rotation_degrees = d['deg']

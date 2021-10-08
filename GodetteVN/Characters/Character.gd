@@ -91,19 +91,20 @@ func fadeout(time : float):
 	self.queue_free()
 	
 	
-func spin(sdir:int,degrees:float,time:float,type:String="linear"):
+func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	if sdir > 0:
 		sdir = 1
 	else:
 		sdir = -1
+	deg = (sdir*deg)
 	var m = fun.movement_type(type)
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self,'rotation_degrees',0,sdir*degrees,time,m,Tween.EASE_IN_OUT)
+	tween.interpolate_property(self,'rotation_degrees',self.rotation_degrees, self.rotation_degrees+deg,t,\
+		m,Tween.EASE_IN_OUT)
 	tween.start()
-	yield(get_tree().create_timer(time), "timeout")
+	yield(get_tree().create_timer(t), "timeout")
 	tween.queue_free()
-	rotation_degrees = 0
 	
 
 

@@ -1,5 +1,9 @@
 extends RichTextLabel
 
+# Not implemented yet because I cannot find any resource
+export(bool) var noise_on = false
+export(String) var noise_file_path = ''
+
 onready var timer = $Timer
 onready var autoTimer = $autoTimer
 var autoCounter = 0

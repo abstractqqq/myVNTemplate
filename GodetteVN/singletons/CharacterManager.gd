@@ -183,7 +183,7 @@ func set_noname(uid:String):
 # There are some workarounds for this issue. If you want one character
 # with two names, you can simply use a different uid to refer to 
 # the other version of the same character with a duplicated character 
-# scene and change their display name there.
+# scene and change their display name and uids there.
 
 func set_new_display_name(uid:String, new_dname:String):
 	if all_chara.has(uid):

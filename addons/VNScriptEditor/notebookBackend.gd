@@ -111,6 +111,7 @@ func camera_action(sub:String):
 		"shake": set_line(lineNum, "camera :: shake; amount :: 250; time :: 2;")
 		"zoom": set_line(lineNum, "camera :: zoom; scale ::*; loc :: 0 0; time :: 1; type :: linear;")
 		"move": set_line(lineNum, "camera :: move; loc ::*; time :: 1; type :: linear;")
+		"spin": set_line(lineNum, "camera :: spin; deg ::*; sdir:1; time :: 1; type :: linear;")
 		_: return
 
 func screen_action(sub:String):
