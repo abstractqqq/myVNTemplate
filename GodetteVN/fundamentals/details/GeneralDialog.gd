@@ -185,6 +185,30 @@ func interpret_events(event):
 				
 			
 #----------------------- on ready, new game, load, set up, end -----------------
+func auto_start(load_instruction:String):
+	if load_instruction != "new_game" and load_instruction != "load_game":
+		print("Unknown load instruction. It can either be new_game or load_game.")
+		return false
+	
+	if self.dialog_json == "":
+		print("For auto_start, you need to provide a dialog json file.")
+		return false
+	else:
+		var dialog_data = fileRelated.load_json(dialog_json)
+		if dialog_data.has('Dialogs') and dialog_data.has('Choices'):
+			if dialog_data.has('Conditions'):
+				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],dialog_data['Conditions'], load_instruction)
+			else:
+				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],{}, load_instruction)
+			
+			return true
+		else:
+			print("Dialog json file must contain 'Dialogs' and 'Choices' (even if empty).")
+			return false
+			
+func get_all_dialog_blocks():
+	return all_blocks
+		
 func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String) -> void:
 	all_blocks = blocks
 	all_choices = choices
