@@ -56,8 +56,6 @@ func make_save(save_path):
 	set_datetime(dt['month'] + "/" + dt['day'] + "/" + dt['year'] + \
 	",  " + dt['hour'] + ":" + dt['minute'] + ':' + dt['second'])
 		
-	# actual saving process
-		
 	# Actual save
 	game.get_latest_nvl() # get current nvl text.
 	game.get_latest_onstage() # get current on stage characters.

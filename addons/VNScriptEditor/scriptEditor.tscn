@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
-[ext_resource path="res://addons/VNScriptEditor/newEditor.gd" type="Script" id=4]
+[ext_resource path="res://addons/VNScriptEditor/scriptEditorMain.gd" type="Script" id=4]
 
 [node name="editor" type="MarginContainer"]
 anchor_right = 1.0
@@ -214,10 +214,9 @@ theme = ExtResource( 1 )
 popup_exclusive = true
 window_title = "Open a File"
 mode = 0
-filters = PoolStringArray( "*.txt", "*.json" )
+filters = PoolStringArray( "*.txt" )
 current_dir = "res://VNScript"
-current_file = "abc.txt"
-current_path = "res://VNScript/abc.txt"
+current_path = "res://VNScript/"
 
 [node name="helperPopup" type="AcceptDialog" parent="."]
 margin_left = 10.0

@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://ActorEditor(WIP)/actorEditor.gd" type="Script" id=2]
+[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=1]
+[ext_resource path="res://addons/ActorEditor/actorEditor.gd" type="Script" id=2]
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=3]
-[ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=4]
 
 [node name="editor" type="TextureRect"]
 script = ExtResource( 2 )
@@ -15,10 +15,9 @@ margin_left = 12.0
 margin_top = 11.0
 margin_right = 518.0
 margin_bottom = 139.0
-custom_fonts/font = ExtResource( 4 )
-text = "Use arrow keys to move.
-Press Tab to hide all edit options,
-and press Tab again to restore."
+custom_fonts/font = ExtResource( 1 )
+text = "Still in development phase.
+Maximize this editor for best experience."
 align = 1
 valign = 1
 __meta__ = {
@@ -46,7 +45,7 @@ margin_left = 267.561
 margin_top = 8.19687
 margin_right = 446.561
 margin_bottom = 70.1969
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "x scale:"
 align = 1
 valign = 1
@@ -72,7 +71,7 @@ margin_left = 468.053
 margin_top = 7.00766
 margin_right = 647.054
 margin_bottom = 69.0077
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "y scale:"
 align = 1
 valign = 1
@@ -98,7 +97,7 @@ margin_left = 39.9364
 margin_top = 7.82843
 margin_right = 223.936
 margin_bottom = 69.8284
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Enter UID:"
 align = 1
 valign = 1
@@ -111,7 +110,7 @@ margin_left = 26.0034
 margin_top = 79.0
 margin_right = 229.003
 margin_bottom = 137.0
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 caret_blink = true
 caret_blink_speed = 0.5
 __meta__ = {
@@ -123,7 +122,7 @@ margin_left = 67.0969
 margin_top = 152.232
 margin_right = 184.097
 margin_bottom = 214.232
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Find"
 __meta__ = {
 "_edit_use_anchors_": false
@@ -143,7 +142,7 @@ margin_left = 31.2048
 margin_top = 2.51699
 margin_right = 307.205
 margin_bottom = 64.517
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Available Sprites:"
 align = 1
 valign = 1
@@ -156,7 +155,7 @@ margin_left = 35.678
 margin_top = 75.0093
 margin_right = 235.678
 margin_bottom = 125.009
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -175,7 +174,7 @@ margin_left = 1.00082
 margin_top = 4.40475
 margin_right = 277.001
 margin_bottom = 66.4048
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Available Anims:"
 align = 1
 valign = 1
@@ -188,7 +187,7 @@ margin_left = 3.09561
 margin_top = 74.5187
 margin_right = 203.096
 margin_bottom = 124.519
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -207,7 +206,7 @@ margin_left = 3.8667
 margin_top = -15.3211
 margin_right = 279.867
 margin_bottom = 46.6789
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "BG Choices:"
 align = 1
 valign = 1
@@ -220,10 +219,10 @@ margin_left = 38.0564
 margin_top = 58.3605
 margin_right = 238.056
 margin_bottom = 108.36
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 shortcut_in_tooltip = false
 text = "No BG"
-items = [ "No BG", null, false, 0, null ]
+items = [ "No BG", null, false, 0, null, "busstop.jpg", null, false, 1, null, "condo.jpg", null, false, 2, null, "cover.png", null, false, 3, null, "p2.png", null, false, 4, null, "p3.png", null, false, 5, null, "p4.png", null, false, 6, null, "p5.png", null, false, 7, null, "p6.png", null, false, 8, null, "p7.png", null, false, 9, null, "p8.png", null, false, 10, null, "roadside.jpg", null, false, 11, null ]
 selected = 0
 __meta__ = {
 "_edit_use_anchors_": false
@@ -234,7 +233,7 @@ margin_left = 61.1122
 margin_top = 935.898
 margin_right = 541.112
 margin_bottom = 997.898
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Save Sprite to Scene (.tscn)"
 clip_text = true
 __meta__ = {
@@ -255,7 +254,7 @@ margin_left = 15.3636
 margin_top = 55.3182
 margin_right = 504.364
 margin_bottom = 108.318
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 caret_blink = true
 caret_blink_speed = 0.5
 __meta__ = {
@@ -267,7 +266,7 @@ margin_left = -17.6697
 margin_top = -4.00452
 margin_right = 258.33
 margin_bottom = 39.9955
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 1 )
 text = "Display Name:"
 align = 1
 valign = 1

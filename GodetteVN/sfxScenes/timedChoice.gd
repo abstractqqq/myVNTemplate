@@ -34,23 +34,20 @@ func _process(_delta):
 	if initialBname != game.currentBlock:
 		# player has reached another block, the choice must have been made
 		
-		# this line is necessary if u do not want your choice to be rolled back
+		# To prevent rollback, you can add this line
 		# Note: if it is rolled back, the choice will no longer be timed
 		# game.rollback_records = []
 		
 		# always needed 
 		self.queue_free()
 	else:
-		# in the same block, but index difference is > 1, that means the player
-		# must have made a choice and proceeded down the same block. This
-		# explains why I need (*)
-		if abs(initialInd - game.currentIndex) > 1:
-			
-			# this line is necessary if u do not want your choice to be rolled back
-			# Note: if it is rolled back, the choice will no longer be timed
+		# initialInd is initialized when the sfx line is run.
+
+		if game.currentIndex - initialInd > 1 or  initialInd - game.currentIndex >= 1:
+			# The first is the case when the player makes a choice and the 
+			# choice goes down the same dialog block.
+			# The second case is when the player rolls back.
 			# game.rollback_records = []
-			
-			# always needed
 			self.queue_free()
 
 
@@ -65,10 +62,7 @@ func _do(_params):
 		# in my VN scene
 		var par = get_parent()
 		
-		
 		# false is needed if you do not want your choice to be rolled back
-		# Note: if it is rolled back, the choice will no longer be timed unless
-		# the player rolls back before the sfx.
 		par.on_choice_made({'then':'out_of_time'} , true)
 		# If you want to go to another scene, like YOU FAILED SCENE, you can use directly
 		# get_tree().change_scene_to() here

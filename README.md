@@ -1,6 +1,6 @@
 # Godette VN, A Visual Novel Framework for Godot Users
 
-## Will be back updating possibly in mid-late October or early November.
+## There might be a system config problem (sound volume) for new downloads. I am trying to fix that.
 
 In the folder /GodetteVN/ , you can find sample projects to run.
 

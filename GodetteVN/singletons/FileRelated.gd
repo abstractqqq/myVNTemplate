@@ -3,6 +3,8 @@ extends Node
 var system_data = {}
 const CONFIG_PATH = "user://config.json"
 const image_exts = ['png', 'jpg', 'jpeg']
+const _default_config_vars = {'bgm_volume':0, 'eff_volume':0,\
+ 'voice_volume':0,'auto_speed':1}
 
 func _ready():
 	load_config()
@@ -44,7 +46,6 @@ func readSave(save : saveSlot) -> bool:
 	var file = File.new()
 	var error = file.open_encrypted_with_pass(save.path, File.READ, vn.PASSWORD)
 	if error == OK:
-		success = true
 		var data = file.get_var()
 		game.currentSaveDesc = data['currentSaveDesc']
 		game.currentIndex = data['currentIndex']
@@ -58,6 +59,7 @@ func readSave(save : saveSlot) -> bool:
 		chara.chara_name_patch = data['name_patches']
 		chara.patch_display_names()
 		vn.dvar = data['dvar']
+		success = true
 		file.close()
 	else:
 		# load save failed. The save is corrupted or removed.
@@ -152,15 +154,14 @@ func load_json(path: String):
 func load_config_with_pass():
 	var directory = Directory.new();
 	if not directory.file_exists(CONFIG_PATH):
-		var temp = {'bgm_volume':0, 'eff_volume':0, 'voice_volume':0,'auto_speed':1}
 		var file = File.new()
 		var error = file.open_encrypted_with_pass(CONFIG_PATH, File.WRITE, vn.PASSWORD)
 		if error == OK:
-			file.store_line(JSON.print(temp,'\t'))
+			file.store_line(JSON.print(_default_config_vars,'\t'))
 			file.close()
 		else:
 			vn.error('Error when opening config: %s' %error)
-		temp.clear()
+
 	
 	var f = File.new()
 	var error = f.open_encrypted_with_pass(CONFIG_PATH, File.READ, vn.PASSWORD)
@@ -183,7 +184,7 @@ func write_to_config():
 			file.close()
 		else:
 			vn.error('Error when opening config: %s' %error)
-		
+			
 func load_config():
 	system_data = load_config_with_pass()
 	AudioServer.set_bus_volume_db(1, system_data["bgm_volume"])
@@ -210,4 +211,3 @@ func remove_spoilerproof(scene_path:String):
 
 func _exit_tree():
 	write_to_config()
-	# Don't quit here, as it will be done by Godot automatically.

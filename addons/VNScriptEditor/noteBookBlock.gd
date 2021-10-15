@@ -1,8 +1,9 @@
 tool
 extends Panel
 
-var last_y_size = self.rect_size.y
 var text_visible = true
+onready var default_y = self.rect_size.y
+onready var default_y_min = 120
 
 func _on_delete_pressed():
 	self.queue_free()
@@ -37,9 +38,12 @@ func get_type()->String:
 func get_plain_text()->String:
 	return get_node("HBoxContainer/MarginContainer/TextEdit").text
 
-func set_block_name(n:String):
-	get_node("HBoxContainer/header/blockName").text = n
-	
+func set_block_name(na:String):
+	get_node("HBoxContainer/header/blockName").text = na
+
+func disable_delete_button():
+	get_node("HBoxContainer/header/list/delete").disabled = true
+
 func disable_name_edit():
 	get_node("HBoxContainer/header/blockName").editable = false
 
@@ -48,10 +52,10 @@ func _on_visible_pressed():
 	get_node("HBoxContainer/MarginContainer/TextEdit").visible = text_visible
 	if text_visible:
 		get_node("HBoxContainer/header/list/visible").texture_normal = load("res://addons/EditorGUI/GuiVisibilityVisible.png")
-		self.rect_min_size.y = self.last_y_size
-		self.rect_size.y = self.last_y_size
+		self.rect_min_size.y = default_y
+		self.rect_size.y = default_y
 	else:
 		get_node("HBoxContainer/header/list/visible").texture_normal = load("res://addons/EditorGUI/GuiVisibilityHidden.png")
-		self.rect_min_size.y = self.rect_min_size.y
-		self.rect_size.y = self.rect_min_size.y
+		self.rect_min_size.y = default_y_min
+		self.rect_size.y = default_y_min
 	

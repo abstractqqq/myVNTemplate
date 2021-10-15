@@ -15,6 +15,11 @@ var main_block = [
 	{"screen":"fade in", 'time':2},
 	{'chara': "female join", "loc": "1600 600", "expression":""},
 	{"female": "Let me show you how to do a timed choice in this example."},
+	{"female": "Before you want to implement a timed choice, you have to decide whether " +\
+	" or not you want the player to rollback your timed choice."},
+	{"female":"There will be no problem if rollback is disabled in your game."},
+	{"female":"But if you allow rollback in your game, then you should take a look at the comments "+\
+	" in the code in /GodetteVN/sfxScenes/timedChoice.tscn and also in this scene."},
 	
 	# optional, useful when you want to turn off quickmenu
 	{"sys":"auto_save"}, # make an auto_save, this should be used immediately after

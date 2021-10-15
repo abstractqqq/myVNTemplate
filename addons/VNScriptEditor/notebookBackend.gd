@@ -63,6 +63,7 @@ func _input(_event):
 			5:float_action()
 			6:font_action()
 			7:then_action()
+			8:fill_time()
 			-1:return
 			
 		yield(get_tree().create_timer(0.2), 'timeout')
@@ -79,7 +80,8 @@ func selection_match(lead:String) -> int:
 		"float": m = 5
 		"font": m = 6
 		"then": m = 7
-		_: m = 1 # anything else will be defaulted to chara
+		"t": m = 8
+		_: m = -1 
 		
 	return m
 
@@ -138,6 +140,11 @@ func font_action():
 func then_action():
 	set_line(lineNum,"")
 	set_line(lineNum, "then :: target_block_name; target id :: your_id;")
+	
+func fill_time():
+	set_line(lineNum,"")
+	set_line(lineNum, "time :: *;")
+	
 
 #-------------------------------- Above is Script Editing --------------------------------
 #-------------------------------- Below is Text Parsing ----------------------------------

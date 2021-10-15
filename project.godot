@@ -100,7 +100,7 @@ window/stretch/aspect="keep"
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/VNScriptEditor/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/ActorEditor/plugin.cfg", "res://addons/VNScriptEditor/plugin.cfg" )
 
 [global]
 

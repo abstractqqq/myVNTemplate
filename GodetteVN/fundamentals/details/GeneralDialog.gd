@@ -1495,7 +1495,6 @@ func system(ev : Dictionary):
 func _parse_loc(loc, ev = {}) -> Vector2:
 	if typeof(loc) == TYPE_VECTOR2: # 5 = Vector2
 		return loc
-	
 	if typeof(loc) == TYPE_STRING and loc == "R":
 		var v = get_viewport().size
 		var rng = RandomNumberGenerator.new()
@@ -1504,11 +1503,13 @@ func _parse_loc(loc, ev = {}) -> Vector2:
 		rng.randf_range(80, v.y-80))
 		return rndv
 	
-	var vec = loc.split(" ")
-	if vec.size() != 2 or not vec[0].is_valid_float() or not vec[1].is_valid_float():
-		vn.error("Expecting value of the form \"float1 float2\" after loc.", ev)
-	
-	return Vector2(float(vec[0]), float(vec[1]))
+	# If you get error here, that means the string cannot be split
+	# as floats with delimiter space.
+	var vec = loc.split_floats(" ")
+	if vec.size() != 2:
+		print("Incorrect loc vector format: " + str(ev))
+		push_error("2D vector should have two real numbers separated by a space.")
+	return Vector2(vec[0], vec[1])
 	
 func _parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
@@ -1522,29 +1523,23 @@ func _parse_dir(dir, ev = {}) -> Vector2:
 		return _parse_loc(dir, ev)
 
 func _parse_color(color, ev = {}) -> Color:
-	if typeof(color) == TYPE_COLOR: # 14 = color
+	if typeof(color) == TYPE_COLOR:
 		return color
 	if color.is_valid_html_color():
 		return Color(color)
 	else:
-		var vec = color.split(" ")
-		var s = vec.size()
-		var temp2 = []
+		# If you get error here, that means the string cannot be split
+		# as floats with delimiter space.
+		var color_vec = color.split_floats(" ", false)
+		var s = color_vec.size()
 		if s == 3 or s == 4:
-			for i in s:
-				if vec[i].is_valid_float():
-					temp2.append(float(vec[i]))
-				else:
-					vn.error("Script Editor: Expecting float values for color.")
-					# we are able to finish, that means all entries valid
-			
 			if s == 3:
-				return Color(temp2[0], temp2[1], temp2[2])
+				return Color(color_vec[0], color_vec[1], color_vec[2])
 			else:
-				return Color(temp2[0], temp2[1], temp2[2], temp2[3])
+				return Color(color_vec[0], color_vec[1], color_vec[2], color_vec[3])
 		else:
 			print("Error event: " + str(ev))
-			push_error("Expecting value of the form flaot1 float2 float3( float4) after color.")
+			push_error("Expecting value of the form float1 float2 float3( float4) after color.")
 			return Color()
 
 func _parse_true_false(truth, ev = {}) -> bool:

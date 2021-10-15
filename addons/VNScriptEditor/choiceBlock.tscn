@@ -9,7 +9,7 @@
 [ext_resource path="res://addons/VNScriptEditor/noteBookBlock.gd" type="Script" id=7]
 [ext_resource path="res://addons/VNScriptEditor/blockStyle.tres" type="StyleBox" id=8]
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=9]
-[ext_resource path="res://addons/VNScriptEditor/VN_Edit.gd" type="Script" id=10]
+[ext_resource path="res://addons/VNScriptEditor/vnscript_edit.gd" type="Script" id=10]
 [ext_resource path="res://addons/EditorGUI/GuiVisibilityVisible.png" type="Texture" id=12]
 
 [node name="choiceBlock" type="Panel"]
@@ -126,8 +126,8 @@ expand = true
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 margin_top = 64.0
 margin_right = 1340.0
-margin_bottom = 334.0
-rect_min_size = Vector2( 1340, 270 )
+margin_bottom = 344.0
+rect_min_size = Vector2( 1340, 280 )
 custom_constants/margin_right = 10
 custom_constants/margin_top = 0
 custom_constants/margin_left = 10
@@ -136,7 +136,7 @@ custom_constants/margin_bottom = 10
 [node name="TextEdit" type="TextEdit" parent="HBoxContainer/MarginContainer"]
 margin_left = 10.0
 margin_right = 1330.0
-margin_bottom = 260.0
+margin_bottom = 270.0
 highlight_current_line = true
 syntax_highlighting = true
 show_line_numbers = true
