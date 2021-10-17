@@ -7,6 +7,10 @@ var rng = RandomNumberGenerator.new()
 var type : int
 const default_offset = Vector2(0,0)
 
+var target_degree = self.rotation_degrees
+var target_zoom = self.zoom
+var target_offset = self.offset
+
 
 func _ready():
 	set_process(false)
@@ -66,24 +70,26 @@ func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 	else:
 		sdir = -1
 	deg = (sdir*deg)
+	target_degree = self.rotation_degrees+deg
 	var m = fun.movement_type(mode)
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, self.rotation_degrees+deg, t,
+	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
 		m, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(t), "timeout")
 	tween.queue_free()
 		
 	
-func camera_move(v:Vector2, t:float, mode = 'linear'):
+func camera_move(off:Vector2, t:float, mode = 'linear'):
+	target_offset = off
 	if t <= 0.05:
-		self.offset = v
+		self.offset = off
 	else:
 		var m = fun.movement_type(mode)
 		var tween = Tween.new()
 		add_child(tween)
-		tween.interpolate_property(self, "offset", self.offset, v, t,
+		tween.interpolate_property(self, "offset", self.offset, off, t,
 			m, Tween.EASE_IN_OUT)
 		tween.start()
 		yield(get_tree().create_timer(t), "timeout")
@@ -91,6 +97,8 @@ func camera_move(v:Vector2, t:float, mode = 'linear'):
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	zm = fun.correct_scale(zm)
+	target_zoom = zm
+	target_offset = off
 	var m = fun.movement_type(mode)
 	var tween1 = Tween.new()
 	var tween2 = Tween.new()
@@ -111,16 +119,24 @@ func zoom(zm:Vector2, off = Vector2(1,1)):
 	# by default, zoom is instant
 	self.offset = off
 	self.zoom = zm
+	target_offset = off
+	target_zoom = zm
 	
 func reset():
-	self.offset = self.default_offset
+	self.offset = default_offset
 	self.rotation_degrees = 0
 	self.zoom = Vector2(1,1)
+	target_degree = 0
+	target_zoom = self.zoom
+	target_offset = default_offset
 
 func get_camera_data() -> Dictionary:
-	return {'offset': self.offset, 'zoom': self.zoom, 'deg':self.rotation_degrees}
+	return {'offset': target_offset, 'zoom': target_zoom, 'deg':target_degree}
 	
 func set_camera(d: Dictionary):
 	zoom(d['zoom'], d['offset'])
+	target_offset = d['offset']
+	target_zoom = d['zoom']
 	if d.has('deg'):
+		target_degree = d['deg']
 		rotation_degrees = d['deg']

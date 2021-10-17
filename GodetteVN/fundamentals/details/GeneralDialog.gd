@@ -794,8 +794,8 @@ func camera_effect(ev : Dictionary) -> void:
 					camera.zoom(ev['scale'], offset)
 				else:
 					camera.zoom_timed(ev['scale'], time, type,offset)
-				game.playback_events['camera'] = {'zoom':ev['scale'], 'offset':offset,\
-				'deg':camera.rotation_degrees}
+				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
+				'deg':camera.target_degree}
 			else:
 				vn.error('Camera zoom expects a scale.', ev)
 		"move":
@@ -812,7 +812,7 @@ func camera_effect(ev : Dictionary) -> void:
 				else:
 					camera.camera_move(ev['loc'], time)
 				
-				game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':ev['loc'], 'deg':camera.rotation_degrees}
+				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.offset, 'deg':camera.target_degree}
 				# yield(get_tree().create_timer(time), 'timeout')
 			else:
 				print("Wrong camera event format: " + str(ev))
@@ -832,14 +832,15 @@ func camera_effect(ev : Dictionary) -> void:
 				if ev.has('type'): type = ev['type']
 				if vn.skipping or type == "instant":
 					camera.rotation_degrees += (sdir*ev['deg'])
-					game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':camera.offset,\
-					'deg':camera.rotation_degrees}
+					camera.target_degree = camera.rotation_degrees
+					game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
+					'deg':camera.target_degree}
 				else:
 					var t = 1.0
 					if ev.has('time'): t = ev['time']
 					camera.camera_spin(sdir,ev['deg'], t,type)
-					game.playback_events['camera'] = {'zoom':camera.zoom, 'offset':camera.offset,\
-					 'deg':camera.rotation_degrees+(sdir*ev['deg'])}
+					game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
+					 'deg':camera.target_degree}
 				
 			else:
 				print("Event format error: " + str(ev))
@@ -1189,7 +1190,11 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 	for d in play_back['charas']:
 		var dkeys = d.keys()
 		var loc = d['loc']
+		var fliph = d['fliph']
+		var flipv = d['flipv']
 		dkeys.erase('loc')
+		dkeys.erase('fliph')
+		dkeys.erase('flipv')
 		var uid = dkeys[0]
 		if RBM:
 			onStageCharas.push_back(uid)
@@ -1197,9 +1202,13 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 				stage.change_pos(uid, _parse_loc(loc))
 				stage.change_expression(uid, d[uid])
 			else:
-				interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+				stage.join(uid,loc,d[uid])
+				#interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
 		else:
-			interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+			stage.join(uid,loc,d[uid])
+			#interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
+		if fliph: stage.change_expression(uid,'flip')
+		if flipv: stage.change_expression(uid,'flipv')
 	
 	if RBM: stage.remove_on_rollback(onStageCharas)
 	
@@ -1389,7 +1398,6 @@ func call_method(ev:Dictionary):
 		callv(ev['call'], ev['params'])
 	else:
 		callv(ev['call'], [])
-	
 	auto_load_next()
 
 
@@ -1587,7 +1595,6 @@ func _dialog_state_reset():
 		dialogbox.nw = false
 
 func preprocess(words : String) -> String:
-
 	_dialog_state_reset()
 	var leng = words.length()
 	var output = ''

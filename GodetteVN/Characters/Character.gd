@@ -31,15 +31,19 @@ var current_expression : String
 func change_expression(e : String) -> bool:
 	if e == "": e = 'default'
 	var expFrames = self.get_sprite_frames()
-	if expFrames.has_animation(e):
+	if expFrames.has_animation(e) or e == "flip" or e == "flipv":
 		var prev_exp = current_expression
-		play(e)
+		if e == "flip" or e == "flipv":
+			if e == "flip": self.flip_h = !self.flip_h
+			elif e == "flipv": self.flip_v = !self.flip_v
+		else:
+			play(e)
 		current_expression = e
 		_dummy_fadeout(expFrames, prev_exp)
 		return true
 	else:
-		print("Warning: " + e + ' not found for character with uid ' + unique_id)
-		print("Nothing is done.")
+		print("---Warning: " + e + ' not found for character with uid ' + unique_id +"---")
+		print("---Nothing is done.---")
 		return false
 
 func shake(amount: float, time : float, mode = 0):
@@ -110,6 +114,8 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
+		if prev_exp == "flip" or "flipv":
+			prev_exp = 'default'
 		var dummy = Sprite.new()
 		dummy.name = "_dummy"
 		dummy.scale = self.scale

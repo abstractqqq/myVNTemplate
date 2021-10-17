@@ -137,7 +137,7 @@ func set_dvar(v:String, value):
 	vn.dvar[v] = value
 	print("Successfully set %s to value %s." % [v, value])
 
-
+#Deprecated
 func error(message, ev = {}):
 	if message == "p" or message == "path":
 		message = "Path invalid."

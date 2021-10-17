@@ -13,7 +13,7 @@ var main_block = [
 	# start of content
 	{"bg": "condo.jpg"},
 	{'screen':'pixelate in'},
-	{'call': 'simple_print', 'params':['test call ', 2]},
+	{'call': 'simple_print', 'params':['test ', 123]},
 	{"vo": "This is vo talking."},
 	{"bg": "condo.jpg", 'diagonal':2, 'color':Color.blueviolet},
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
@@ -28,11 +28,11 @@ var main_block = [
 	{'chara': "female fadein", "loc": "1600 600",'time':0.5},
 	{'chara':'female hpunch', 'time':3, 'amount':300},
 	{'extend': 'This is an extend statement~', 'speed':'slower'},
-	{'wait':5},
+	{'wait':1},
 	{'ext':'As you can see, extend works for anything in between.'},
 	{'extend':'There are two imperfections:1. the statements are saved separately in history.'},
 	{'extend':'2. If you rollback, then the speed of dialog will be default speed, regardless of your speed input.'},
-	{"female": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
+	{"female flip": "When you're switching scenes, many things disappear, and need to be reset. Music persists."},
 	{"chara":"female fadeout", 'time':0.5},
 	{"screen": "curtain_left out", 'time':1},
 	{'chara': "female fadein", "loc": "R", 'type':'quad', 'time':0.4},
