@@ -1,8 +1,12 @@
 # Godette VN, A Visual Novel Framework for Godot Users
 
-## There might be a system config problem (sound volume) for new downloads. I am trying to fix that.
+## Every journey starts with a single step.
 
-In the folder /GodetteVN/ , you can find sample projects to run.
+For basic dialog for RPG games, then [Dialogic](https://github.com/coppolaemilio/dialogic) might be a better addon than this, 
+because this framework is solely focused on the making of Visual/Graphic Novel. Renpy is also a good 
+alternative if your game doesn't require features that are easier to code in Godot.
+
+In the folder res://GodetteVN/ , you can find sample projects to run.
 
 Before you run your own sample scene, make sure your character is created via the 
 actor editor and saved as a scene. Moreover, you have to register your characters
@@ -13,16 +17,12 @@ There are 3 core components in this framework.
 2. A script editor (WIP, mostly stable for written functions)
 3. A core dialog system (basically a json interpreter, mostly stable)  
 
-Core dialog system can be found in /scenes/fundamental/details/generalDialog.gd
+Core dialog system (messy code alert) can be found in /scenes/fundamental/details/generalDialog.gd
 To see how spritesheet animation is integrated into VNs, go to /GodetteVN/Characters/gt.tscn to check it out.
-
-For basic dialog for RPG games, then [Dialogic](https://github.com/coppolaemilio/dialogic) might be a better addon than this, 
-because this framework is solely focused on the making of Visual/Graphic Novel. Renpy is also a good 
-alternative if your game doesn't include advanced features or complicated minigames.
 
 Transition system is integrated from eh-jogos's project. You can find it [here](https://github.com/eh-jogos/eh_Transitions)
 
-Video Showcases:
+Video Showcases (Possibly outdated):
 
 [Parallax and Sprite Sheet Animation](https://www.youtube.com/watch?v=sG7tDFsk4HE)
 

@@ -180,6 +180,7 @@ func interpret_events(event):
 		{'float', 'wait',..}: flt_text(ev)
 		{'voice'}:voice(ev['voice'])
 		{'id'}, {}:auto_load_next()
+		{'call', ..}: call_method(ev)
 		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
@@ -1380,6 +1381,16 @@ func _check_latest_voice(ev:Dictionary):
 func dimming(c : Color):
 	get_node('background').modulate = c
 	stage.set_modulate_4_all(c)
+	
+func call_method(ev:Dictionary):
+	# rollback and save are not taken care of by default because
+	# there is no way to predict what the method will do
+	if ev.has('params'):
+		callv(ev['call'], ev['params'])
+	else:
+		callv(ev['call'], [])
+	
+	auto_load_next()
 
 
 func register_dvar_propagation(method_name:String, dvar_name:String):

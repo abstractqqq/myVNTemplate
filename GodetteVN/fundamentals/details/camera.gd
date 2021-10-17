@@ -72,10 +72,8 @@ func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, self.rotation_degrees+deg, t,
 		m, Tween.EASE_IN_OUT)
 	tween.start()
-	print("spin started")
 	yield(get_tree().create_timer(t), "timeout")
 	tween.queue_free()
-	print("spin ended")
 		
 	
 func camera_move(v:Vector2, t:float, mode = 'linear'):

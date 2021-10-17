@@ -13,16 +13,20 @@ var main_block = [
 	# start of content
 	{"bg": "condo.jpg"},
 	{'screen':'pixelate in'},
+	{'call': 'simple_print', 'params':['test call ', 2]},
 	{"vo": "This is vo talking."},
 	{"bg": "condo.jpg", 'diagonal':2, 'color':Color.blueviolet},
 	{"vo": "If you haven't noticed, I am a character without a namebox. You can set this "+\
 	"attribute for any talking characters in characterManager.gd."},
+	{'camera':'zoom','scale':Vector2(0.5,0.5)},
 	{'camera':'spin', 'deg':20, 'sdir':-1, 'time':1},
 	{'wait':2},
 	{"bg": "condo.jpg", 'sweep_down':2, 'color':Color.pink},
 	{'female':'Hello, hello, is it time for me to show up?'},
 	{'camera':'spin', 'deg':20, 'sdir':1, 'time':1},
+	{'camera':'zoom', 'scale':Vector2(1,1)},
 	{'chara': "female fadein", "loc": "1600 600",'time':0.5},
+	{'chara':'female hpunch', 'time':3, 'amount':300},
 	{'extend': 'This is an extend statement~', 'speed':'slower'},
 	{'wait':5},
 	{'ext':'As you can see, extend works for anything in between.'},
@@ -106,5 +110,9 @@ func _ready():
 	game.currentNodePath = get_tree().current_scene.filename
 	get_tree().set_auto_accept_quit(false)
 	start_scene(dialog_blocks, choice_blocks, {}, game.load_instruction)
-	
-	
+
+#---------------------------------------------------------------------
+
+func simple_print(a,b):
+	# test function for the {call:.. } event
+	print(a,b)

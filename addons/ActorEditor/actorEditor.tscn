@@ -1,102 +1,67 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=1]
 [ext_resource path="res://addons/ActorEditor/actorEditor.gd" type="Script" id=2]
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=3]
 
-[node name="editor" type="TextureRect"]
+[sub_resource type="StyleBoxFlat" id=1]
+bg_color = Color( 0.25098, 0.243137, 0.243137, 1 )
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color( 0.682353, 0.717647, 0.858824, 1 )
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="editor" type="PanelContainer"]
+margin_right = 500.0
+margin_bottom = 520.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+custom_styles/panel = SubResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="msg" type="Label" parent="."]
-margin_left = 12.0
-margin_top = 11.0
-margin_right = 518.0
-margin_bottom = 139.0
-custom_fonts/font = ExtResource( 1 )
-text = "Still in development phase.
-Maximize this editor for best experience."
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="editOptions" type="Control" parent="."]
+[node name="editOptions" type="VBoxContainer" parent="."]
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 496.0
+margin_bottom = 516.0
 theme = ExtResource( 3 )
+custom_constants/separation = 18
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="main" type="Control" parent="editOptions"]
-margin_left = 20.0
-margin_top = 191.0
-margin_right = 675.0
-margin_bottom = 416.0
+[node name="msg" type="Label" parent="editOptions"]
+margin_right = 492.0
+margin_bottom = 177.0
+custom_fonts/font = ExtResource( 1 )
+text = "
+Find and save your sprite to scene for further edits.
+
+"
+align = 1
+valign = 1
+autowrap = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="main" type="VBoxContainer" parent="editOptions"]
+margin_top = 195.0
+margin_right = 492.0
+margin_bottom = 318.0
 theme = ExtResource( 3 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="xLabel" type="Label" parent="editOptions/main"]
-margin_left = 267.561
-margin_top = 8.19687
-margin_right = 446.561
-margin_bottom = 70.1969
-custom_fonts/font = ExtResource( 1 )
-text = "x scale:"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="xScale" type="HSlider" parent="editOptions/main/xLabel"]
-margin_left = 32.439
-margin_top = 71.8031
-margin_right = 192.439
-margin_bottom = 111.803
-max_value = 1.0
-step = 0.1
-value = 1.0
-tick_count = 5
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="yLabel" type="Label" parent="editOptions/main"]
-margin_left = 468.053
-margin_top = 7.00766
-margin_right = 647.054
-margin_bottom = 69.0077
-custom_fonts/font = ExtResource( 1 )
-text = "y scale:"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="yScale" type="HSlider" parent="editOptions/main/yLabel"]
-margin_left = 31.9467
-margin_top = 72.9923
-margin_right = 191.947
-margin_bottom = 112.992
-max_value = 1.0
-step = 0.1
-value = 1.0
-tick_count = 5
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="enterUID" type="Label" parent="editOptions/main"]
-margin_left = 39.9364
-margin_top = 7.82843
-margin_right = 223.936
-margin_bottom = 69.8284
+margin_right = 492.0
+margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
 text = "Enter UID:"
 align = 1
@@ -106,10 +71,9 @@ __meta__ = {
 }
 
 [node name="LineEdit" type="LineEdit" parent="editOptions/main"]
-margin_left = 26.0034
-margin_top = 79.0
-margin_right = 229.003
-margin_bottom = 137.0
+margin_top = 37.0
+margin_right = 492.0
+margin_bottom = 80.0
 custom_fonts/font = ExtResource( 1 )
 caret_blink = true
 caret_blink_speed = 0.5
@@ -118,30 +82,33 @@ __meta__ = {
 }
 
 [node name="Button" type="Button" parent="editOptions/main"]
-margin_left = 67.0969
-margin_top = 152.232
-margin_right = 184.097
-margin_bottom = 214.232
+margin_top = 84.0
+margin_right = 492.0
+margin_bottom = 123.0
 custom_fonts/font = ExtResource( 1 )
 text = "Find"
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="spriteInfo" type="Control" parent="editOptions"]
-margin_left = 26.0
-margin_top = 440.0
-margin_right = 326.0
-margin_bottom = 596.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="assetInfo" type="HBoxContainer" parent="editOptions"]
+margin_top = 336.0
+margin_right = 492.0
+margin_bottom = 412.0
+custom_constants/separation = 20
 
-[node name="spriteName" type="Label" parent="editOptions/spriteInfo"]
-margin_left = 31.2048
-margin_top = 2.51699
-margin_right = 307.205
-margin_bottom = 64.517
+[node name="dummySpace" type="Control" parent="editOptions/assetInfo"]
+margin_bottom = 76.0
+
+[node name="spriteInfo" type="VBoxContainer" parent="editOptions/assetInfo"]
+margin_left = 20.0
+margin_right = 239.0
+margin_bottom = 76.0
+size_flags_horizontal = 2
+
+[node name="spriteName" type="Label" parent="editOptions/assetInfo/spriteInfo"]
+margin_right = 219.0
+margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
 text = "Available Sprites:"
 align = 1
@@ -150,30 +117,24 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="spriteOptions" type="OptionButton" parent="editOptions/spriteInfo"]
-margin_left = 35.678
-margin_top = 75.0093
-margin_right = 235.678
-margin_bottom = 125.009
+[node name="spriteOptions" type="OptionButton" parent="editOptions/assetInfo/spriteInfo"]
+margin_top = 37.0
+margin_right = 219.0
+margin_bottom = 76.0
 custom_fonts/font = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="animInfo" type="Control" parent="editOptions"]
-margin_left = 366.0
-margin_top = 438.0
-margin_right = 666.0
-margin_bottom = 579.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="animInfo" type="VBoxContainer" parent="editOptions/assetInfo"]
+margin_left = 266.0
+margin_right = 475.0
+margin_bottom = 76.0
+size_flags_horizontal = 2
 
-[node name="animName" type="Label" parent="editOptions/animInfo"]
-margin_left = 1.00082
-margin_top = 4.40475
-margin_right = 277.001
-margin_bottom = 66.4048
+[node name="animName" type="Label" parent="editOptions/assetInfo/animInfo"]
+margin_right = 209.0
+margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
 text = "Available Anims:"
 align = 1
@@ -182,99 +143,25 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="animOptions" type="OptionButton" parent="editOptions/animInfo"]
-margin_left = 3.09561
-margin_top = 74.5187
-margin_right = 203.096
-margin_bottom = 124.519
+[node name="animOptions" type="OptionButton" parent="editOptions/assetInfo/animInfo"]
+margin_top = 37.0
+margin_right = 209.0
+margin_bottom = 76.0
 custom_fonts/font = ExtResource( 1 )
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="bgInfo" type="Control" parent="editOptions"]
-margin_left = 24.0
-margin_top = 610.0
-margin_right = 324.0
-margin_bottom = 731.0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="bgName" type="Label" parent="editOptions/bgInfo"]
-margin_left = 3.8667
-margin_top = -15.3211
-margin_right = 279.867
-margin_bottom = 46.6789
-custom_fonts/font = ExtResource( 1 )
-text = "BG Choices:"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="bgOptions" type="OptionButton" parent="editOptions/bgInfo"]
-margin_left = 38.0564
-margin_top = 58.3605
-margin_right = 238.056
-margin_bottom = 108.36
-custom_fonts/font = ExtResource( 1 )
-shortcut_in_tooltip = false
-text = "No BG"
-items = [ "No BG", null, false, 0, null, "busstop.jpg", null, false, 1, null, "condo.jpg", null, false, 2, null, "cover.png", null, false, 3, null, "p2.png", null, false, 4, null, "p3.png", null, false, 5, null, "p4.png", null, false, 6, null, "p5.png", null, false, 7, null, "p6.png", null, false, 8, null, "p7.png", null, false, 9, null, "p8.png", null, false, 10, null, "roadside.jpg", null, false, 11, null ]
-selected = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="generateButton" type="Button" parent="editOptions"]
-margin_left = 61.1122
-margin_top = 935.898
-margin_right = 541.112
-margin_bottom = 997.898
+margin_top = 430.0
+margin_right = 492.0
+margin_bottom = 469.0
 custom_fonts/font = ExtResource( 1 )
 text = "Save Sprite to Scene (.tscn)"
 clip_text = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="displayName" type="Control" parent="editOptions"]
-margin_left = 44.6516
-margin_top = 754.638
-margin_right = 525.652
-margin_bottom = 877.638
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="displayName" type="LineEdit" parent="editOptions/displayName"]
-margin_left = 15.3636
-margin_top = 55.3182
-margin_right = 504.364
-margin_bottom = 108.318
-custom_fonts/font = ExtResource( 1 )
-caret_blink = true
-caret_blink_speed = 0.5
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="displayLabel" type="Label" parent="editOptions/displayName"]
-margin_left = -17.6697
-margin_top = -4.00452
-margin_right = 258.33
-margin_bottom = 39.9955
-custom_fonts/font = ExtResource( 1 )
-text = "Display Name:"
-align = 1
-valign = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="sprite" type="Sprite" parent="."]
 
 [node name="charaGenPopup" type="AcceptDialog" parent="."]
 margin_right = 746.0
@@ -286,10 +173,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="value_changed" from="editOptions/main/xLabel/xScale" to="." method="_on_xScale_value_changed"]
-[connection signal="value_changed" from="editOptions/main/yLabel/yScale" to="." method="_on_yScale_value_changed"]
 [connection signal="pressed" from="editOptions/main/Button" to="." method="_on_Button_pressed"]
-[connection signal="item_selected" from="editOptions/spriteInfo/spriteOptions" to="." method="_on_spriteOptions_item_selected"]
-[connection signal="item_selected" from="editOptions/bgInfo/bgOptions" to="." method="_on_bgOptions_item_selected"]
 [connection signal="pressed" from="editOptions/generateButton" to="." method="_on_generateButton_pressed"]
 [connection signal="confirmed" from="charaGenPopup" to="." method="_on_charaGenPopup_confirmed"]
