@@ -2,7 +2,7 @@ extends GeneralDialog
 
 var starter = [
 	{'bg':'condo.jpg'},
-	{'':'In this clickable test scene, you will see how you can implement a basic '+\
+	{'':'In this clickable test scene, you will see how to implement a basic '+\
 	"investigation scene for your VN."},
 	{'':'Pay attention to the code while you are trying it out.'},
 	{'':'Find the two clickable objects and click them.'},

@@ -69,7 +69,12 @@ func _input(ev):
 		QM.reset_auto_skip()
 		if game.rollback_records.size() >= 1:
 			waiting_acc = false
-			idle = false
+			if idle: # This if branch is needed because of how just_loaded works.
+				# Notice (waiting_acc or idle). Ususally player can only rollback when waiting_acc, but
+				# idle is the exception. So here we need to treat this a little differently.
+				idle = false
+			else:
+				game.history.pop_back()
 			screen.removeLasting()
 			screen.weather_off()
 			sideImageChange({},false)
@@ -80,7 +85,6 @@ func _input(ev):
 			for n in choiceContainer.get_children():
 				n.queue_free()
 			generate_nullify()
-			game.history.pop_back()
 			on_rollback()
 			return
 		else: # Show to readers that they cannot rollback further
@@ -596,6 +600,7 @@ func change_scene_to(path : String):
 		music.stop_bgm()
 	if path == "free":
 		game.rollback_records = []
+		music.stop_bgm()
 		self.queue_free()
 	elif path == 'idle':
 		idle = true
