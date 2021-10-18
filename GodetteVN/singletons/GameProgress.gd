@@ -3,7 +3,14 @@ extends Node
 #----------------------------------Important------------------------------------
 # 
 #-------------------------------------------------------------------------------
-#
+#-------------Game Control State---------------------------
+var control_state = {
+	'right_click': true,
+	'quick_menu':true,
+	'boxes': true,
+	'scroll':true
+}
+#----------------------------------------------------------
 # 
 var currentNodePath = null
 
@@ -24,8 +31,7 @@ var currentSaveDesc = ""
 # then when loading back, we need to restore all the nvl text.
 var nvl_text = ''
 
-
-var playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':''}
+var playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':'', 'control_state': control_state}
 
 func get_latest_onstage():
 	playback_events['charas'] = stage.all_on_stage()
@@ -40,6 +46,7 @@ func get_latest_nvl():
 var load_instruction = "new_game"
 #-------------------------------------------------------------------------------
 
+# The save is around 155k mostly because it contains thumbnail data. (a small picture)
 # Do not touch unless you will change the thumbnail size in the save/load screens, 
 var currentFormat = null # save current format. Used for thumbnail creation
 
@@ -90,4 +97,8 @@ func makeSnapshot():
 	updateRollback()
 	if checkSkippable() == false:
 		fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
-		
+
+func resetControlStates(to:bool=true):
+	# By default, resets everything back to true
+	for k in control_state.keys():
+		control_state[k] = to

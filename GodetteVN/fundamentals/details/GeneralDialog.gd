@@ -7,6 +7,8 @@ export(String) var scene_description
 
 export(String, FILE, "*.tscn") var choice_bar = ''
 export(String, FILE, "*.tscn") var float_text = ''
+export(bool) var refresh_ctrl_state = true
+export(bool) var auto_adjust_namebox_pos_no_effect_rn = false
 
 # Core data
 var current_index : int = 0
@@ -54,7 +56,10 @@ signal dvar_set
 func _ready():
 	fileRelated.load_config()
 	var _error = self.connect("player_accept", self, '_yield_check')
+	if refresh_ctrl_state:
+		game.resetControlStates()
 
+# Useless?
 func set_bg_path(node_path:String):
 	bg = get_node(node_path)
 	
@@ -1185,6 +1190,11 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 		change_weather(play_back['weather']['weather'], false)
 	if play_back.has('side'):
 		sideImageChange(play_back['side'], false)
+		
+	var ctrl_state = play_back['control_state']
+	for k in ctrl_state.keys():
+		if ctrl_state[k] == false:
+			system({'system': k + " off"})
 	
 	var onStageCharas = []
 	for d in play_back['charas']:
@@ -1421,13 +1431,13 @@ func propagate_dvar_calls(dvar_name:String=''):
 
 func system(ev : Dictionary):
 	if ev.size() != 1:
-		print("Warning: wrong system event format for " + str(ev))
-		push_error("System event only receives one field.")
+		print("--- Warning: wrong system event format for " + str(ev)+" ---")
+		push_error("---System event only receives one field.---")
 	
 	var k = ev.keys()[0]
 	var temp = ev[k].split(" ")
 	match temp[0]:
-		"auto": # This doesn't have on.
+		"auto": # You cannot turn auto on.
 			# Simply turns off dialog auto forward.
 			if temp[1] == "off":
 				QM.reset_auto()
@@ -1440,6 +1450,8 @@ func system(ev : Dictionary):
 			clear_boxes()
 			
 		"rollback", "roll_back" ,"RB":
+			# Example {system: RB clear} clears all rollback saves
+			# {system: RB clear_3} clears last 3 rollback saves
 			if temp[1] == "clear":
 				game.rollback_records = []
 			else:
@@ -1466,33 +1478,39 @@ func system(ev : Dictionary):
 				QM.get_node("QsaveButton").disabled = true
 				QM.get_node("loadButton").disabled = true
 				
-		# The above are not included in all.
+		# The above are not included in 'all'.
 		
 		"right_click", "RC":
 			if temp[1] == "on":
 				self.no_right_click = false
 			elif temp[1] == "off":
 				self.no_right_click = true
+			game.control_state['right_click'] = self.no_right_click
 				
 		"quick_menu", "QM":
 			if temp[1] == "on":
 				QM.visible = true
 				QM.hiding = false
+				game.control_state['quick_menu'] = true
 			elif temp[1] == "off":
 				QM.visible = false
 				QM.hiding = true
+				game.control_state['quick_menu'] = false
 		
 		"boxes":
 			if temp[1] == "on":
 				show_boxes()
+				game.control_state['boxes'] = true
 			elif temp[1] == "off":
 				hide_boxes()
+				game.control_state['boxes'] = false
 				
 		"scroll":
 			if temp[1] == "on":
 				no_scroll = false
 			elif temp[1] == "off":
 				no_scroll = true
+			game.control_state['scroll'] = !no_scroll 
 				
 		"all":
 			if temp[1] == "on":
@@ -1501,14 +1519,17 @@ func system(ev : Dictionary):
 				QM.hiding = false
 				self.no_right_click = false
 				show_boxes()
+				game.resetControlStates()
 			elif temp[1] == "off":
 				no_scroll = true
 				QM.visible = false
 				QM.hiding = true
 				no_right_click = true
 				hide_boxes()
+				game.resetControlStates(false)
 
-	auto_load_next()
+	if !vn.inLoading:
+		auto_load_next()
 	
 #-------------------- Extra Preprocessing ----------------------
 func _parse_loc(loc, ev = {}) -> Vector2:
