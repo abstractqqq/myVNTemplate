@@ -7,7 +7,7 @@ export(String) var scene_description
 
 export(String, FILE, "*.tscn") var choice_bar = ''
 export(String, FILE, "*.tscn") var float_text = ''
-export(bool) var refresh_ctrl_state = true
+export(bool) var refresh_game_ctrl_state = true
 export(bool) var auto_adjust_namebox_pos_no_effect_rn = false
 
 # Core data
@@ -41,7 +41,7 @@ const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 onready var bg = $background
 onready var vnui = $VNUI
 onready var QM = vnui.get_node('quickMenu')
-onready var dialogbox = vnui.get_node('textBox/dialog')
+onready var dialogbox = vnui.get_node('dialogBox/textBox')
 onready var speaker = vnui.get_node('nameBox/speaker')
 onready var choiceContainer = vnui.get_node('choiceContainer')
 onready var camera = screen.get_node('camera')
@@ -56,7 +56,7 @@ signal dvar_set
 func _ready():
 	fileRelated.load_config()
 	var _error = self.connect("player_accept", self, '_yield_check')
-	if refresh_ctrl_state:
+	if refresh_game_ctrl_state:
 		game.resetControlStates()
 
 # Useless?
@@ -1369,12 +1369,12 @@ func hide_UI(show=false):
 
 func hide_boxes():
 	hide_all_boxes = true
-	get_node('VNUI/textBox').visible = false
+	get_node('VNUI/dialogBox').visible = false
 	get_node('VNUI/nameBox').visible = false
 	
 func show_boxes():
 	if hide_all_boxes:
-		get_node('VNUI/textBox').visible = true
+		get_node('VNUI/dialogBox').visible = true
 		get_node('VNUI/nameBox').visible = true
 		hide_all_boxes = false
 		
