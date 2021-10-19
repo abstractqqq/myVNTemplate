@@ -7,8 +7,8 @@ export(String) var scene_description
 
 export(String, FILE, "*.tscn") var choice_bar = ''
 export(String, FILE, "*.tscn") var float_text = ''
+export(bool) var allow_rollback = true
 export(bool) var refresh_game_ctrl_state = true
-export(bool) var auto_adjust_namebox_pos_no_effect_rn = false
 
 # Core data
 var current_index : int = 0
@@ -65,7 +65,7 @@ func set_bg_path(node_path:String):
 	
 func _input(ev):
 	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting \
-	and not vn.inNotif and not vn.skipping:
+	and not vn.inNotif and not vn.skipping and allow_rollback:
 		QM.reset_auto_skip()
 		if game.rollback_records.size() >= 1:
 			waiting_acc = false
@@ -220,6 +220,8 @@ func get_all_dialog_blocks():
 	return all_blocks
 		
 func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String) -> void:
+	game.currentSaveDesc = scene_description
+	game.currentNodePath = get_tree().current_scene.filename
 	all_blocks = blocks
 	all_choices = choices
 	all_conditions = conditions
@@ -482,7 +484,7 @@ func wait_for_accept(ques:bool = false):
 	if not ques:
 		yield(self, "player_accept")
 		if not _nullify_prev_yield:
-			game.makeSnapshot()
+			if allow_rollback: game.makeSnapshot()
 			music.stop_voice()
 			if centered:
 				nvl_off()
@@ -822,7 +824,7 @@ func camera_effect(ev : Dictionary) -> void:
 				else:
 					camera.camera_move(ev['loc'], time)
 				
-				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.offset, 'deg':camera.target_degree}
+				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset, 'deg':camera.target_degree}
 				# yield(get_tree().create_timer(time), 'timeout')
 			else:
 				print("Wrong camera event format: " + str(ev))
@@ -1141,13 +1143,13 @@ func wait(time : float) -> void:
 		print("Warning: wait time < 0.1s is ignored.")
 		auto_load_next()
 
-func on_choice_made(ev : Dictionary, allow_rollback = true) -> void:
+func on_choice_made(ev : Dictionary, rollback_to_choice = true) -> void:
+	# rollback_to_choice is only used when called externally.
 	QM.enable_skip_auto()
 	for n in choiceContainer.get_children():
 		n.queue_free()
 	
-	if allow_rollback: # allow_rollback can only be set externally. Currently
-		# there is no method in GeneralDialog that alters this value
+	if rollback_to_choice and allow_rollback:
 		game.makeSnapshot()
 	waiting_cho = false
 	choiceContainer.visible = false

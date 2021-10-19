@@ -9,8 +9,6 @@
 [node name="VNUI" type="CanvasLayer"]
 layer = 3
 script = ExtResource( 6 )
-draggable_dialog = true
-resizable_dialog = true
 
 [node name="dialogBox" parent="." instance=ExtResource( 1 )]
 margin_left = 412.0
