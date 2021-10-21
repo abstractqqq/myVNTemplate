@@ -131,6 +131,7 @@ func load_event_at_index(ind : int) -> void:
 	if ind >= current_block.size():
 		print("Reached the end of block %s, entering an idle state." %[game.currentBlock])
 		idle = true
+		if self.nvl: nvl_off()
 	else:
 		if debug_mode:print("Debug: current event index is " + str(current_index))
 		interpret_events(current_block[ind])
@@ -149,9 +150,7 @@ func interpret_events(event):
 	if ev.has('loc'): ev['loc'] = _parse_loc(ev['loc'], ev)
 	if ev.has('params'): ev['params'] = _parse_params(ev['params'],ev)
 	if ev.has('color'): ev['color'] = _parse_color(ev['color'], ev)
-	if ev.has('nvl'):
-		if (typeof(ev['nvl'])!=1) and ev['nvl'] != 'clear': 
-			ev['nvl'] = _parse_true_false(ev['nvl'], ev)
+	if ev.has('nvl'): ev['nvl'] = _parse_nvl(ev['nvl'])
 	if ev.has('scale'): ev['scale'] = _parse_loc(ev['scale'], ev)
 	if ev.has('dir'): ev['dir'] = _parse_dir(ev['dir'], ev)
 	# End of pre-parse. Actual match event
@@ -669,8 +668,7 @@ func check_condition(cond_list) -> bool:
 			front_var = _parse_var(front_var)
 			back_var = _parse_var(back_var)
 			match rel:
-				"=": result = (front_var == back_var)
-				"==": result = (front_var == back_var)
+				"=", "==": result = (front_var == back_var)
 				"<=": result = (front_var <= back_var)
 				">=": result = (front_var >= back_var)
 				"<": result = (front_var < back_var)
@@ -679,7 +677,7 @@ func check_condition(cond_list) -> bool:
 				_: vn.error('Unknown Relation ' + rel)
 			
 			final_result = _a_what_b(is_or, final_result, result)
-		elif typeof(cond) == 19: # array type
+		elif typeof(cond) == TYPE_ARRAY: # array type
 			final_result = _a_what_b(is_or, final_result, check_condition(cond))
 		else:
 			vn.error("Unknown entry in a condition array.")
@@ -1547,7 +1545,7 @@ func system(ev : Dictionary):
 func _parse_loc(loc, ev = {}) -> Vector2:
 	if typeof(loc) == TYPE_VECTOR2: # 5 = Vector2
 		return loc
-	if typeof(loc) == TYPE_STRING and loc == "R":
+	if typeof(loc) == TYPE_STRING and (loc == "R" or loc == "r"):
 		var v = get_viewport().size
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
@@ -1566,7 +1564,7 @@ func _parse_loc(loc, ev = {}) -> Vector2:
 func _parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
 		return vn.DIRECTION[dir]
-	elif typeof(dir) == TYPE_STRING and dir == "R":
+	elif typeof(dir) == TYPE_STRING and (dir == "R" or dir == "r"):
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
 		var rndv = Vector2(rng.randf_range(-1, 1),rng.randf_range(-1, 1))
@@ -1593,16 +1591,34 @@ func _parse_color(color, ev = {}) -> Color:
 			print("Error event: " + str(ev))
 			push_error("Expecting value of the form float1 float2 float3( float4) after color.")
 			return Color()
+			
+func _parse_nvl(nvl_state):
+	if typeof(nvl_state) == TYPE_BOOL:
+		return nvl_state
+	elif typeof(nvl_state) == TYPE_STRING:
+		nvl_state = nvl_state.to_lower()
+		if nvl_state == "clear":
+			return nvl_state
+		elif nvl_state == "on":
+			return true
+		elif nvl_state == "off":
+			return false
+		else:
+			return _parse_true_false(nvl_state)
 
 func _parse_true_false(truth, ev = {}) -> bool:
 	if typeof(truth) == TYPE_BOOL: # 1 = bool
 		return truth
-	if truth == "true":
-		return true
-	elif truth == "false":
-		return false
+	if typeof(truth) == TYPE_STRING:
+		truth = truth.to_lower()
+		if truth == "true":
+			return true
+		elif truth == "false":
+			return false
+		else:
+			return false
 	else:
-		print("Error event: " + str(ev))
+		print("!!! Format error" + str(ev))
 		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
 
@@ -1654,8 +1670,8 @@ func preprocess(words : String) -> String:
 				"sm": output += ";"
 				"dc": output += "::"
 				"nl": output += "\n"
-				"lbr": output += "["
-				"rbr": output += "]"
+				"lb": output += "["
+				"rb": output += "]"
 				_: 
 					if vn.dvar.has(inner):
 						output += str(vn.dvar[inner])

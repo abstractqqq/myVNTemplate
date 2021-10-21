@@ -12,6 +12,7 @@ var target_zoom = self.zoom
 var target_offset = self.offset
 
 
+
 func _ready():
 	set_process(false)
 	
@@ -123,6 +124,10 @@ func zoom(zm:Vector2, off = Vector2(1,1)):
 	target_zoom = zm
 	
 func reset():
+	for child in get_children():
+		if child.get_class() == "Tween":
+			child.remove_all()
+	
 	self.offset = default_offset
 	self.rotation_degrees = 0
 	self.zoom = Vector2(1,1)

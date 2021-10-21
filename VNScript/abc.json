@@ -14,6 +14,13 @@
 			{
 				"female": "Let me make a choice.",
 				"choice": "c1"
+			},
+			{
+				"params": [
+					1,
+					2,
+					"c"
+				]
 			}
 		]
 	},

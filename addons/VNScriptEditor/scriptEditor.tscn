@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://addons/VNScriptEditor/ubuntuRedOutlined.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
@@ -9,6 +9,7 @@
 [ext_resource path="res://addons/EditorGUI/GodotDocs.png" type="Texture" id=7]
 [ext_resource path="res://addons/EditorGUI/AddSingleTile.png" type="Texture" id=8]
 [ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=9]
+[ext_resource path="res://addons/VNScriptEditor/documentation/documentation.tscn" type="PackedScene" id=10]
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -224,31 +225,8 @@ margin_bottom = 908.0
 rect_min_size = Vector2( 1020, 500 )
 size_flags_vertical = 3
 
-[node name="TabContainer" type="TabContainer" parent="hbox/vbox/hsplit"]
-margin_left = 1035.0
+[node name="documentation" parent="hbox/vbox/hsplit" instance=ExtResource( 10 )]
 margin_right = 1380.0
-margin_bottom = 908.0
-rect_min_size = Vector2( 345, 0 )
-size_flags_horizontal = 3
-theme = ExtResource( 9 )
-tab_align = 0
-
-[node name="temp1" type="Tabs" parent="hbox/vbox/hsplit/TabContainer"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 48.0
-margin_right = -4.0
-margin_bottom = -4.0
-
-[node name="Label" type="Label" parent="hbox/vbox/hsplit/TabContainer/temp1"]
-margin_right = 324.0
-margin_bottom = 847.0
-text = "Reserved for future use......"
-autowrap = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 margin_left = 10.0
