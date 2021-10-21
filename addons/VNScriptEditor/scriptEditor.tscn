@@ -1,14 +1,24 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
+[ext_resource path="res://addons/VNScriptEditor/editorBlockContainer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/VNScriptEditor/scriptEditorMain.gd" type="Script" id=4]
+[ext_resource path="res://fonts/Ubuntu-Regular.ttf" type="DynamicFontData" id=5]
+[ext_resource path="res://addons/EditorGUI/PackedScene.png" type="Texture" id=6]
+[ext_resource path="res://addons/EditorGUI/GodotDocs.png" type="Texture" id=7]
+[ext_resource path="res://addons/EditorGUI/AddSingleTile.png" type="Texture" id=8]
+
+[sub_resource type="DynamicFont" id=1]
+size = 24
+font_data = ExtResource( 5 )
 
 [node name="editor" type="MarginContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_right = -380.0
-size_flags_horizontal = 3
+margin_top = -1.0
+margin_right = -520.0
+margin_bottom = -1.0
 size_flags_vertical = 3
 theme = ExtResource( 1 )
 custom_constants/margin_right = 10
@@ -20,169 +30,216 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="hbox" type="HBoxContainer" parent="."]
 margin_left = 10.0
 margin_top = 10.0
-margin_right = 1530.0
+margin_right = 1390.0
 margin_bottom = 1070.0
 custom_constants/separation = 30
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
-margin_right = 1520.0
+[node name="vbox" type="VBoxContainer" parent="hbox"]
+margin_right = 1380.0
 margin_bottom = 1060.0
 size_flags_horizontal = 3
-size_flags_vertical = 3
 theme = ExtResource( 1 )
 custom_constants/separation = 25
 
-[node name="headLayers" type="VBoxContainer" parent="HBoxContainer/VBoxContainer"]
-margin_right = 1520.0
-margin_bottom = 102.0
+[node name="headLayers" type="VBoxContainer" parent="hbox/vbox"]
+margin_right = 1380.0
+margin_bottom = 98.0
 custom_constants/separation = 20
 
-[node name="head" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/headLayers"]
-margin_right = 1520.0
-margin_bottom = 43.0
+[node name="head" type="HBoxContainer" parent="hbox/vbox/headLayers"]
+margin_right = 1380.0
+margin_bottom = 39.0
 custom_constants/separation = 30
 
-[node name="tlLabel" type="Label" parent="HBoxContainer/VBoxContainer/headLayers/head"]
-margin_top = 5.0
-margin_right = 117.0
-margin_bottom = 38.0
+[node name="tlLabel" type="Label" parent="hbox/vbox/headLayers/head"]
+margin_top = 3.0
+margin_right = 215.0
+margin_bottom = 36.0
 custom_fonts/font = ExtResource( 2 )
-text = "Timeline:"
+text = "Timeline name:"
 align = 1
 valign = 1
+uppercase = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="tlname" type="LineEdit" parent="HBoxContainer/VBoxContainer/headLayers/head"]
-margin_left = 147.0
-margin_right = 229.0
-margin_bottom = 43.0
-custom_fonts/font = ExtResource( 2 )
-custom_colors/font_color = Color( 0.498039, 0.407843, 0.407843, 1 )
+[node name="tlname" type="LineEdit" parent="hbox/vbox/headLayers/head"]
+margin_left = 245.0
+margin_right = 385.0
+margin_bottom = 39.0
+rect_min_size = Vector2( 140, 38 )
+custom_fonts/font = SubResource( 1 )
+max_length = 50
+expand_to_text_length = true
 caret_blink = true
 caret_blink_speed = 0.5
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="manual" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/head"]
-margin_left = 259.0
-margin_right = 518.0
-margin_bottom = 43.0
+[node name="newNBButton" type="Button" parent="hbox/vbox/headLayers/head"]
+margin_left = 415.0
+margin_right = 766.0
+margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "New Timeline(Notebook)"
+icon = ExtResource( 6 )
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="manual" type="Button" parent="hbox/vbox/headLayers/head"]
+margin_left = 1103.0
+margin_right = 1380.0
+margin_bottom = 39.0
+size_flags_horizontal = 10
+custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "USER MANUAL(NA)"
+icon = ExtResource( 7 )
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newNBButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/head"]
-margin_left = 548.0
-margin_right = 755.0
-margin_bottom = 43.0
-custom_fonts/font = ExtResource( 2 )
-text = "New NoteBook"
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="buttons" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/headLayers"]
-margin_top = 63.0
-margin_right = 1520.0
-margin_bottom = 102.0
+[node name="buttons" type="HBoxContainer" parent="hbox/vbox/headLayers"]
+margin_top = 59.0
+margin_right = 1380.0
+margin_bottom = 98.0
 custom_constants/separation = 50
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newDialogButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_right = 159.0
+[node name="newDialogButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_right = 177.0
 margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Dialog"
+icon = ExtResource( 8 )
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newChoiceButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_left = 209.0
-margin_right = 371.0
+[node name="newChoiceButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 227.0
+margin_right = 407.0
 margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Choice"
+icon = ExtResource( 8 )
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="newCommentButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_left = 421.0
-margin_right = 622.0
+[node name="newCommentButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 457.0
+margin_right = 676.0
 margin_bottom = 39.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Comment"
+icon = ExtResource( 8 )
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="saveButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_left = 672.0
-margin_right = 819.0
+[node name="saveButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 763.0
+margin_right = 910.0
 margin_bottom = 39.0
+size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "Save as txt"
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="loadButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_left = 869.0
-margin_right = 944.0
+[node name="loadButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 1070.0
+margin_right = 1145.0
 margin_bottom = 39.0
+size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "Load"
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="jsonButton" type="Button" parent="HBoxContainer/VBoxContainer/headLayers/buttons"]
-margin_left = 994.0
-margin_right = 1116.0
+[node name="jsonButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
+margin_left = 1258.0
+margin_right = 1380.0
 margin_bottom = 39.0
+size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "To JSON"
+flat = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="separationLine" type="ColorRect" parent="HBoxContainer/VBoxContainer"]
-margin_top = 127.0
-margin_right = 1520.0
-margin_bottom = 131.0
+[node name="separationLine" type="ColorRect" parent="hbox/vbox"]
+margin_top = 123.0
+margin_right = 1380.0
+margin_bottom = 127.0
 rect_min_size = Vector2( 0, 4 )
 color = Color( 0.266667, 0.266667, 0.266667, 1 )
 
-[node name="notebook" type="ScrollContainer" parent="HBoxContainer/VBoxContainer"]
-margin_top = 156.0
-margin_right = 1520.0
+[node name="hsplit" type="HSplitContainer" parent="hbox/vbox"]
+margin_top = 152.0
+margin_right = 1380.0
 margin_bottom = 1060.0
-size_flags_horizontal = 3
 size_flags_vertical = 3
-theme = ExtResource( 1 )
-follow_focus = true
+custom_constants/separation = 15
+
+[node name="notebook" parent="hbox/vbox/hsplit" instance=ExtResource( 3 )]
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1020.0
+margin_bottom = 908.0
+rect_min_size = Vector2( 1020, 500 )
+size_flags_vertical = 3
+
+[node name="TabContainer" type="TabContainer" parent="hbox/vbox/hsplit"]
+margin_left = 1035.0
+margin_right = 1380.0
+margin_bottom = 908.0
+rect_min_size = Vector2( 345, 0 )
+size_flags_horizontal = 3
+tab_align = 0
+
+[node name="temp1" type="Tabs" parent="hbox/vbox/hsplit/TabContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 54.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="Label" type="Label" parent="hbox/vbox/hsplit/TabContainer/temp1"]
+margin_right = 324.0
+margin_bottom = 847.0
+text = "Reserved for future use......"
+autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="notebookOrganizer" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/notebook"]
-margin_right = 1520.0
-margin_bottom = 1080.0
-rect_min_size = Vector2( 1520, 0 )
-size_flags_horizontal = 6
-size_flags_vertical = 3
-custom_constants/separation = 20
 
 [node name="AcceptDialog" type="AcceptDialog" parent="."]
 margin_left = 10.0
@@ -235,11 +292,11 @@ margin_right = 592.0
 margin_bottom = 342.0
 bbcode_enabled = true
 
-[connection signal="text_changed" from="HBoxContainer/VBoxContainer/headLayers/head/tlname" to="." method="_on_tlname_text_changed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/head/newNBButton" to="." method="_on_newNBButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newDialogButton" to="." method="_on_newDialogButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newChoiceButton" to="." method="_on_newChoiceButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/newCommentButton" to="." method="_on_newCommentButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/saveButton" to="." method="_on_saveButton_pressed"]
-[connection signal="pressed" from="HBoxContainer/VBoxContainer/headLayers/buttons/loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/head/newNBButton" to="." method="_on_newNBButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newDialogButton" to="." method="_on_newDialogButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newChoiceButton" to="." method="_on_newChoiceButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/newCommentButton" to="." method="_on_newCommentButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/saveButton" to="." method="_on_saveButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/loadButton" to="." method="_on_loadButton_pressed"]
+[connection signal="pressed" from="hbox/vbox/headLayers/buttons/jsonButton" to="." method="_on_jsonButton_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

@@ -7,8 +7,11 @@ var editor_instance
 func _enter_tree():
 	editor_instance = editor_path.instance()
 	get_editor_interface().get_editor_viewport().add_child(editor_instance)
+	editor_instance.parent = self
 	make_visible(false)
 
+func test():
+	print('abc')
 
 func _exit_tree():
 	if editor_instance:

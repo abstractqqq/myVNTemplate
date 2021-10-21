@@ -9,7 +9,7 @@ func _ready():
 	# game.currentNodePath = get_tree().current_scene.filename
 	# This is is to make sure that a quit notification is popped up before quit
 	get_tree().set_auto_accept_quit(false)
-	if auto_start(game.load_instruction):
+	if auto_start():
 		# The following is optional. 
 		
 		# When you're in development mode, it's a good idea to be able to skip around without constraint.

@@ -13,14 +13,18 @@ var sc = Vector2(1,1)
 var found = false
 var _ready_to_generate = false
 
-var counter = 0
-var speed = 30
-var displacement = Vector2()
-var sp = null
+var parent
+
+#var counter = 0
+#var speed = 30
+#var displacement = Vector2()
+#var sp = null
 
 
 func _on_Button_pressed():
-	cur_uid = $editOptions/main/LineEdit.text
+	$hbox/editOptions/assetInfo/spriteInfo/spriteOptions.clear()
+	$hbox/editOptions/assetInfo/animInfo/animOptions.clear()
+	cur_uid = $hbox/editOptions/main/LineEdit.text
 	if cur_uid == "":
 		found = false
 		return
@@ -28,40 +32,49 @@ func _on_Button_pressed():
 	temp_dict = {}
 	anim_dict = {}
 	# Expression data
-	var index = 0
+	var index = -1
 	var exp_list = _get_chara_sprites(cur_uid)
 	for i in range(exp_list.size()):
 		var temp = exp_list[i].split(".")[0]
 		temp = temp.split("_")
 		temp_dict[temp[1]] = exp_list[i]
-		$editOptions/assetInfo/spriteInfo/spriteOptions.add_item(temp[1])
+		$hbox/editOptions/assetInfo/spriteInfo/spriteOptions.add_item(temp[1])
+		if temp[1] == "default":
+			index = i
+			$hbox/preview.texture = load(chara_dir+temp_dict[temp[1]])
 
-	
-	$editOptions/assetInfo/spriteInfo/spriteOptions.select(index)
+	# There has to be a static sprite called default.
+	if index == -1:
+		_fail_to_find()
+		push_error("Unable to find a default expression for %s." %[cur_uid])
+		return
+	else:
+		found = true
+		
+	$hbox/editOptions/assetInfo/spriteInfo/spriteOptions.select(index)
 	
 	var anim_lists = _get_chara_sprites(cur_uid, "anim")
 	for e in anim_lists:
 		var temp = e.split(".")[0]
 		temp = temp.split("_")
 		anim_dict[temp[1]] = e
-		$editOptions/assetInfo/animInfo/animOptions.add_item(temp[1])
+		$hbox/editOptions/assetInfo/animInfo/animOptions.add_item(temp[1])
 		
-	$editOptions/main/LineEdit.release_focus()
-	if temp_dict.size() > 0 or anim_lists.size() > 0:
-		found = true
-	else:
-		print("No asset related to this UID is found in the designated folders.")
+	$hbox/editOptions/main/LineEdit.release_focus()
+		
+func _fail_to_find():
+	found = false
+	$hbox/editOptions/assetInfo/spriteInfo/spriteOptions.clear()
+	$hbox/preview.texture = null
+	
 
 func _on_generateButton_pressed():
-	return
-	
 	if found == false:
 		return
-	
 	_ready_to_generate = true
-	$charaGenPopup.dialog_text = ("You are about to generate a character scene with uid: {0}" +\
-	", which will have the path: {1}.").format({0:cur_uid,1:(chara_scdir+cur_uid+".tscn")})
-	$charaGenPopup.dialog_text += "\n You can pick a name color and do more customization for the "+\
+	$charaGenPopup.dialog_text = ("You are about to generate a character scene for uid: {0}" +\
+	", which will have the path:\n\n {1}.").format({0:cur_uid,1:(chara_scdir+cur_uid+".tscn")})
+	$charaGenPopup.dialog_text += "\n\nYou can pick a name color and do more customization for the "+\
 	 "character in the generated scene."
 	$charaGenPopup.popup_centered()
 
@@ -90,7 +103,7 @@ func _on_charaGenPopup_confirmed():
 		var sheetName = chara_scdir+cur_uid+"_expressionSheet.tres"
 		var error = ResourceSaver.save(sheetName, expSheet)
 		if error == OK:
-			print("Character expression sheet saved.")
+			print("Expression sheet for %s saved." %[cur_uid])
 		else:
 			print("Some error occurred when trying to save spriteSheet.")
 		
@@ -98,6 +111,7 @@ func _on_charaGenPopup_confirmed():
 		ch.set_sprite_frames(load(sheetName))
 		ch.unique_id = cur_uid
 		packed_scene.pack(ch)
+		var chara_scene_path = chara_scdir+cur_uid+".tscn"
 		error = ResourceSaver.save(chara_scdir+cur_uid+".tscn", packed_scene)
 		if error == OK:
 			print("Character successfully saved to scene.")
@@ -105,6 +119,8 @@ func _on_charaGenPopup_confirmed():
 			print("Some error occurred when trying to save as scene.")
 		
 		_ready_to_generate = false
+		
+		parent.get_editor_interface().open_scene_from_path(chara_scene_path)
 
 
 # -------------------------------------------------------------------------
@@ -140,3 +156,8 @@ func _get_chara_sprites(uid, which = "sprite"):
 				
 	dir.list_dir_end()
 	return sprites
+
+func _on_spriteOptions_item_selected(index):
+	if found:
+		var expr = $hbox/editOptions/assetInfo/spriteInfo/spriteOptions.get_item_text(index)
+		$hbox/preview.texture = load(chara_dir+temp_dict[expr])

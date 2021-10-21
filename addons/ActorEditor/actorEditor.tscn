@@ -5,7 +5,7 @@
 [ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=3]
 
 [sub_resource type="StyleBoxFlat" id=1]
-bg_color = Color( 0.25098, 0.243137, 0.243137, 1 )
+bg_color = Color( 0.2, 0.227451, 0.309804, 1 )
 border_width_left = 4
 border_width_top = 4
 border_width_right = 4
@@ -17,33 +17,45 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
 [node name="editor" type="PanelContainer"]
-margin_right = 500.0
-margin_bottom = 520.0
-size_flags_horizontal = 0
-size_flags_vertical = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_vertical = 3
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="editOptions" type="VBoxContainer" parent="."]
+[node name="hbox" type="HBoxContainer" parent="."]
 margin_left = 4.0
 margin_top = 4.0
-margin_right = 496.0
-margin_bottom = 516.0
-theme = ExtResource( 3 )
-custom_constants/separation = 18
+margin_right = 1916.0
+margin_bottom = 1076.0
+custom_constants/separation = 20
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="msg" type="Label" parent="editOptions"]
-margin_right = 492.0
+[node name="space1" type="Control" parent="hbox"]
+margin_bottom = 1072.0
+
+[node name="editOptions" type="VBoxContainer" parent="hbox"]
+margin_left = 20.0
+margin_right = 488.0
+margin_bottom = 1072.0
+theme = ExtResource( 3 )
+custom_constants/separation = 24
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="msg" type="Label" parent="hbox/editOptions"]
+margin_right = 468.0
 margin_bottom = 177.0
+size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 text = "
-Find and save your sprite to scene for further edits.
+Find and save your actor sprites to scene for further edits.
 
 "
 align = 1
@@ -53,14 +65,15 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="main" type="VBoxContainer" parent="editOptions"]
-margin_top = 195.0
-margin_right = 492.0
-margin_bottom = 318.0
+[node name="main" type="VBoxContainer" parent="hbox/editOptions"]
+margin_top = 336.0
+margin_right = 468.0
+margin_bottom = 648.0
+size_flags_vertical = 3
 theme = ExtResource( 3 )
 
-[node name="enterUID" type="Label" parent="editOptions/main"]
-margin_right = 492.0
+[node name="enterUID" type="Label" parent="hbox/editOptions/main"]
+margin_right = 468.0
 margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
 text = "Enter UID:"
@@ -70,9 +83,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LineEdit" type="LineEdit" parent="editOptions/main"]
+[node name="LineEdit" type="LineEdit" parent="hbox/editOptions/main"]
 margin_top = 37.0
-margin_right = 492.0
+margin_right = 468.0
 margin_bottom = 80.0
 custom_fonts/font = ExtResource( 1 )
 caret_blink = true
@@ -81,9 +94,9 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Button" type="Button" parent="editOptions/main"]
+[node name="Button" type="Button" parent="hbox/editOptions/main"]
 margin_top = 84.0
-margin_right = 492.0
+margin_right = 468.0
 margin_bottom = 123.0
 custom_fonts/font = ExtResource( 1 )
 text = "Find"
@@ -91,22 +104,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="assetInfo" type="HBoxContainer" parent="editOptions"]
-margin_top = 336.0
-margin_right = 492.0
-margin_bottom = 412.0
+[node name="assetInfo" type="HBoxContainer" parent="hbox/editOptions"]
+margin_top = 672.0
+margin_right = 468.0
+margin_bottom = 985.0
+size_flags_vertical = 3
 custom_constants/separation = 20
 
-[node name="dummySpace" type="Control" parent="editOptions/assetInfo"]
-margin_bottom = 76.0
+[node name="dummySpace" type="Control" parent="hbox/editOptions/assetInfo"]
+margin_bottom = 313.0
 
-[node name="spriteInfo" type="VBoxContainer" parent="editOptions/assetInfo"]
+[node name="spriteInfo" type="VBoxContainer" parent="hbox/editOptions/assetInfo"]
 margin_left = 20.0
 margin_right = 239.0
-margin_bottom = 76.0
+margin_bottom = 313.0
 size_flags_horizontal = 2
 
-[node name="spriteName" type="Label" parent="editOptions/assetInfo/spriteInfo"]
+[node name="spriteName" type="Label" parent="hbox/editOptions/assetInfo/spriteInfo"]
 margin_right = 219.0
 margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
@@ -117,7 +131,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="spriteOptions" type="OptionButton" parent="editOptions/assetInfo/spriteInfo"]
+[node name="spriteOptions" type="OptionButton" parent="hbox/editOptions/assetInfo/spriteInfo"]
 margin_top = 37.0
 margin_right = 219.0
 margin_bottom = 76.0
@@ -126,13 +140,13 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="animInfo" type="VBoxContainer" parent="editOptions/assetInfo"]
-margin_left = 266.0
-margin_right = 475.0
-margin_bottom = 76.0
+[node name="animInfo" type="VBoxContainer" parent="hbox/editOptions/assetInfo"]
+margin_left = 259.0
+margin_right = 468.0
+margin_bottom = 313.0
 size_flags_horizontal = 2
 
-[node name="animName" type="Label" parent="editOptions/assetInfo/animInfo"]
+[node name="animName" type="Label" parent="hbox/editOptions/assetInfo/animInfo"]
 margin_right = 209.0
 margin_bottom = 33.0
 custom_fonts/font = ExtResource( 1 )
@@ -143,7 +157,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="animOptions" type="OptionButton" parent="editOptions/assetInfo/animInfo"]
+[node name="animOptions" type="OptionButton" parent="hbox/editOptions/assetInfo/animInfo"]
 margin_top = 37.0
 margin_right = 209.0
 margin_bottom = 76.0
@@ -152,10 +166,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="generateButton" type="Button" parent="editOptions"]
-margin_top = 430.0
-margin_right = 492.0
-margin_bottom = 469.0
+[node name="generateButton" type="Button" parent="hbox/editOptions"]
+margin_top = 1009.0
+margin_right = 468.0
+margin_bottom = 1048.0
 custom_fonts/font = ExtResource( 1 )
 text = "Save Sprite to Scene (.tscn)"
 clip_text = true
@@ -163,16 +177,41 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="bottomspace" type="Control" parent="hbox/editOptions"]
+margin_top = 1072.0
+margin_right = 468.0
+margin_bottom = 1072.0
+
+[node name="space2" type="Control" parent="hbox"]
+margin_left = 508.0
+margin_right = 508.0
+margin_bottom = 1072.0
+
+[node name="preview" type="TextureRect" parent="hbox"]
+margin_left = 960.0
+margin_right = 1480.0
+margin_bottom = 1072.0
+rect_min_size = Vector2( 520, 0 )
+size_flags_horizontal = 6
+expand = true
+stretch_mode = 5
+
 [node name="charaGenPopup" type="AcceptDialog" parent="."]
-margin_right = 746.0
-margin_bottom = 396.0
+margin_left = 4.0
+margin_top = 4.0
+margin_right = 1004.0
+margin_bottom = 604.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 theme = ExtResource( 3 )
 window_title = ""
+resizable = true
 dialog_autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[connection signal="pressed" from="editOptions/main/Button" to="." method="_on_Button_pressed"]
-[connection signal="pressed" from="editOptions/generateButton" to="." method="_on_generateButton_pressed"]
+[connection signal="pressed" from="hbox/editOptions/main/Button" to="." method="_on_Button_pressed"]
+[connection signal="item_selected" from="hbox/editOptions/assetInfo/spriteInfo/spriteOptions" to="." method="_on_spriteOptions_item_selected"]
+[connection signal="pressed" from="hbox/editOptions/generateButton" to="." method="_on_generateButton_pressed"]
 [connection signal="confirmed" from="charaGenPopup" to="." method="_on_charaGenPopup_confirmed"]

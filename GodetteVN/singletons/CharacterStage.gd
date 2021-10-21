@@ -190,6 +190,13 @@ func is_on_stage(uid : String) -> bool:
 		if n.unique_id == uid:
 			return true
 	return false
+	
+func get_chara_pos(uid:String)->Vector2:
+	var output = Vector2(0,0)
+	var c = find_chara_on_stage(uid)
+	if c: # if c is not null
+		output = c.position
+	return output
 
 func all_on_stage():
 	var output = []

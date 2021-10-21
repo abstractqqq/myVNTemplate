@@ -63,9 +63,7 @@ func readSave(save : saveSlot) -> bool:
 		file.close()
 	else:
 		# load save failed. The save is corrupted or removed.
-		print(error)
-		vn.error('Loading failed for unknown reasons.')
-		save.queue_free()
+		push_error(error)
 	
 	return success
 
@@ -183,7 +181,7 @@ func write_to_config():
 			file.store_line(JSON.print(system_data,'\t'))
 			file.close()
 		else:
-			vn.error('Error when opening config: %s' %error)
+			push_error(error)
 			
 func load_config():
 	system_data = load_config_with_pass()
@@ -193,13 +191,20 @@ func load_config():
 	vn.auto_bound = (7 - (system_data['auto_speed'] + 1) * 2) * 20
 
 func make_spoilerproof(scene_path:String, all_dialog_blocks):
-	if not system_data.has(scene_path):
+	if system_data.has(scene_path) == false:
 		var ev = {}
 		for block in all_dialog_blocks.keys():
 			ev[block] = 0
 			
 		system_data[scene_path] = ev
 		
+func reset_all_spoilerproof():
+	var regex = RegEx.new()
+	regex.compile("^(res://)(.+)(\\.tscn)$")
+	for k in system_data.keys():
+		if regex.search(k):
+			reset_spoilerproof(k)
+
 func reset_spoilerproof(scene_path:String):
 	if system_data.has(scene_path):
 		for key in system_data[scene_path].keys():

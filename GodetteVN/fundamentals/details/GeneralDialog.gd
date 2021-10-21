@@ -39,11 +39,10 @@ var _propagate_dvar_list = {}
 const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Important components
 onready var bg = $background
-onready var vnui = $VNUI
-onready var QM = vnui.get_node('quickMenu')
-onready var dialogbox = vnui.get_node('dialogBox/textBox')
-onready var speaker = vnui.get_node('nameBox/speaker')
-onready var choiceContainer = vnui.get_node('choiceContainer')
+onready var QM = $VNUI/quickMenu
+onready var dialogbox = $VNUI/dialogBox/textBox
+onready var speaker = $VNUI/nameBox/speaker
+onready var choiceContainer = $VNUI/choiceContainer
 onready var camera = screen.get_node('camera')
 
 var nvlBox = null # dynamic. The NVL component is only instanced when in nvl mode.
@@ -195,7 +194,9 @@ func interpret_events(event):
 				
 			
 #----------------------- on ready, new game, load, set up, end -----------------
-func auto_start(load_instruction:String):
+func auto_start():
+	var load_instruction = game.load_instruction
+	print("--- Beta Notice: auto_start currently only works if you use json files for dialog. ---")
 	if load_instruction != "new_game" and load_instruction != "load_game":
 		print("Unknown load instruction. It can either be new_game or load_game.")
 		return false
@@ -401,10 +402,11 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 				game.history.push_back([uid, nvlBox.get_text(), latest_voice])
 	else:
 		if not _hide_namebox(uid):
+			$VNUI.namebox_follow_chara(uid)
 			var info = chara.all_chara[uid]
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
-			if info['font'] and not nvl and not one_time_font_change:
+			if info['font'] and not one_time_font_change:
 				var fonts = {'normal_font': info['normal_font'],
 				'bold_font': info['bold_font'],
 				'italics_font':info['italics_font'],
@@ -445,6 +447,7 @@ func extend(ev:Dictionary):
 		# you will get an error by using extend as the first sentence
 		var prev_speaker = game.history[game.history.size()-1][0]
 		if not _hide_namebox(prev_speaker):
+			$VNUI.namebox_follow_chara(prev_speaker)
 			var info = chara.all_chara[prev_speaker]
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
@@ -571,7 +574,7 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 				eff_name = n
 				break
 		if eff_name == 'wwttff':
-			print("Error at " + str(ev))
+			print("!!! Error at " + str(ev))
 			push_error("Unknown transition type given in bg change event.")
 			
 		var eff_dur = float(ev[eff_name])/2 # transition effect total duration / 2
@@ -827,7 +830,7 @@ func camera_effect(ev : Dictionary) -> void:
 				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset, 'deg':camera.target_degree}
 				# yield(get_tree().create_timer(time), 'timeout')
 			else:
-				print("Wrong camera event format: " + str(ev))
+				print("!!! Wrong camera event format: " + str(ev))
 				push_error("Camera move expects a loc and time, and type (optional)")
 		"shake":
 			if not vn.skipping:
@@ -855,11 +858,11 @@ func camera_effect(ev : Dictionary) -> void:
 					 'deg':camera.target_degree}
 				
 			else:
-				print("Event format error: " + str(ev))
+				print("!!! Event format error: " + str(ev))
 				push_error("Camera spin event must have a 'deg' degree field.")
 				
 		_:
-			print("Unknown camera event: " + str(ev))
+			print("!!! Unknown camera event: " + str(ev))
 			push_error("Camera effect not found.")
 			
 	auto_load_next()
@@ -893,8 +896,8 @@ func character_event(ev : Dictionary) -> void:
 					character_jump(uid, ev)
 			'move': 
 				if uid == 'all': 
-					print("Warning: Attempting to move all character at once.")
-					print("This is currently not allowed and this event is ignored.")
+					print("!!! Warning: Attempting to move all character at once.")
+					print("!!! This is currently not allowed and this event is ignored.")
 					auto_load_next()
 				else:
 					character_move(uid, ev)
@@ -1023,7 +1026,7 @@ func history_manipulation(ev: Dictionary):
 	var what = ev['history']
 	if what == "push":
 		if ev.size() != 2:
-			print("History event format error " + str(ev))
+			print("!!! History event format error " + str(ev))
 			push_error("History push should have only two fields.")
 		
 		for k in ev.keys():
@@ -1034,7 +1037,7 @@ func history_manipulation(ev: Dictionary):
 	elif what == "pop":
 		game.history.pop_back()
 	else:
-		print("History event format error " + str(ev))
+		print("!!! History event format error " + str(ev))
 		push_error("History expects only push or pop.")
 		
 	auto_load_next()
@@ -1178,7 +1181,6 @@ func on_rollback():
 
 
 func load_playback(play_back, RBM = false): # Roll Back Mode
-	# print(play_back)
 	vn.inLoading = true
 	if play_back.has('bg'):
 		bg.bg_change(play_back['bg'])
@@ -1318,7 +1320,7 @@ func nvl_on(center_font:String=''):
 	dialogbox.get_node('autoTimer').stop()
 	nvlBox = load(vn.DEFAULT_NVL).instance()
 	nvlBox.connect('load_next', self, 'trigger_accept')
-	vnui.add_child(nvlBox)
+	$VNUI.add_child(nvlBox)
 	nvlBox.get_node('autoTimer').start()
 	if centered:
 		nvlBox.center_mode()

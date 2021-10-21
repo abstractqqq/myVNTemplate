@@ -1,5 +1,12 @@
 $--DIALOG--starter
-THIS ADDON IS STILL BUGGY. DO NOT USE.123
+bg::	busstop.jpg ;
+chara::	female join ; loc::	1200 600 ;
+female smile:: hello world! ;
+female::	Let me make a choice. ; choice::	c1 ;
+$--END
+$--CHOICE--c1
+choose this::	{"dvar": "mo = mo+999"} ; condition:: 	mo < 100;
+choose that::	{} ;
 $--END
 $--CONDITIONS
 

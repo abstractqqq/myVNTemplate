@@ -124,5 +124,4 @@ func _eval_a(ex_arr) -> float:
 				vn.error("Unrecognized operator " + e)
 		
 	var result = stack.pop_back()
-	print(result)
 	return result
