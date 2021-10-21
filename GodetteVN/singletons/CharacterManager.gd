@@ -59,7 +59,7 @@ func _ready():
 	set_dvar("parallax_speed", -25)
 	
 	# Suppose for vo, we do not want name box at all 
-	# (no name display + no namebox texture)
+	# = (no name display + no namebox texture)
 	set_noname("vo")
 	
 	# Used in clickable test
@@ -157,6 +157,7 @@ func set_dvar(v:String, value):
 # It will be interpreted as b happy: "Hello!"
 # This works with save system, and will be different depending on the player's
 # choice in each save.
+# This is not transitive and only works with two uids.
 func point_uid_to(uid:String, to:String):
 	chara_pointer[uid] = to
 	

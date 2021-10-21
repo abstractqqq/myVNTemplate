@@ -129,8 +129,8 @@ func _input(ev):
 
 func load_event_at_index(ind : int) -> void:
 	if ind >= current_block.size():
-		print("IMPORTANT: THERE IS NO PROPER ENDING. GOING BACK TO MAIN MENU.")
-		change_scene_to(vn.ending_scene_path)
+		print("Reached the end of block %s, entering an idle state." %[game.currentBlock])
+		idle = true
 	else:
 		if debug_mode:print("Debug: current event index is " + str(current_index))
 		interpret_events(current_block[ind])
@@ -486,7 +486,7 @@ func extend(ev:Dictionary):
 func wait_for_accept(ques:bool = false):
 	if not ques:
 		yield(self, "player_accept")
-		if not _nullify_prev_yield:
+		if _nullify_prev_yield == false: # if this is false, then it's natural dialog progression
 			if allow_rollback: game.makeSnapshot()
 			music.stop_voice()
 			if centered:
@@ -495,6 +495,9 @@ func wait_for_accept(ques:bool = false):
 			if not self.nvl: stage.remove_highlight()
 			waiting_acc = false
 			auto_load_next()
+		else:
+			# back to default
+			_nullify_prev_yield = false
 
 
 #------------------------ Related to Music and Sound ---------------------------
@@ -1161,7 +1164,7 @@ func on_choice_made(ev : Dictionary, rollback_to_choice = true) -> void:
 	else:
 		interpret_events(ev)
 
-func _yield_check(npy : bool): # npy = nullily_previous_yield ?
+func _yield_check(npy : bool): # npy = nullily_previous_yield
 	_nullify_prev_yield = npy
 
 func on_rollback():

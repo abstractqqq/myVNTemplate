@@ -12,7 +12,7 @@ onready var organizer = $hbox/vbox/hsplit/notebook/notebookOrganizer
 func _new_notebook():
 	in_timeline = true
 	_clear()
-	_new_dialog_block("starter", "THIS ADDON IS STILL BUGGY. DO NOT USE.")
+	_new_dialog_block("starter", "#Your story begins here.")
 	_new_condition_block()
 	
 func _new_condition_block(content:String = ""):
@@ -105,13 +105,13 @@ func _on_newNBButton_pressed():
 	_new_notebook()
 
 func _on_newCommentButton_pressed():
+	if in_timeline == false: return
 	var d = comment_block.instance()
 	d.int_type = -1
 	organizer.add_child(d)
 	return d
 	
 func _new_comment_block(content:String):
-	if in_timeline == false: return
 	var d = _on_newCommentButton_pressed()
 	d.set_content(content)
 	
@@ -126,6 +126,7 @@ func _load_new_text(path):
 	var textFile = File.new()
 	var err = textFile.open(path, File.READ)
 	if err == OK:
+		in_timeline = true
 		var blocks = textFile.get_as_text().split("$--END")
 		for content in blocks:
 			content = content.strip_edges()
@@ -153,6 +154,7 @@ func _load_new_text(path):
 			_new_dialog_block("starter", "")
 		if has_cond == false:
 			_new_condition_block()
+		
 		print("Finished Loading.")
 	else:
 		push_error("Failed to load text file.")

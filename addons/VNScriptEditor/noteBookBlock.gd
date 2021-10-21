@@ -10,7 +10,7 @@ var int_type = 0
 # 2 : condition block
 
 onready var default_y = self.rect_size.y
-onready var default_y_min = 120
+onready var default_y_min = self.rect_min_size.y
 
 func _on_delete_pressed():
 	self.queue_free()
@@ -52,15 +52,16 @@ func disable_name_edit():
 
 func _on_visible_pressed():
 	text_visible = !text_visible
-	$MarginContainer/TextEdit.visible = text_visible
+	$MarginContainer.visible = text_visible
 	if text_visible:
 		$header/list/visible.texture_normal = load("res://addons/EditorGUI/GuiVisibilityVisible.png")
-		self.rect_min_size.y = default_y
+		self.rect_min_size.y = default_y_min
 		self.rect_size.y = default_y
 	else:
 		$header/list/visible.texture_normal = load("res://addons/EditorGUI/GuiVisibilityHidden.png")
-		self.rect_min_size.y = default_y_min
-		self.rect_size.y = default_y_min
+		self.rect_min_size.y = 150
+		self.rect_size.y = 150
+		
 		
 		
 #------------------------ Parsing -------------------------------

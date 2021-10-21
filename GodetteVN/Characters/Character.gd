@@ -4,8 +4,8 @@ class_name Character
 
 # Exports
 # Character metadata
-export(String) var display_name = "Character Name"
-export(String) var unique_id = "UID"
+export(String) var display_name
+export(String) var unique_id
 export(Color) var name_color = null
 export(bool) var in_all = true
 export(bool) var apply_highlight = true

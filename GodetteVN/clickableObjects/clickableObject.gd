@@ -9,6 +9,9 @@ func _ready():
 func _on_pressed():
 	# This will give us the root of the vn scene. (if you also put clickable
 	# objects as subnodes in clickables node.)
-	get_parent().get_parent().generate_nullify()
-	get_parent().get_parent().change_block_to(change_to_on_click, 0)
+	var dialog_node = get_parent().get_parent()
+	if dialog_node.allow_rollback:
+		game.makeSnapshot()
+	dialog_node.generate_nullify()
+	dialog_node.change_block_to(change_to_on_click, 0)
 

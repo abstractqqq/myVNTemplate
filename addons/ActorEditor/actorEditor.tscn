@@ -1,25 +1,32 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=1]
 [ext_resource path="res://addons/ActorEditor/actorEditor.gd" type="Script" id=2]
-[ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=3]
+[ext_resource path="res://fonts/Ubuntu-Regular.ttf" type="DynamicFontData" id=4]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRedOutlined.tres" type="Theme" id=5]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.2, 0.227451, 0.309804, 1 )
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
 border_color = Color( 0.682353, 0.717647, 0.858824, 1 )
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="DynamicFont" id=2]
+size = 30
+font_data = ExtResource( 4 )
+
 [node name="editor" type="PanelContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 size_flags_vertical = 3
+theme = ExtResource( 5 )
 custom_styles/panel = SubResource( 1 )
 script = ExtResource( 2 )
 __meta__ = {
@@ -27,23 +34,22 @@ __meta__ = {
 }
 
 [node name="hbox" type="HBoxContainer" parent="."]
-margin_left = 4.0
-margin_top = 4.0
-margin_right = 1916.0
-margin_bottom = 1076.0
+margin_left = 3.0
+margin_top = 3.0
+margin_right = 1917.0
+margin_bottom = 1077.0
 custom_constants/separation = 20
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="space1" type="Control" parent="hbox"]
-margin_bottom = 1072.0
+margin_bottom = 1074.0
 
 [node name="editOptions" type="VBoxContainer" parent="hbox"]
 margin_left = 20.0
 margin_right = 488.0
-margin_bottom = 1072.0
-theme = ExtResource( 3 )
+margin_bottom = 1074.0
 custom_constants/separation = 24
 __meta__ = {
 "_edit_use_anchors_": false
@@ -51,11 +57,13 @@ __meta__ = {
 
 [node name="msg" type="Label" parent="hbox/editOptions"]
 margin_right = 468.0
-margin_bottom = 177.0
+margin_bottom = 249.0
 size_flags_vertical = 2
 custom_fonts/font = ExtResource( 1 )
 text = "
 Find and save your actor sprites to scene for further edits.
+
+You can only preview static sprites.
 
 "
 align = 1
@@ -66,11 +74,10 @@ __meta__ = {
 }
 
 [node name="main" type="VBoxContainer" parent="hbox/editOptions"]
-margin_top = 336.0
+margin_top = 337.0
 margin_right = 468.0
-margin_bottom = 648.0
+margin_bottom = 650.0
 size_flags_vertical = 3
-theme = ExtResource( 3 )
 
 [node name="enterUID" type="Label" parent="hbox/editOptions/main"]
 margin_right = 468.0
@@ -86,8 +93,8 @@ __meta__ = {
 [node name="LineEdit" type="LineEdit" parent="hbox/editOptions/main"]
 margin_top = 37.0
 margin_right = 468.0
-margin_bottom = 80.0
-custom_fonts/font = ExtResource( 1 )
+margin_bottom = 81.0
+custom_fonts/font = SubResource( 2 )
 caret_blink = true
 caret_blink_speed = 0.5
 __meta__ = {
@@ -95,9 +102,9 @@ __meta__ = {
 }
 
 [node name="Button" type="Button" parent="hbox/editOptions/main"]
-margin_top = 84.0
+margin_top = 85.0
 margin_right = 468.0
-margin_bottom = 123.0
+margin_bottom = 124.0
 custom_fonts/font = ExtResource( 1 )
 text = "Find"
 __meta__ = {
@@ -105,9 +112,9 @@ __meta__ = {
 }
 
 [node name="assetInfo" type="HBoxContainer" parent="hbox/editOptions"]
-margin_top = 672.0
+margin_top = 674.0
 margin_right = 468.0
-margin_bottom = 985.0
+margin_bottom = 987.0
 size_flags_vertical = 3
 custom_constants/separation = 20
 
@@ -167,9 +174,9 @@ __meta__ = {
 }
 
 [node name="generateButton" type="Button" parent="hbox/editOptions"]
-margin_top = 1009.0
+margin_top = 1011.0
 margin_right = 468.0
-margin_bottom = 1048.0
+margin_bottom = 1050.0
 custom_fonts/font = ExtResource( 1 )
 text = "Save Sprite to Scene (.tscn)"
 clip_text = true
@@ -178,19 +185,19 @@ __meta__ = {
 }
 
 [node name="bottomspace" type="Control" parent="hbox/editOptions"]
-margin_top = 1072.0
+margin_top = 1074.0
 margin_right = 468.0
-margin_bottom = 1072.0
+margin_bottom = 1074.0
 
 [node name="space2" type="Control" parent="hbox"]
 margin_left = 508.0
 margin_right = 508.0
-margin_bottom = 1072.0
+margin_bottom = 1074.0
 
 [node name="preview" type="TextureRect" parent="hbox"]
-margin_left = 960.0
-margin_right = 1480.0
-margin_bottom = 1072.0
+margin_left = 961.0
+margin_right = 1481.0
+margin_bottom = 1074.0
 rect_min_size = Vector2( 520, 0 )
 size_flags_horizontal = 6
 expand = true
@@ -203,7 +210,7 @@ margin_right = 1004.0
 margin_bottom = 604.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme = ExtResource( 3 )
+theme = ExtResource( 6 )
 window_title = ""
 resizable = true
 dialog_autowrap = true

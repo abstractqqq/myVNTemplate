@@ -1,6 +1,6 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=11 format=2]
 
-[ext_resource path="res://addons/VNScriptEditor/editorFontTheme.tres" type="Theme" id=1]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRedOutlined.tres" type="Theme" id=1]
 [ext_resource path="res://fonts/ubuntu.tres" type="DynamicFont" id=2]
 [ext_resource path="res://addons/VNScriptEditor/editorBlockContainer.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/VNScriptEditor/scriptEditorMain.gd" type="Script" id=4]
@@ -8,6 +8,7 @@
 [ext_resource path="res://addons/EditorGUI/PackedScene.png" type="Texture" id=6]
 [ext_resource path="res://addons/EditorGUI/GodotDocs.png" type="Texture" id=7]
 [ext_resource path="res://addons/EditorGUI/AddSingleTile.png" type="Texture" id=8]
+[ext_resource path="res://addons/VNScriptEditor/ubuntuRegularTheme.tres" type="Theme" id=9]
 
 [sub_resource type="DynamicFont" id=1]
 size = 24
@@ -85,6 +86,7 @@ __meta__ = {
 margin_left = 415.0
 margin_right = 766.0
 margin_bottom = 39.0
+focus_mode = 0
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Timeline(Notebook)"
@@ -120,6 +122,7 @@ __meta__ = {
 [node name="newDialogButton" type="Button" parent="hbox/vbox/headLayers/buttons"]
 margin_right = 177.0
 margin_bottom = 39.0
+focus_mode = 0
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Dialog"
@@ -133,6 +136,7 @@ __meta__ = {
 margin_left = 227.0
 margin_right = 407.0
 margin_bottom = 39.0
+focus_mode = 0
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Choice"
@@ -146,6 +150,7 @@ __meta__ = {
 margin_left = 457.0
 margin_right = 676.0
 margin_bottom = 39.0
+focus_mode = 0
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
 text = "New Comment"
@@ -159,6 +164,7 @@ __meta__ = {
 margin_left = 763.0
 margin_right = 910.0
 margin_bottom = 39.0
+focus_mode = 0
 size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
@@ -172,6 +178,7 @@ __meta__ = {
 margin_left = 1070.0
 margin_right = 1145.0
 margin_bottom = 39.0
+focus_mode = 0
 size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
@@ -185,6 +192,7 @@ __meta__ = {
 margin_left = 1258.0
 margin_right = 1380.0
 margin_bottom = 39.0
+focus_mode = 0
 size_flags_horizontal = 10
 custom_fonts/font = ExtResource( 2 )
 custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
@@ -222,13 +230,14 @@ margin_right = 1380.0
 margin_bottom = 908.0
 rect_min_size = Vector2( 345, 0 )
 size_flags_horizontal = 3
+theme = ExtResource( 9 )
 tab_align = 0
 
 [node name="temp1" type="Tabs" parent="hbox/vbox/hsplit/TabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
-margin_top = 54.0
+margin_top = 48.0
 margin_right = -4.0
 margin_bottom = -4.0
 
@@ -249,7 +258,7 @@ margin_bottom = 410.0
 rect_min_size = Vector2( 600, 400 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
-theme = ExtResource( 1 )
+theme = ExtResource( 9 )
 window_title = ""
 dialog_text = "
 To Json success! You can find it in the VNScript folder."
@@ -267,7 +276,7 @@ rect_min_size = Vector2( 1000, 600 )
 input_pass_on_modal_close_click = false
 size_flags_horizontal = 0
 size_flags_vertical = 0
-theme = ExtResource( 1 )
+theme = ExtResource( 9 )
 popup_exclusive = true
 window_title = "Open a File"
 mode = 0
@@ -283,13 +292,14 @@ margin_bottom = 410.0
 rect_min_size = Vector2( 600, 400 )
 size_flags_horizontal = 0
 size_flags_vertical = 0
+theme = ExtResource( 9 )
 window_title = ""
 
 [node name="richText" type="RichTextLabel" parent="helperPopup"]
 margin_left = 8.0
 margin_top = 8.0
 margin_right = 592.0
-margin_bottom = 342.0
+margin_bottom = 348.0
 bbcode_enabled = true
 
 [connection signal="pressed" from="hbox/vbox/headLayers/head/newNBButton" to="." method="_on_newNBButton_pressed"]
