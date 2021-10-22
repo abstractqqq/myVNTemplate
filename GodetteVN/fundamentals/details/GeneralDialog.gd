@@ -220,6 +220,7 @@ func get_all_dialog_blocks():
 	return all_blocks
 		
 func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String) -> void:
+	get_tree().set_auto_accept_quit(false)
 	game.currentSaveDesc = scene_description
 	game.currentNodePath = get_tree().current_scene.filename
 	all_blocks = blocks
@@ -1229,6 +1230,8 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 	for k in ctrl_state.keys():
 		if ctrl_state[k] == false:
 			system({'system': k + " off"})
+		else:
+			system({'system': k + " on"})
 	
 	var onStageCharas = []
 	for d in play_back['charas']:

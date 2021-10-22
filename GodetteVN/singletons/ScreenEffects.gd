@@ -84,7 +84,8 @@ func flashlight(sc : Vector2):
 	fl_scene.scale = sc
 	
 func clear_debug()->void:
-	get_node("debugger").text = ''
+	var debugger = get_node("debugger")
+	if debugger: debugger.text = ''
 	
 func in_transition(eff_name:String, color:Color, eff_dur:float):
 	if eff_name in vn.TRANSITIONS:

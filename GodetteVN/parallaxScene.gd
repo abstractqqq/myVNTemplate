@@ -9,7 +9,6 @@ extends GeneralDialog
 # as well. It makes organization cleaner. There is really no point in mixing
 # parallax background and regular staic background in one Godot scene when you
 # can easily switch from one to another.)
-# 
 
 # Another note: in order for parallax to be compatible with character actions,
 # it is important to make your parallax bgs self-moving. This is because we
@@ -25,8 +24,8 @@ var main_block = [
 	{"gt": "You can look at the top left corner to see the events controlling everything."},
 	{"express": "gt crya"},
 	{"gt": "This forest is a bit scary, isn't it?"},
-	{"chara": "gt shake"},
-	{'wait': 2},
+	{"chara": "gt shake","time":1},
+	{'wait': 1},
 	{'gt default': "I see someone!"},
 	{"express": "gt wavea"},
 	{"chara": "gt jump"},
@@ -37,10 +36,6 @@ var main_block = [
 	{"gt":'This is done by using a dvar to control the moving speed and a function which gets called '+\
 	"whenever this dvar is changed."},
 	{"gt": "See comment 1 in the code if you're curious."},
-	{'gt': "Let me do my signature jump!"},
-	{"chara": "gt jump", "amount":800, "time":2},
-	{"chara":"gt spin", "sdir": -1, "time":2, "deg": 720, "type":"expo"},
-	{"chara":"gt move", "loc": Vector2(200,650), "time":2, 'type': "expo"},
 	{"gt":"Thanks a lot to saukgp on itch who provides these parallax backgrounds for free!"},
 	{'wait':3},
 	{"screen":"fade out", 'time':1}, # fade in means fade into darkness

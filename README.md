@@ -47,9 +47,8 @@ More in the making ~
 
 ### Documentations
 
-A link to the not so well-written [documentation](https://drive.google.com/file/d/1GnNqZsEiuScddbIXL5IWVSM-kF7ECFD-/view?usp=sharing)
+Documentation will be in the VNScript editor in the framework.
 
-If you're too a programmer, you might be interested in the [design doc](https://docs.google.com/document/d/1_j8YX7iYI9FBYTwUS_dhHKJdJcFYeaHjLQ8eWzhaA2s/edit?usp=sharing)
 
 If you want to contact me:
 Discord: T.Q#8863
