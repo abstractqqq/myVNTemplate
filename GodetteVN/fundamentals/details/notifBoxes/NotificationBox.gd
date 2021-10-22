@@ -56,6 +56,8 @@ func _on_yesButton_pressed():
 			screen.weather_off()
 			screen.clear_debug()
 			music.stop_bgm()
+			game.resetPlayback()
+			chara.dvar_declaration()
 			stage.reset_sideImage()
 			stage.remove_chara('absolute_all')
 			#----------------------------------------

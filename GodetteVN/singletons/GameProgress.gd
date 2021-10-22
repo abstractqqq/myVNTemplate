@@ -102,3 +102,10 @@ func resetControlStates(to:bool=true):
 	# By default, resets everything back to true
 	for k in control_state.keys():
 		control_state[k] = to
+
+# Suppose player A returns to main without saving, then the state of playback events should be
+# refreshed.
+func resetPlayback():
+	resetControlStates()
+	rollback_records = []
+	playback_events = {'bg':'', 'bgm':{'bgm':''}, 'charas':[], 'nvl': '','speech':'', 'control_state': control_state}

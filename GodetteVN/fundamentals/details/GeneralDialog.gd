@@ -1011,6 +1011,7 @@ func character_spin(uid:String, ev:Dictionary):
 	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):
+	if we == "off": we = ""
 	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
 		if we == "":

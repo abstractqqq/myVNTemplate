@@ -11,10 +11,7 @@ var all_chara = {
 var chara_pointer = {}
 var chara_name_patch = {}
 #--------------------------------------------------------------------
-
-
-
-func _ready():
+func character_declaration():
 	# Define all your game characters here.
 	
 	# Characters have two classes
@@ -42,6 +39,9 @@ func _ready():
 	# Color(0,1,0) = Green
 	
 	spriteless_character("", "vo")
+	# Suppose for vo, we do not want name box at all 
+	# = (no name display + no namebox texture)
+	set_noname("vo")
 	
 	# Here you define character with sprites, they must have a 
 	# Godot scene in the folder GodetteVN/Characters with the name
@@ -50,6 +50,11 @@ func _ready():
 	stage_character("test2")
 	stage_character("gt") # register your character so that the system knows
 	# which uid to look for
+
+
+func dvar_declaration():
+	# Initialze all dvars you want to use here.
+	
 	
 	# You may initialize your variables here
 	#'mo':50, 'le':0, 'tt': true
@@ -58,16 +63,9 @@ func _ready():
 	set_dvar("tt", true)
 	set_dvar("parallax_speed", -25)
 	
-	# Suppose for vo, we do not want name box at all 
-	# = (no name display + no namebox texture)
-	set_noname("vo")
-	
 	# Used in clickable test
 	set_dvar('obj1', false)
 	set_dvar('obj2', false)
-	
-	
-	
 
 	
 	
@@ -77,13 +75,11 @@ func _ready():
 	
 	
 	
-	
-	
-	
-	
 #----------------------------------------------------------------------------
-#BREAK
-# Do not delete this break line
+func _ready():
+	character_declaration()
+	dvar_declaration()
+
 # Keep a record of the path to the scene of the stage character
 func stage_character(uid:String) -> void:
 	if uid in vn.BAD_UIDS:
