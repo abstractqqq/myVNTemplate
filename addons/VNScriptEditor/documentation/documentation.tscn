@@ -8,8 +8,8 @@
 
 [node name="documentation" type="TabContainer"]
 margin_left = 1035.0
-margin_right = 1594.0
-margin_bottom = 908.0
+margin_right = 1675.0
+margin_bottom = 800.0
 rect_min_size = Vector2( 345, 0 )
 size_flags_horizontal = 3
 theme = ExtResource( 1 )
@@ -31,7 +31,7 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Intro"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
@@ -296,6 +296,50 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="Preview" type="Tabs" parent="."]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 4.0
+margin_top = 58.0
+margin_right = -4.0
+margin_bottom = -4.0
+
+[node name="bgPreview" type="Button" parent="Preview"]
+margin_left = 4.87483
+margin_top = 3.94426
+margin_right = 233.875
+margin_bottom = 49.9443
+focus_mode = 0
+custom_colors/font_color_hover = Color( 0, 0, 0, 0.54902 )
+text = "Choose a BG"
+flat = true
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="doc" type="TextureRect" parent="Preview"]
+margin_left = 1.0
+margin_top = 56.0
+margin_right = 641.0
+margin_bottom = 737.0
+focus_mode = 2
+expand = true
+stretch_mode = 1
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="Preview"]
+margin_right = 637.0
+margin_bottom = 478.0
+window_title = "Open a File"
+dialog_text = "Choose a background picture to preview."
+mode = 0
+filters = PoolStringArray( "*.jpg", "*.png", "*jpeg" )
+current_dir = "res://assets/backgrounds"
+current_path = "res://assets/backgrounds/"
+
 [node name="Chara" type="Tabs" parent="."]
 visible = false
 anchor_right = 1.0
@@ -308,7 +352,7 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Chara"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 796.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
@@ -342,20 +386,26 @@ Randomly shake character with given amount for a duration of the given time. Sup
 Vpunch/hpunches the character given default parameters. Supports 'all'.
 
 [b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored. Supports 'all'.
 
 [b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
 Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
 
 [b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump. Supports 'all'.
 
 [b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance. Supports 'all' if the given point exists for each character.
 
 In addition, you may use 
 [b]express:: * expression_name;[/b]
 to change expression.
+
+There are two special character expression that are prebuilt. You do not need the corresponding sprites.
+
+[center]flip and vflip[/center]
+
+You can use them as any other expressions. Flip will flip horizontally, and vflip will flip vertically. This will be reset if the character leaves.
 
 
 [font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
@@ -404,20 +454,26 @@ chara:: * hpunch;
 Vpunch/hpunches the character given default parameters. Supports 'all'.
 
 chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored. Supports 'all'.
 
 chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
 Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
 
 chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump. Supports 'all'.
 
 chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance. Supports 'all' if the given point exists for each character.
 
 In addition, you may use 
 express:: * expression_name;
 to change expression.
+
+There are two special character expression that are prebuilt. You do not need the corresponding sprites.
+
+flip and vflip
+
+You can use them as any other expressions. Flip will flip horizontally, and vflip will flip vertically. This will be reset if the character leaves.
 
 
 Character Class:
@@ -455,124 +511,68 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Camera"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Camera Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Moves, rotates, and zooms the camera. Camera movement and zoom will discontinue skipping. The state of the camera will be saved.
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b]camera:: move; loc:: *; time:: (1); type:: (linear);[/b]
+Moves the top left corner of the camera to loc in given time in the given fashion.
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+[b]camera:: zoom;  loc:: (0 0); scale:: *; time:: (1); type:: (linear);[/b]
+Zooms the camera to the scale. Scale shoule be two real numbers between 0 and 1 separated by a space. If a loc is given, performs move at the same time. 
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+[b]camera:: shake; amount:: (250) ; time:: (2);[/b]
+Randomly shakes the camera with given amount for a duration of the given time.
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+[b]camera:: vpunch;[/b]
+[b]camera:: hpunch;[/b]
+Vpunch/hpunches the camera with default parameters.
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+[b]camera:: spin; deg:: *; sdir:: (1) ; time:: (1); type:: (linear);[/b]
+Rotates the camera given number of degrees in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type=instant, time will be ignored.
 
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+[b]camera:: ; or camera:: reset;[/b]
+Resets the camera to default.
 
 
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
 
-[b]Customizable Attributes:[/b]
+"
+text = "Camera Events:
 
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Moves, rotates, and zooms the camera. Camera movement and zoom will discontinue skipping. The state of the camera will be saved.
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+camera:: move; loc:: *; time:: (1); type:: (linear);
+Moves the top left corner of the camera to loc in given time in the given fashion.
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+camera:: zoom;  loc:: (0 0); scale:: *; time:: (1); type:: (linear);
+Zooms the camera to the scale. Scale shoule be two real numbers between 0 and 1 separated by a space. If a loc is given, performs move at the same time. 
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+camera:: shake; amount:: (250) ; time:: (2);
+Randomly shakes the camera with given amount for a duration of the given time.
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
+camera:: vpunch;
+camera:: hpunch;
+Vpunch/hpunches the camera with default parameters.
 
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+camera:: spin; deg:: *; sdir:: (1) ; time:: (1); type:: (linear);
+Rotates the camera given number of degrees in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type=instant, time will be ignored.
 
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+camera:: ; or camera:: reset;
+Resets the camera to default.
 
 
-Character Class:
 
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
+"
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -590,7 +590,7 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Weather"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
@@ -655,124 +655,72 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Screen"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Screen Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Screen special effects. There are lasting and temporary screen effects. Lasting means  that they will be saved.
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b]screen:: tint; color:: *; time:: (1);[/b]
+Tints the screen with the given color. For color, you can pass in an html color with # in front, or four real numbers separated by a space. Time refers to the time it takes for the screen to be fully tinted.
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+[b]screen:: tintwave; color:: *; time:: (1);[/b]
+Same as above, but now it will tint and un-tint the screen with a period of the given time.
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+[b]screen:: flashlight ;[/b]
+Creates a flashlight.
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+[b]screen:: ;  or screen :: off ;[/b]
+Deletes all the lasting effects.
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+The ones below are temporary screen transitions.
 
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+[b]screen:: * ; color:: (Color.Black);  time:: (1);[/b]
+Here * can be anything in the list 
 
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
 
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+Plus in/out. Color works for everything except pixelate. For example,
 
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+screen:: fade in; color:: Color.Purple;  time:: 1;
 
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+will play a purple fade in effect in time 1."
+text = "Screen Events:
 
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
-
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Screen special effects. There are lasting and temporary screen effects. Lasting means  that they will be saved.
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+screen:: tint; color:: *; time:: (1);
+Tints the screen with the given color. For color, you can pass in an html color with # in front, or four real numbers separated by a space. Time refers to the time it takes for the screen to be fully tinted.
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+screen:: tintwave; color:: *; time:: (1);
+Same as above, but now it will tint and un-tint the screen with a period of the given time.
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+screen:: flashlight ;
+Creates a flashlight.
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
+screen:: ;  or screen :: off ;
+Deletes all the lasting effects.
 
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+The ones below are temporary screen transitions.
 
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+screen:: * ; color:: (Color.Black);  time:: (1);
+Here * can be anything in the list 
 
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
 
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+Plus in/out. Color works for everything except pixelate. For example,
 
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+screen:: fade in; color:: Color.Purple;  time:: 1;
 
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-Character Class:
-
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
+will play a purple fade in effect in time 1."
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -790,124 +738,54 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Dvar"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Dvar Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Dvar, or Dialog Variables, are variables that can interact with the dialog directly. Technically, they are not variables, but let's keep it simple here. You must initialize your dvar in CharacterManager.gd's dvar_declaration function. After that, you may use them directly in dialogs if you put them in square brackets. You can use them in your conditions and modifiy them either by code or by using a dvar event like the one below. To access dvars via code, you can do vn.dvar['dvar_identifier']. Because they're not really variables, there are some limitations on how you can modify them. 
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b] dvar :: money = value ;;[/b]
+Will set the dvar \"money\" to value. You can put numbers as values or strings. If it can be parsed into numbers, then it will be understood as numbers.
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+[b] dvar :: money = some_algebraic_expression_involving_dvars_and_constants ;[/b]
+For example,
+dvar :: money = money*2 + 5 - debt;
+Using algebraic expression only works when the dvars involved have numerical values. 
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+[color=#ff0000]Important:  you cannot add string dvars together. If your dvar is initialized to be a string, then it will ignore the algebraic expressions and set the value to the RHS of the equal sign. I am too lazy to add string manipulations. For boolean dvars, b = !b doesn't work either. If say you have a dvar called name, which is initialized to a string,, and your dvar event is dvar:: name = 10 + 20; Then the value of the dvar name will be set to the string \"10+20\".[/color]
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+If you're really curious, you should think about how any programming language handles inputs like algebraic expressions, which are essentially all strings, and how does the system understands in which order to perform them. This is a highly nontrivial task, althought people have figured it out and is something at the very backend.
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+[color=#ff0000]
+These limitations only apply when you're accessing dvars with dvar events in script, however. If you're accessing dvars directly with code, there is no limitation on what operations you can do as long as the operations are legal in GDscript.
+[/color]"
+text = "Dvar Events:
 
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
-
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Dvar, or Dialog Variables, are variables that can interact with the dialog directly. Technically, they are not variables, but let's keep it simple here. You must initialize your dvar in CharacterManager.gd's dvar_declaration function. After that, you may use them directly in dialogs if you put them in square brackets. You can use them in your conditions and modifiy them either by code or by using a dvar event like the one below. To access dvars via code, you can do vn.dvar['dvar_identifier']. Because they're not really variables, there are some limitations on how you can modify them. 
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+ dvar :: money = value ;;
+Will set the dvar \"money\" to value. You can put numbers as values or strings. If it can be parsed into numbers, then it will be understood as numbers.
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+ dvar :: money = some_algebraic_expression_involving_dvars_and_constants ;
+For example,
+dvar :: money = money*2 + 5 - debt;
+Using algebraic expression only works when the dvars involved have numerical values. 
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+Important:  you cannot add string dvars together. If your dvar is initialized to be a string, then it will ignore the algebraic expressions and set the value to the RHS of the equal sign. I am too lazy to add string manipulations. For boolean dvars, b = !b doesn't work either. If say you have a dvar called name, which is initialized to a string,, and your dvar event is dvar:: name = 10 + 20; Then the value of the dvar name will be set to the string \"10+20\".
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
-
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+If you're really curious, you should think about how any programming language handles inputs like algebraic expressions, which are essentially all strings, and how does the system understands in which order to perform them. This is a highly nontrivial task, althought people have figured it out and is something at the very backend.
 
 
-Character Class:
-
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
+These limitations only apply when you're accessing dvars with dvar events in script, however. If you're accessing dvars directly with code, there is no limitation on what operations you can do as long as the operations are legal in GDscript.
+"
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -925,130 +803,46 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Bg"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Bg Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Changes the background picture. You can may your custom transition effect with grayscale images. This process is more involved but won't take more than 5 minutes if you already have the grayscale image ready.
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b]bg:: *; name_of_transition :: (1); color :: (Color.Black);[/b]
+Changes the background and plays the given transition effect in the given time with the given color. name_of_transition field is optional and can be either one of the below
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+The entire transition will take the given time. That means half of the given time is the in transition and the other half is the out transition. Color doesn't apply to pixelate.
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+Please place all background images in the assets/backgrounds folder. Here you do not need to provide the full path, only the name of the picture file and its extension."
+text = "Bg Events:
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
-
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Changes the background picture. You can may your custom transition effect with grayscale images. This process is more involved but won't take more than 5 minutes if you already have the grayscale image ready.
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+bg:: *; name_of_transition :: (1); color :: (Color.Black);
+Changes the background and plays the given transition effect in the given time with the given color. name_of_transition field is optional and can be either one of the below
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+['fade','sweep_left','sweep_right','sweep_up','sweep_down', 'curtain_left','curtain_right','pixelate','diagonal']
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+The entire transition will take the given time. That means half of the given time is the in transition and the other half is the out transition. Color doesn't apply to pixelate.
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
-
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-Character Class:
-
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
+Please place all background images in the assets/backgrounds folder. Here you do not need to provide the full path, only the name of the picture file and its extension."
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Bgm" type="Tabs" parent="."]
+[node name="Audio" type="Tabs" parent="."]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -1057,262 +851,75 @@ margin_top = 58.0
 margin_right = -4.0
 margin_bottom = -4.0
 
-[node name="doc" type="RichTextLabel" parent="Bgm"]
+[node name="doc" type="RichTextLabel" parent="Audio"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Audio Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
-
-[b]Available events:[/b]
-
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
-
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
-
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
-
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
-
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
-
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
-
-Available events:
-
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
-
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
-
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
-
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
-
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-Character Class:
-
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
-selection_enabled = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="Conditions" type="Tabs" parent="."]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 58.0
-margin_right = -4.0
-margin_bottom = -4.0
-
-[node name="doc" type="RichTextLabel" parent="Conditions"]
-margin_left = 2.0
-margin_right = 561.0
-margin_bottom = 856.0
-focus_mode = 2
-custom_fonts/italics_font = ExtResource( 4 )
-custom_fonts/bold_font = ExtResource( 5 )
-custom_fonts/normal_font = ExtResource( 6 )
-bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Bgm, audio, and voice are all audio events. 
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b]audio:: * ; vol:: (0) ;[/b]
+Plays the given speicial effect sound and adjusts its volume by vol. The audio file has to be placed in the audio folder. 
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+[b]bgm:: * ; fadein:: (1) ; vol:: (0) ;[/b]
+Fades in the given bgm in the given time and adjusts its volume by vol. The bgm file must be placed in the bgm folder. 
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+[b]bgm:: ; fadeout:: (1) ;[/b]
+If fadeout is given, fades out the bgm in the given time. Otherwise, stops bgm.
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+Example of a voiced dialog:
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+[center][b]a happy:: Today is my birthday ; voice :: c1.wav ;[/b][/center]
 
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+Here the character has uid a, showing expression happy, and the voice file c1.wav will be played as the dialog unfolds. The voice file must be placed in the voice folder.
 
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+You can also use 
 
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+[b] voice :: file.wav ; [/b]
 
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+to play a voice line without a dialog. Notice, such voice lines will not be replayable in the history menu. Also, currently you cannot adjust the volume of the voice file.
 
 
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
 
-[b]Customizable Attributes:[/b]
+"
+text = "Audio Events:
 
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+Bgm, audio, and voice are all audio events. 
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+audio:: * ; vol:: (0) ;
+Plays the given speicial effect sound and adjusts its volume by vol. The audio file has to be placed in the audio folder. 
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+bgm:: * ; fadein:: (1) ; vol:: (0) ;
+Fades in the given bgm in the given time and adjusts its volume by vol. The bgm file must be placed in the bgm folder. 
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+bgm:: ; fadeout:: (1) ;
+If fadeout is given, fades out the bgm in the given time. Otherwise, stops bgm.
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
+Example of a voiced dialog:
 
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+a happy:: Today is my birthday ; voice :: c1.wav ;
 
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+Here the character has uid a, showing expression happy, and the voice file c1.wav will be played as the dialog unfolds. The voice file must be placed in the voice folder.
 
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+You can also use 
 
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+ voice :: file.wav ; 
 
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+to play a voice line without a dialog. Notice, such voice lines will not be replayable in the history menu. Also, currently you cannot adjust the volume of the voice file.
 
 
-Character Class:
 
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
+"
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1330,7 +937,7 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="History"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
@@ -1371,141 +978,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="GDscene" type="Tabs" parent="."]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = 4.0
-margin_top = 58.0
-margin_right = -4.0
-margin_bottom = -4.0
-
-[node name="doc" type="RichTextLabel" parent="GDscene"]
-margin_left = 2.0
-margin_right = 561.0
-margin_bottom = 856.0
-focus_mode = 2
-custom_fonts/italics_font = ExtResource( 4 )
-custom_fonts/bold_font = ExtResource( 5 )
-custom_fonts/normal_font = ExtResource( 6 )
-bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
-
-[b]Available events:[/b]
-
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
-
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
-
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
-
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
-
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
-
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
-
-
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
-
-To be filled in."
-text = "Character Events:
-
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
-
-Available events:
-
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
-
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
-
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
-
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
-
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
-
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
-
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
-
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
-
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
-
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
-
-
-Character Class:
-
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
-
-
-Other:
-
-To be filled in."
-selection_enabled = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="System" type="Tabs" parent="."]
 visible = false
 anchor_right = 1.0
@@ -1518,124 +990,108 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="System"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
-bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Character Events:[/font]
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]System Events:[/font]
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+System events are mostly used for pace controls and player interaction controls. By default in this framework, right click means hide VNUI and show only the sprites and background. Mouse wheel up-scroll means show history. Control+z means to rollback. 
+
+System events are of the form system :: ; OR sys :: ;
 
 [b]Available events:[/b]
 
-[b]chara:: * join; loc:: *; expression :: (default);[/b]
-Character * will join at loc with given expression.
+[b]system:: auto off ;[/b]
+Turns auto forward off if the player is in auto mode.
 
-[b]chara:: * fadein; loc :: *; time :: (1);  expression :: (default);[/b]
-Character * will fadein at loc in given time with given expression.
+[b]system:: skip off ;[/b]
+Turns skip off if the player is skipping. Note: choice, camera movement events, and GD scene changes will force skipping to stop by default.
 
-[b]chara:: * leave;[/b]
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+[b]system:: clear;[/b]
+Clears the content of dialog box. For nvl box, use nvl:: clear;
 
-[b]chara:: * fadeout; loc:: *; time:: (1);[/b]
-Fadeout character * in given time. Here * can be 'all'.
+[b]system:: rollback clear_n ;[/b]
+Clears n records in the rollback stack. You can change the max number of allowed rollback in GlobalSettings.gd. You can also clear the entire rollback stack by system:: rollback clear ;
 
-[b]chara:: * shake; amount:: (250) ; time:: (2);[/b]
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+rollback, roll_back, RB are interchangeable.
 
-[b]chara:: * vpunch;[/b]
-[b]chara:: * hpunch;[/b]
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+[b]system:: auto_save ;[/b]
+Automatically makes a save. AS and auto_save are interchangeable.
 
-[b]chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);[/b]
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+[b]system:: make_save;[/b]
+Shows a popup which asks if the player wants to make a save. MS and make_save are interchangeable.
 
-[b]chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);[/b]
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+-------The ones below belong to the group \"all\".---------
 
-[b]chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;[/b]
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+[b]system:: right_click on/off ;[/b]
+Enables or disables the function of right click, which is to hide the VNUI. RC and right_click are interchangeable.
 
-[b]chara::* add; at:: *; path:: *;[/b]
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+[b]system:: quick_menu on/off ;[/b]
+Shows or hides the quick menu. QM and quickmenu are interchangeable.
 
+[b]system:: boxes on/off ;[/b]
+Shows or hides dialog and name boxes.
 
-[font=res://addons/VNScriptEditor/documentation/title.tres]Character Class:[/font]
+[b]system:: scroll on/off ;[/b]
+Enables or disables the functionality of mouse wheel up-scroll, which is to show history menu. 
 
-[b]Customizable Attributes:[/b]
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-[color=#ff0000]Technically you may change the uid, but this is highly discouraged.[/color]
+[b]system:: allon/off ;[/b]
+Turns on or off the controls that belong to the group all.
 
 
-[font=res://addons/VNScriptEditor/documentation/title.tres]Other:[/font]
 
-To be filled in."
-text = "Character Events:
+"
+text = "System Events:
 
-All characters must have a default expression and character sprites must be named as  uid_expression.jpg/png. Otherwise, you have to manually add the sprites to your character scene. When typing in an expression, if you use empty string then it is understood as using default. But a better way is to simply leave out the expression field.
+System events are mostly used for pace controls and player interaction controls. By default in this framework, right click means hide VNUI and show only the sprites and background. Mouse wheel up-scroll means show history. Control+z means to rollback. 
+
+System events are of the form system :: ; OR sys :: ;
 
 Available events:
 
-chara:: * join; loc:: *; expression :: (default);
-Character * will join at loc with given expression.
+system:: auto off ;
+Turns auto forward off if the player is in auto mode.
 
-chara:: * fadein; loc :: *; time :: (1);  expression :: (default);
-Character * will fadein at loc in given time with given expression.
+system:: skip off ;
+Turns skip off if the player is skipping. Note: choice, camera movement events, and GD scene changes will force skipping to stop by default.
 
-chara:: * leave;
-Here * can be 'all' to make all character leave the stage. Use 'absolute_all' to remove all characters including those with in_all=False.
+system:: clear;
+Clears the content of dialog box. For nvl box, use nvl:: clear;
 
-chara:: * fadeout; loc:: *; time:: (1);
-Fadeout character * in given time. Here * can be 'all'.
+system:: rollback clear_n ;
+Clears n records in the rollback stack. You can change the max number of allowed rollback in GlobalSettings.gd. You can also clear the entire rollback stack by system:: rollback clear ;
 
-chara:: * shake; amount:: (250) ; time:: (2);
-Randomly shake character with given amount for a duration of the given time. Supports 'all'.
+rollback, roll_back, RB are interchangeable.
 
-chara:: * vpunch;
-chara:: * hpunch;
-Vpunch/hpunches the character given default parameters. Supports 'all'.
+system:: auto_save ;
+Automatically makes a save. AS and auto_save are interchangeable.
 
-chara:: * spin; deg:: (360); sdir:: (1) ; time:: (1); type:: (linear);
-Rotates the character given number of degress in sdir direction in the given time with the given type. Here sdir=1 means clockwise and -1 means counterclockwise. Type supports all Godot movement types plus 'instant'. If type instance, time will be ignored.
+system:: make_save;
+Shows a popup which asks if the player wants to make a save. MS and make_save are interchangeable.
 
-chara:: * move; loc:: *; time::(1); type:: (linear) ; expression:: (no change by default);
-Moves the character to location loc in given time with given movement type. If a valid expression is given, changes the expression when moving is done. Otherwise, there will be no expression change.
+-------The ones below belong to the group \"all\".---------
 
-chara:: * jump; amount:: (80); time:: (0.25); dir:: (up) ;
-Moves the character in direction dir with amount distance and back. This is done linearly in the given time. Dir can be up, down, left, right, or any other vector or \"R\" or \"r\" for random direction. The system will noramlize the direction for you. The default values will show a jump animation and therefore this event is called jump.
+system:: right_click on/off ;
+Enables or disables the function of right click, which is to hide the VNUI. RC and right_click are interchangeable.
 
-chara::* add; at:: *; path:: *;
-Instances the scene with the given path, and add it as a subnode to the character at the given point. The point has to be a node2d subnode of the character, and the name of the node2d is used as the value for at. This event does not save the added instance.
+system:: quick_menu on/off ;
+Shows or hides the quick menu. QM and quickmenu are interchangeable.
 
+system:: boxes on/off ;
+Shows or hides dialog and name boxes.
 
-Character Class:
+system:: scroll on/off ;
+Enables or disables the functionality of mouse wheel up-scroll, which is to show history menu. 
 
-Customizable Attributes:
-
-Display name: the display name of the character.
-Name color: the color for display name.
-In_all: determines whether or not the special uid all applies to this character or not.
-apply_highlight: when not talking, the sprites will be slightly dimmed.
-fade_on_change: creates a fading effect when changing expression, making expression changes look smoother.
-fade_time: the fading time if fade_on_change is on.
-use_character_font: if on, then the given fonts will be applied when this character is talking.
-
-Technically you may change the uid, but this is highly discouraged.
+system:: allon/off ;
+Turns on or off the controls that belong to the group all.
 
 
-Other:
 
-To be filled in."
+"
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1653,12 +1109,146 @@ margin_bottom = -4.0
 [node name="doc" type="RichTextLabel" parent="Other"]
 margin_left = 2.0
 margin_right = 561.0
-margin_bottom = 856.0
+margin_bottom = 706.0
 focus_mode = 2
 custom_fonts/italics_font = ExtResource( 4 )
 custom_fonts/bold_font = ExtResource( 5 )
 custom_fonts/normal_font = ExtResource( 6 )
 bbcode_enabled = true
+bbcode_text = "[font=res://addons/VNScriptEditor/documentation/title.tres]Other Events:[/font]
+
+[b]Available events:[/b]
+
+[b]sfx:: /path/to/ur/scene.tscn; anim:: (none_by_default) ; loc:: (none_by_default) ; params:: (none_by_default) ;[/b]
+Instances the scene at the given path as a subnode of your general dialog node. The is usually intended for some temporary special effects, but can also be extended to other functionalities like timed choices.
+
+anim:: name_of_animation ;
+
+If the instanced scene has an AnimationPlayer subnode with default name, then the given animation will be played.
+
+loc :: 100 100;
+
+If the instanced scene is a sprite, or has a position attribute, then the scene will be instanced and placed at that location. In this example, the instanced scene will be placed at (100,100). Notice, not every scene has a position attribute.
+
+params:: single value / JSON formatted array data.
+
+If the instanced scene has a variable called params, then the value here will be passed to the params.
+
+[b]GDscene:: /path/to/ur/scene.tscn;[/b]
+Changes current Godot scene to the one given. Used for changing between chapters. Will disrupt skip and reset all rollback events, meaning that if you use this to change scene, then rollback records will be reinitialized. 
+
+In addition, you can use 
+
+GDscene:: free;
+
+to free current scene and nothing else will happen.
+
+[b]then :: target_block_name ; else:: (optional) ; condition :: some_condition ;[/b]
+If condition is true, changes to target block, and otherwise goes to the block in else field. Always starts at index 0 in the new block.
+
+[b]id :: your_id ; [/b]
+No effect. Only used when you want to jump to this line in the block from somewhere else. See below. It is recommended you use integer for ids.
+
+[b]then :: target_block_name ; target id :: target_id  ;[/b]
+Jumps to target block and start from one event after the id event.
+
+[b].......; condition :: your_condition ; [/b]
+You may attach condition field to any event and the event will be played only if the condition is met.
+
+[b] premade:: name_of_premade; [/b]
+If you have an event which you know you will use 1 million times in your story, then make it into a premade event! Go to GlobalFunctions.gd, and find premade_events dictionary. Give it a key, and put the event as the value. Say the key (name of the premade event) is a1, then you can simply write 
+
+premade :: a1 ;
+
+for the event. Premade events can only be made in GDscript for now.
+
+[b]extend :: ; [/b]
+
+[b]float :: ;  [/b]
+
+[b]side:: image.jpg; [/b]
+Shows a side image. Side image must be placed in assets/sideImages folder. You can adjust the position of side images in ScreenEffects singleton. Only one side image can be shown at one time and there is NO correspondence between character expressions and side images. 
+
+[b]nvl:: true; [/b]
+Turns on nvl mode, and use false to turn it off. ( on / off also works) 
+
+[b]nvl:: clear; [/b]
+Clears all text in nvl box. 
+
+[b]center:: ur_text ; who:: (narrator) ; voice:: (none) ; speed:: (fast) ; font:: (none, /path/to/ur/font.tres) ; [/b]
+Shows the text at the center of the screen. The name of the speaker will not be shown even if you specify a who. The who field will put the speaker's name in the history. Speed determines the cps of the center text.
+
+{fast:50, slow:25, instant:0, slower:10}
+
+[b]call :: function_name; params :: (none) ; [/b]
+Calls the function with the given name in the root node. The function has to be present in the script in the root node of this VN scene. (the node that extends generalDialog.) You can pass an array of params, and if you do so then this must match the arguments in the function. The system does not save your custom effects invoked by these functions."
+text = "Other Events:
+
+Available events:
+
+sfx:: /path/to/ur/scene.tscn; anim:: (none_by_default) ; loc:: (none_by_default) ; params:: (none_by_default) ;
+Instances the scene at the given path as a subnode of your general dialog node. The is usually intended for some temporary special effects, but can also be extended to other functionalities like timed choices.
+
+anim:: name_of_animation ;
+
+If the instanced scene has an AnimationPlayer subnode with default name, then the given animation will be played.
+
+loc :: 100 100;
+
+If the instanced scene is a sprite, or has a position attribute, then the scene will be instanced and placed at that location. In this example, the instanced scene will be placed at (100,100). Notice, not every scene has a position attribute.
+
+params:: single value / JSON formatted array data.
+
+If the instanced scene has a variable called params, then the value here will be passed to the params.
+
+GDscene:: /path/to/ur/scene.tscn;
+Changes current Godot scene to the one given. Used for changing between chapters. Will disrupt skip and reset all rollback events, meaning that if you use this to change scene, then rollback records will be reinitialized. 
+
+In addition, you can use 
+
+GDscene:: free;
+
+to free current scene and nothing else will happen.
+
+then :: target_block_name ; else:: (optional) ; condition :: some_condition ;
+If condition is true, changes to target block, and otherwise goes to the block in else field. Always starts at index 0 in the new block.
+
+id :: your_id ; 
+No effect. Only used when you want to jump to this line in the block from somewhere else. See below. It is recommended you use integer for ids.
+
+then :: target_block_name ; target id :: target_id  ;
+Jumps to target block and start from one event after the id event.
+
+.......; condition :: your_condition ; 
+You may attach condition field to any event and the event will be played only if the condition is met.
+
+ premade:: name_of_premade; 
+If you have an event which you know you will use 1 million times in your story, then make it into a premade event! Go to GlobalFunctions.gd, and find premade_events dictionary. Give it a key, and put the event as the value. Say the key (name of the premade event) is a1, then you can simply write 
+
+premade :: a1 ;
+
+for the event. Premade events can only be made in GDscript for now.
+
+extend :: ; 
+
+float :: ;  
+
+side:: image.jpg; 
+Shows a side image. Side image must be placed in assets/sideImages folder. You can adjust the position of side images in ScreenEffects singleton. Only one side image can be shown at one time and there is NO correspondence between character expressions and side images. 
+
+nvl:: true; 
+Turns on nvl mode, and use false to turn it off. ( on / off also works) 
+
+nvl:: clear; 
+Clears all text in nvl box. 
+
+center:: ur_text ; who:: (narrator) ; voice:: (none) ; speed:: (fast) ; font:: (none, /path/to/ur/font.tres) ; 
+Shows the text at the center of the screen. The name of the speaker will not be shown even if you specify a who. The who field will put the speaker's name in the history. Speed determines the cps of the center text.
+
+{fast:50, slow:25, instant:0, slower:10}
+
+call :: function_name; params :: (none) ; 
+Calls the function with the given name in the root node. The function has to be present in the script in the root node of this VN scene. (the node that extends generalDialog.) You can pass an array of params, and if you do so then this must match the arguments in the function. The system does not save your custom effects invoked by these functions."
 selection_enabled = true
 __meta__ = {
 "_edit_use_anchors_": false
@@ -1666,3 +1256,5 @@ __meta__ = {
 
 [connection signal="resized" from="." to="." method="_on_documentation_resized"]
 [connection signal="tab_selected" from="." to="." method="_on_documentation_tab_selected"]
+[connection signal="pressed" from="Preview/bgPreview" to="." method="_on_bgPreview_pressed"]
+[connection signal="file_selected" from="Preview/FileDialog" to="." method="_on_FileDialog_file_selected"]

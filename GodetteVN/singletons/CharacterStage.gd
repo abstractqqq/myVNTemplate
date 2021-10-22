@@ -2,6 +2,11 @@ extends Node2D
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
+# Note for future:
+# The code here is highly repetitive. I could have used call() to 
+# simplify many things?
+
+
 # What is the point of making this a singleton instead of a node
 # inside a scene?
 
@@ -50,7 +55,6 @@ func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 
 
 func jump(uid:String, dir:Vector2 = Vector2.UP, amount:float = 80, time:float = 0.25):
-	dir = dir.normalized()
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -92,9 +96,8 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 		if vn.skipping:
 			join(uid,location,expression)
 		else:
-			var ch_scene = load(info['path'])
+			var c = load(info['path']).instance()
 			# If load fails, there will be a bug pointing to this line
-			var c = ch_scene.instance()
 			if c.apply_highlight:
 				c.modulate = Color(0.86,0.86,0.86,0)
 			else:

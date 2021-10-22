@@ -157,7 +157,7 @@ func set_dvar(v:String, value):
 func point_uid_to(uid:String, to:String):
 	chara_pointer[uid] = to
 	
-func forward_uid(uid:String):
+func forward_uid(uid:String) -> String:
 	if chara_pointer.has(uid):
 		return chara_pointer[uid]
 	else:

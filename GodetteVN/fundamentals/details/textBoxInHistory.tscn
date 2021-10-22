@@ -44,7 +44,7 @@ text = "Sample Name:"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="box"]
 margin_left = 154.0
-margin_right = 1354.0
+margin_right = 1600.0
 margin_bottom = 90.0
 size_flags_horizontal = 3
 custom_constants/separation = 10
@@ -53,7 +53,7 @@ __meta__ = {
 }
 
 [node name="text" type="RichTextLabel" parent="box/HBoxContainer"]
-margin_right = 1200.0
+margin_right = 1446.0
 margin_bottom = 90.0
 rect_min_size = Vector2( 740, 90 )
 size_flags_horizontal = 3

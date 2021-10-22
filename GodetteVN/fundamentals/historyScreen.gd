@@ -1,5 +1,7 @@
 extends CanvasLayer
 
+export(bool) var record_voice = true
+
 func _ready():
 	vn.inSetting = true
 	

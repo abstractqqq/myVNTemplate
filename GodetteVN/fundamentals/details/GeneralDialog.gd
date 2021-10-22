@@ -54,6 +54,7 @@ signal dvar_set
 #--------------------------------------------------------------------------------
 func _ready():
 	fileRelated.load_config()
+	screen.set_debug(debug_mode)
 	var _error = self.connect("player_accept", self, '_yield_check')
 	if refresh_game_ctrl_state:
 		game.resetControlStates()
@@ -140,10 +141,9 @@ func interpret_events(event):
 	# Try to keep the code under each case <=3 lines
 	# Also keep the number of cases small. Try to repeat the use of key words.
 	var ev = event.duplicate(true)
-	if debug_mode: 
-		var debugger = screen.get_node('debugger')
+	if debug_mode:
 		var msg = "Debug :" + str(ev)
-		debugger.text = msg 
+		screen.set_debug(debug_mode, "Debug :" + str(ev))
 		print(msg)
 	
 	# Pre-parse, keep this at minimum
@@ -572,8 +572,9 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 	else:
 		var eff_name = 'wwttff'
 		for n in ev.keys():
-			if n in vn.TRANSITIONS:
-				eff_name = n
+			var tf = n.to_lower()
+			if tf in vn.TRANSITIONS:
+				eff_name = tf
 				break
 		if eff_name == 'wwttff':
 			print("!!! Error at " + str(ev))
@@ -602,26 +603,48 @@ func change_scene_to(path : String):
 	change_weather('', false)
 	QM.reset_auto_skip()
 	fileRelated.write_to_config()
+	game.rollback_records = []
 	if path == vn.title_screen_path:
-		game.rollback_records = []
 		music.stop_bgm()
 	if path == "free":
-		game.rollback_records = []
 		music.stop_bgm()
 		self.queue_free()
-	elif path == 'idle':
-		idle = true
 	else:
-		game.rollback_records = []
 		var error = get_tree().change_scene(vn.ROOT_DIR + path)
 		if error == OK:
 			self.queue_free()
 
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
-	var splitted = fun.break_line(ev['dvar'], '=')
-	var left = splitted[0].strip_edges()
-	var right = splitted[1].strip_edges()
+	var og = ev['dvar']
+	var splitted
+	var left
+	var right
+	if "+=" in og:
+		og = og.replace("+=", "=")
+		splitted = og.split("=")
+		left = splitted[0].strip_edges()
+		right = left+ "+" + "(" + splitted[1].strip_edges() + ")"
+	elif "-=" in og:
+		og = og.replace("-=", "=")
+		splitted = og.split("=")
+		left = splitted[0].strip_edges()
+		right = left+ "-" + "(" + splitted[1].strip_edges() + ")"
+	elif "*=" in og:
+		og = og.replace("*=", "=")
+		splitted = og.split("=")
+		left = splitted[0].strip_edges()
+		right = left+ "*" + "(" + splitted[1].strip_edges() + ")"
+	elif "/=" in og:
+		og = og.replace("/=", "=")
+		splitted = og.split("=")
+		left = splitted[0].strip_edges()
+		right = left+ "/" + "(" + splitted[1].strip_edges() + ")"
+	else:
+		splitted = og.split("=")
+		left = splitted[0].strip_edges()
+		right = splitted[1].strip_edges()
+	
 	if vn.dvar.has(left):
 		if typeof(vn.dvar[left])== TYPE_STRING:
 			# If we get string, just set it to RHS
@@ -644,18 +667,18 @@ func check_condition(cond_list) -> bool:
 	if typeof(cond_list) == 4: # if this is a string, not a list
 		cond_list = [cond_list]
 	
-	var final_result = true # start by assuming final_result is true
-	var is_or = false
+	var final_result:bool = true # start by assuming final_result is true
+	var is_or:bool = false
 	while cond_list.size() > 0:
-		var result = false
+		var result:bool = false
 		var cond = cond_list.pop_front()
 		if all_conditions.has(cond):
 			cond = all_conditions[cond]
-		if typeof(cond) == 4: # string, so do the regular thing
+		if typeof(cond) == TYPE_STRING:
 			if cond == "or" or cond == "||":
 				is_or = true
 				continue
-			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == 1: # 1 for bool
+			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == TYPE_BOOL:
 				result = vn.dvar[cond]
 				final_result = _a_what_b(is_or, final_result, result)
 				is_or = false
@@ -687,6 +710,7 @@ func check_condition(cond_list) -> bool:
 	return final_result
 
 func _parse_var(st:String):
+	st = st.to_lower()
 	if st == "true":
 		return true
 	elif st == "false":
@@ -758,10 +782,8 @@ func flashlight(ev:Dictionary):
 #	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
-	game.playback_events['screen'] = ev
 	var time = 1
-	if ev.has('time'): 
-		time = ev['time']
+	if ev.has('time'):  time = ev['time']
 	if ev.has('color'):
 		if ev['screen'] == 'tintwave':
 			screen.tintWave(ev['color'], time)
@@ -769,7 +791,8 @@ func tint(ev : Dictionary) -> void:
 			screen.tint(ev['color'], time)
 			# When saving to playback, no need to replay the fadein effect
 			ev['time'] = 0.05
-		
+			
+		game.playback_events['screen'] = ev
 	else:
 		vn.error("Tint or tintwave requires the color field.", ev)
 
@@ -785,7 +808,6 @@ func sfx_player(ev : Dictionary) -> void:
 			anim.play(ev['anim'])
 		else:
 			vn.error("Animation not found.", ev)
-			assert(false)
 
 	auto_load_next()
 
@@ -794,7 +816,7 @@ func camera_effect(ev : Dictionary) -> void:
 	match ef_name:
 		"vpunch": if not vn.skipping: camera.vpunch()
 		"hpunch": if not vn.skipping: camera.hpunch()
-		"reset": 
+		"reset", '': 
 			camera.reset()
 			game.playback_events.erase('camera')
 		"zoom":
@@ -829,7 +851,6 @@ func camera_effect(ev : Dictionary) -> void:
 					camera.camera_move(ev['loc'], time)
 				
 				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset, 'deg':camera.target_degree}
-				# yield(get_tree().create_timer(time), 'timeout')
 			else:
 				print("!!! Wrong camera event format: " + str(ev))
 				push_error("Camera move expects a loc and time, and type (optional)")
@@ -996,7 +1017,9 @@ func character_add(uid:String, ev:Dictionary):
 		stage.add_to_chara_at(uid, ev['at'], vn.ROOT_DIR + ev['path'])
 		auto_load_next()
 	else:
-		vn.error('Character add expects a path and an "at".', ev)
+		print("!!! Character add event format error.")
+		push_error('Character add expects a path and an "at".')
+		
 # This method is here to fill in default values
 func character_spin(uid:String, ev:Dictionary):
 	var sdir : int = 1
@@ -1479,16 +1502,7 @@ func system(ev : Dictionary):
 			notif.show("make_save")
 			var cur_notif = notif.get_current_notif()
 			yield(cur_notif, "clicked")
-		"save_load", "SL":
-			if temp[1] == "on":
-				QM.get_node("saveButton").disabled = false
-				QM.get_node("QsaveButton").disabled = false
-				QM.get_node("loadButton").disabled = false
-			elif temp[1] == "off":
-				QM.get_node("saveButton").disabled = true
-				QM.get_node("QsaveButton").disabled = true
-				QM.get_node("loadButton").disabled = true
-				
+
 		# The above are not included in 'all'.
 		
 		"right_click", "RC":
@@ -1528,7 +1542,7 @@ func system(ev : Dictionary):
 				no_scroll = false
 				QM.visible = true
 				QM.hiding = false
-				self.no_right_click = false
+				no_right_click = false
 				show_boxes()
 				game.resetControlStates()
 			elif temp[1] == "off":
@@ -1544,7 +1558,7 @@ func system(ev : Dictionary):
 	
 #-------------------- Extra Preprocessing ----------------------
 func _parse_loc(loc, ev = {}) -> Vector2:
-	if typeof(loc) == TYPE_VECTOR2: # 5 = Vector2
+	if typeof(loc) == TYPE_VECTOR2:
 		return loc
 	if typeof(loc) == TYPE_STRING and (loc == "R" or loc == "r"):
 		var v = get_viewport().size
@@ -1569,9 +1583,9 @@ func _parse_dir(dir, ev = {}) -> Vector2:
 		var rng = RandomNumberGenerator.new()
 		rng.randomize()
 		var rndv = Vector2(rng.randf_range(-1, 1),rng.randf_range(-1, 1))
-		return rndv
+		return rndv.normalized()
 	else:
-		return _parse_loc(dir, ev)
+		return _parse_loc(dir, ev).normalized()
 
 func _parse_color(color, ev = {}) -> Color:
 	if typeof(color) == TYPE_COLOR:

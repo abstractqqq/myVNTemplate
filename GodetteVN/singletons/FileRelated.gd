@@ -8,7 +8,6 @@ const _default_config_vars = {'bgm_volume':0, 'eff_volume':0,\
 
 func _ready():
 	load_config()
-
 #------------------------------------------------------------------------------
 func get_save_files():
 	

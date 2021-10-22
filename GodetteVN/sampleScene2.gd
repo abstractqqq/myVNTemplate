@@ -12,6 +12,7 @@ var main_block = [
 	
 	# start of content
 	{"bg": "condo.jpg"},
+	{"dvar":'mo += 50*2-mo'},
 	{'screen':'pixelate in'},
 	{'call': 'simple_print', 'params':['test ', 123]},
 	{"vo": "This is vo talking."},

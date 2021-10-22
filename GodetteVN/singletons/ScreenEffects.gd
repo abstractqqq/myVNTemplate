@@ -79,9 +79,8 @@ func tintWave(c: Color, t : float):
 	
 func flashlight(sc : Vector2):
 	removeLasting()
-	var lasting = get_node("lasting")
 	var fl_scene = load("res://GodetteVN/sfxScenes/flashLightScreen.tscn").instance()
-	lasting.add_child(fl_scene)
+	get_node("lasting").add_child(fl_scene)
 	fl_scene.scale = sc
 	
 func clear_debug()->void:
@@ -119,6 +118,12 @@ func out_transition(eff_name:String, color:Color, eff_dur:float):
 			
 func reset():
 	_color_panel.visible = false
+	
+func set_debug(debug:bool, text:String=""):
+	if debug == false:
+		$debugger.queue_free()
+	else:
+		$debugger.text = text
 
 ### eh's Public Methods --------------------------------------------------------------------------------
 

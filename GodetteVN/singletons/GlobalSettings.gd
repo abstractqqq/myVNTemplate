@@ -87,6 +87,7 @@ var auto_bound = -1 # Initialize to -1. Will get changed in fileRelated.
 # how many 0.05s do we need to wait if auto is on
 # Formula ((-1)*auto_speed + 3.25)*20
 
+# DO NOT CHANGE THIS VAR
 var cps : int = 50 # either 50 or 25
 # cps correspondence = {fast:50, slow:25, instant:0, slower:10}
 
