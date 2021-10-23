@@ -3,7 +3,8 @@ extends Node
 # Constants
 const max_history_size = 300 # Max number of history entries
 const max_rollback_steps = 50 # Max steps of rollback to keep
-# It is recommended that max_rollback_steps is kept to a small number (say <500).
+# It is recommended that max_rollback_steps is kept to a small number.
+const voice_to_history = true # Should voice be replayable in history?
 
 
 # Narrator

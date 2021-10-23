@@ -28,6 +28,7 @@ func get_save_files():
 				files.append(file)
 				
 	dir.list_dir_end()
+	dir.call_deferred('free')
 	return files
 
 func data2Thumbnail(img_data:PoolByteArray, format) -> ImageTexture:

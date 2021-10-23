@@ -48,9 +48,13 @@ func movement_type(type:String)-> int:
 	return m
 
 #----------------------------------------------------------------
-
-
-
+func random_vec(x:Vector2, y:Vector2):
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var rndv = Vector2(rng.randf_range(x.x, x.y),rng.randf_range(y.x, y.y))
+	rng.call_deferred('free')
+	return rndv
+	
 func calculate(what:String):
 	# what means what to calculate, should be an algebraic expression
 	# only dvars are allowed
@@ -72,6 +76,8 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 	if !dir.dir_exists(vn.THUMBNAIL_DIR):
 		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
 		
+	dir.call_deferred('free')
+		
 	var file = File.new()
 	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
 	var error = file.open(save_path, File.WRITE)
@@ -79,6 +85,7 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		# store raw image data
 		file.store_var(thumbnail.get_data())
 		file.close()
+		
 
 # sl.make_save only works for standard VN saves. That means if you're 
 # adding extra info, you will have to modify sl.make_save first.
@@ -89,12 +96,12 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 		
 	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
 	var slot = load(vn.SAVESLOT)
-	var sl = slot.instance()
+	var sl = slot.instance() # bad. See below
 	var temp = game.currentSaveDesc
 	var curId = game.currentIndex
 	game.currentIndex = game.currentIndex - offset_by
 	game.currentSaveDesc = msg + temp
-	sl.make_save(sl.path)
+	sl.make_save(sl.path)# Because in reality we do not need to instance a save slot object. Only the data
 	sl.queue_free()
 	game.currentSaveDesc = temp
 	game.currentIndex = curId
@@ -103,8 +110,9 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 #------------------------------------------------------------------------
 # Given any sentence with a [dvar] in it, 
 # This will prase any dvar into their values and insert back
-# to the sentence. But it doesn't process things like [nw]. Only dvar.
-func dvarMarkup(words:String):
+# to the sentence. Same with special tokens. It doesn't handle nw, and so is different
+# from that in GeneralDialog.
+func MarkUp(words:String):
 	var leng = words.length()
 	var output = ''
 	var i = 0
@@ -123,8 +131,13 @@ func dvarMarkup(words:String):
 			if vn.dvar.has(inner):
 				output += str(vn.dvar[inner])
 			else:
-				output += '[' + inner + ']'
-						
+				match inner:
+					"sm": output += ";"
+					"dc": output += "::"
+					"nl": output += "\n"
+					"lb": output += "["
+					"rb": output += "]"
+					_: output += '[' + inner + ']'
 		else:
 			output += c
 			

@@ -26,8 +26,7 @@ const all_weathers = {
 #--------------------------------------------------------------------------------------------------
 
 func _ready(): # turn off everything on ready
-	removeLasting()
-	weather_off()
+	clean_up()
 	
 func weather_off():
 	var w = get_node("weather")
@@ -125,6 +124,11 @@ func set_debug(debug:bool, text:String=""):
 		$debugger.queue_free()
 	else:
 		$debugger.text = text
+		
+func clean_up():
+	removeLasting()
+	weather_off()
+	clear_debug()
 
 ### eh's Public Methods --------------------------------------------------------------------------------
 

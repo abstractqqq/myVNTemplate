@@ -75,9 +75,8 @@ func _input(ev):
 				idle = false
 			else:
 				game.history.pop_back()
-			screen.removeLasting()
-			screen.weather_off()
-			sideImageChange({},false)
+			screen.clean_up()
+			stage.reset_sideImage()
 			camera.reset()
 			waiting_cho = false
 			centered = false
@@ -291,7 +290,7 @@ func set_center(ev: Dictionary):
 		say(u, ev['center'], ev['speed'])
 	else:
 		say(u, ev['center'])
-	var _has_voice = _check_latest_voice(ev) # not gonna be used, thus _
+	var _has_voice = _check_latest_voice(ev)
 
 func speech_parse(ev : Dictionary) -> void:
 	# Voice first
@@ -365,7 +364,7 @@ func generate_choices(ev: Dictionary):
 				break
 		
 		var choice_ev = ev2[choice_text] # the choice action
-		choice_text = fun.dvarMarkup(choice_text)
+		choice_text = fun.MarkUp(choice_text)
 		var choice = load(choice_bar).instance()
 		choice.setup_choice_event(choice_text, choice_ev)
 		choice.connect("choice_made", self, "on_choice_made")
@@ -375,14 +374,10 @@ func generate_choices(ev: Dictionary):
 	choiceContainer.visible = true # make it visible now
 	
 func say(combine : String, words : String, cps = 50, ques = false) -> void:
-	var temp = combine.split(" ") # temp[0] = uid, temp[1] = expression
-	var uid = chara.forward_uid(temp[0])
-	if temp.size() == 2:
-		stage.change_expression(uid, temp[1])
-		
+	var uid = express(combine, false, true)
 	words = preprocess(words)
 	if vn.skipping: cps = 0
-	if self.nvl:
+	if self.nvl: # little awkward. But stable for now.
 		if just_loaded:
 			just_loaded = false
 			if centered:
@@ -396,10 +391,8 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 			else:
 				nvlBox.set_dialog(uid, words, cps)
 				game.nvl_text = nvlBox.bbcode_text
-			if latest_voice == null:
-				game.history.push_back([uid, nvlBox.get_text()])
-			else:
-				game.history.push_back([uid, nvlBox.get_text(), latest_voice])
+			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, nvlBox.get_text())
+	
 	else:
 		if not _hide_namebox(uid):
 			$VNUI.namebox_follow_chara(uid)
@@ -421,31 +414,25 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 		else:
 			dialogbox.set_dialog(words, cps)
 			var new_text = dialogbox.get_text()
-			if latest_voice == null:
-				game.history.push_back([uid, new_text])
-			else:
-				game.history.push_back([uid, new_text, latest_voice])
-				
+			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, new_text)
 			game.playback_events['speech'] = new_text
 		
 		stage.set_highlight(uid)
-	# wait for ui_accept if this is not a question
-	waiting_acc = true
+	
 	wait_for_accept(ques)
 	# If this is a question, then displaying the text is all we need.
-
 
 func extend(ev:Dictionary):
 	# Cannot use extend with a choice, extend doesn't support font
 	if game.playback_events['speech'] == '' or self.nvl:
-		print("Warning: you're getting his warning either because you're in nvl mode")
-		print("Or because you're using extend without a previous speech event.")
-		print("In either case, nothing is done.")
+		print("!!! Warning: you're getting his warning either because you're in nvl mode")
+		print("!!! Or because you're using extend without a previous speech event.")
+		print("!!! In either case, nothing is done.")
 		auto_load_next()
 	else:
 		# get previous speaker from history
 		# you will get an error by using extend as the first sentence
-		var prev_speaker = game.history[game.history.size()-1][0]
+		var prev_speaker = game.history.back()[0]
 		if not _hide_namebox(prev_speaker):
 			$VNUI.namebox_follow_chara(prev_speaker)
 			var info = chara.all_chara[prev_speaker]
@@ -464,11 +451,7 @@ func extend(ev:Dictionary):
 			if (ev['speed'] in cps_dict.keys()):
 				cps = cps_dict[ev['speed']]
 		
-		if _check_latest_voice(ev):
-			game.history.push_back([prev_speaker, words, latest_voice])
-		else:
-			game.history.push_back([prev_speaker, words])
-			
+		_voice_to_hist(_check_latest_voice(ev) and vn.voice_to_history, prev_speaker, words)
 		if just_loaded:
 			just_loaded = false
 			dialogbox.set_dialog(game.playback_events['speech'], 50)
@@ -480,10 +463,10 @@ func extend(ev:Dictionary):
 			
 		stage.set_highlight(prev_speaker)
 		# wait for accept
-		waiting_acc = true
 		wait_for_accept(false)
 
 func wait_for_accept(ques:bool = false):
+	waiting_acc = true
 	if not ques:
 		yield(self, "player_accept")
 		if _nullify_prev_yield == false: # if this is false, then it's natural dialog progression
@@ -495,7 +478,7 @@ func wait_for_accept(ques:bool = false):
 			if not self.nvl: stage.remove_highlight()
 			waiting_acc = false
 			auto_load_next()
-		else:
+		else: # The yield has been nullified, that means some outside code is trying to change dialog blocks
 			# back to default
 			_nullify_prev_yield = false
 
@@ -599,11 +582,13 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 		auto_load_next()
 
 func change_scene_to(path : String):
-	stage.remove_chara('absolute_all')
-	stage.reset_sideImage()
-	change_weather('', false)
+	stage.clean_up()
+	change_weather('', false) # NOT screen.weather_off because we need to tell the sys
+	# remove record of weather, which is only done in change_weather()
 	QM.reset_auto_skip()
 	fileRelated.write_to_config()
+	print("You are changing scene. Rollback will be cleared. It's a good idea to explain "+\
+	"to the player the rules about rollback.")
 	game.rollback_records = []
 	if path == vn.title_screen_path:
 		music.stop_bgm()
@@ -621,7 +606,7 @@ func set_dvar(ev : Dictionary) -> void:
 	var splitted
 	var left
 	var right
-	if "+=" in og:
+	if "+=" in og: # Bad, bad, bad code.
 		og = og.replace("+=", "=")
 		splitted = og.split("=")
 		left = splitted[0].strip_edges()
@@ -685,7 +670,7 @@ func check_condition(cond_list) -> bool:
 				is_or = false
 				continue
 
-			var parsed = split_condition(cond)
+			var parsed = split_equation(cond)
 			var front_var = parsed[0]
 			var rel = parsed[1]
 			var back_var = parsed[2]
@@ -783,13 +768,11 @@ func flashlight(ev:Dictionary):
 #	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
-	var time = 1
-	if ev.has('time'):  time = ev['time']
 	if ev.has('color'):
 		if ev['screen'] == 'tintwave':
-			screen.tintWave(ev['color'], time)
+			screen.tintWave(ev['color'], _has_or_default(ev,'time',1))
 		elif ev['screen'] == 'tint':
-			screen.tint(ev['color'], time)
+			screen.tint(ev['color'], _has_or_default(ev,'time',1))
 			# When saving to playback, no need to replay the fadein effect
 			ev['time'] = 0.05
 			
@@ -823,60 +806,40 @@ func camera_effect(ev : Dictionary) -> void:
 		"zoom":
 			QM.reset_skip()
 			if ev.has('scale'):
-				var time = 1
-				var offset = Vector2(0,0)
-				var type = 'linear'
-				if ev.has('time'): time = ev['time']
-				if ev.has('type'): type = ev['type']
-				if ev.has('loc'): offset = ev['loc']
+				var type = _has_or_default(ev,'type','linear')
 				if type == 'instant' or vn.skipping:
-					camera.zoom(ev['scale'], offset)
+					camera.zoom(ev['scale'], _has_or_default(ev,'loc',Vector2(0,0)))
 				else:
-					camera.zoom_timed(ev['scale'], time, type,offset)
+					camera.zoom_timed(ev['scale'], _has_or_default(ev,'time',1), type, _has_or_default(ev,'loc',Vector2(0,0)))
 				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
 				'deg':camera.target_degree}
 			else:
 				vn.error('Camera zoom expects a scale.', ev)
 		"move":
 			QM.reset_skip()
-			var time = 1
-			var type = "linear"
-			if ev.has('time'): time = ev['time']
-			if ev.has('type'): type = ev['type']
+			var time = _has_or_default(ev, 'time', 1)
+			var type = _has_or_default(ev, 'type', 'linear')
 			if ev.has('loc'):
-				if vn.skipping: time = 0
-				if ev.has('type'):
-					if type == 'instant': ev['time'] = 0
-					camera.camera_move(ev['loc'],time, type)
-				else:
-					camera.camera_move(ev['loc'], time)
-				
+				if vn.skipping or type == "instance": time = 0
+				camera.camera_move(ev['loc'], time, type)
 				game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset, 'deg':camera.target_degree}
 			else:
 				print("!!! Wrong camera event format: " + str(ev))
 				push_error("Camera move expects a loc and time, and type (optional)")
 		"shake":
 			if not vn.skipping:
-				var amount = 250
-				var time = 2
-				if ev.has('amount'): amount = ev['amount']
-				if ev.has('time'): time = ev['time']
-				camera.shake(amount, time)
+				camera.shake(_has_or_default(ev,'amount',250), _has_or_default(ev,'time',2))
 		"spin":
 			if ev.has('deg'):
-				var type = 'linear'
-				var sdir = 1
-				if ev.has("sdir"): sdir = ev['sdir']
-				if ev.has('type'): type = ev['type']
+				var type = _has_or_default(ev,'type','linear')
+				var sdir = _has_or_default(ev,'sdir', 1)
 				if vn.skipping or type == "instant":
 					camera.rotation_degrees += (sdir*ev['deg'])
 					camera.target_degree = camera.rotation_degrees
 					game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
 					'deg':camera.target_degree}
 				else:
-					var t = 1.0
-					if ev.has('time'): t = ev['time']
-					camera.camera_spin(sdir,ev['deg'], t,type)
+					camera.camera_spin(sdir,ev['deg'], _has_or_default(ev,'time',1.0), type)
 					game.playback_events['camera'] = {'zoom':camera.target_zoom, 'offset':camera.target_offset,\
 					 'deg':camera.target_degree}
 				
@@ -935,19 +898,18 @@ func character_event(ev : Dictionary) -> void:
 				auto_load_next()
 			_: vn.error('Unknown character event/action.', ev)
 		
+		# End of the branch
+		
 	else: # uid is not all, and character not on stage
-		var expression = ""
-		if ev.has('expression'): expression = ev['expression'] 
+		var expression = _has_or_default(ev,'expression', '')
 		if ef == 'join':
 			if ev.has('loc'):
 				stage.join(uid,ev['loc'], expression)
 			else:
 				vn.error('Character join expects a loc.', ev)
 		elif ef == 'fadein':
-			var time = 1
-			if ev.has('time'): time = ev['time']
 			if ev.has('loc'): 
-				stage.fadein(uid,time, ev['loc'], expression)
+				stage.fadein(uid,_has_or_default(ev,'time',1), ev['loc'], expression)
 			else:
 				vn.error('Character fadein expects a time and a loc.', ev)
 		else:
@@ -958,57 +920,41 @@ func character_event(ev : Dictionary) -> void:
 
 # This method is here to fill in default values
 func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
-	var amount = 250
-	var time = 2
-	if ev.has('amount'): amount = ev['amount']
-	if ev.has('time'): time = ev['time']
-	stage.shake(uid, amount, time, mode)
+	stage.shake(uid,_has_or_default(ev,'amount',250), _has_or_default(ev,'time',2), mode)
 	auto_load_next()
 	
 
-func express(combine : String) -> void:
+func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	var temp = combine.split(" ")
 	var uid = chara.forward_uid(temp[0])
 	if temp.size() > 2 or temp.size() == 0:
 		vn.error("Wrong express format.")
-	elif temp.size() == 1:
-		temp.push_back("")
-	
-	stage.change_expression(uid,temp[1])
-	auto_load_next()
+	elif temp.size() == 2: # No expression change if temp has size 1.
+		stage.change_expression(uid,temp[1])
+	if auto_forw: auto_load_next()
+	if ret_uid: return uid
 
-# This method is here to fill in default values
+
 func character_jump(uid : String, ev : Dictionary) -> void:
-	var amount = 80
-	var time = 0.25
-	var dir = vn.DIRECTION['up']
-	if ev.has('amount'): amount = ev['amount']
-	if ev.has('time'): time = ev['time']
-	if ev.has('dir'): dir = ev['dir']
-	stage.jump(uid, dir, amount, time)
+	stage.jump(uid, _has_or_default(ev,'dir',Vector2.UP), _has_or_default(ev,'amount',80), _has_or_default(ev,'time',0.8))
 	auto_load_next()
 	
-# This method is here to fill in default values
+# redundant? Directly call stage? No. This one has a yield, which should be here.
 func character_fadeout(uid: String, ev:Dictionary):
-	var time = 1
-	if ev.has('time'): time = ev['time']
+	var time = _has_or_default(ev,'time',1)
 	stage.fadeout(uid, time)
 	yield(get_tree().create_timer(time), 'timeout')
 	auto_load_next()
 
-# This method is here to fill in default values
+
 func character_move(uid:String, ev:Dictionary):
-	var type = "linear"
-	var expr = ''
-	if ev.has('expression'): expr = ev['expression']
-	if ev.has('type'): type = ev['type']
+	var type = _has_or_default(ev,'type','linear')
+	var expr = _has_or_default(ev,'expression','')
 	if ev.has('loc'):
 		if type == 'instant' or vn.skipping:
 			stage.change_pos(uid, ev['loc'], expr)
 		else:
-			var time = 1
-			if ev.has('time'):time = ev['time']
-			stage.change_pos_2(uid, ev['loc'], time, type, expr)
+			stage.change_pos_2(uid, ev['loc'], _has_or_default(ev,'time',1), type, expr)
 		auto_load_next()
 	else:
 		vn.error("Character move expects a loc.", ev)
@@ -1021,28 +967,18 @@ func character_add(uid:String, ev:Dictionary):
 		print("!!! Character add event format error.")
 		push_error('Character add expects a path and an "at".')
 		
-# This method is here to fill in default values
 func character_spin(uid:String, ev:Dictionary):
-	var sdir : int = 1
-	var deg = 360.0
-	var time = 1
-	var type = "linear"
-	if ev.has('type'): type = ev['type']
-	if ev.has('sdir'): time = int(ev['sdir'])
-	if ev.has('deg'): deg = ev['deg']
-	if ev.has('time'): time = ev['time']
-	stage.spin(uid, deg, time, sdir, type)
+	stage.spin(uid, _has_or_default(ev,'deg',360), _has_or_default(ev,'time',1), _has_or_default(ev,'sdir',1),\
+	 _has_or_default(ev,'type','linear'))
 	auto_load_next()
 #--------------------------------- Weather -------------------------------------
 func change_weather(we:String, auto_forw = true):
-	if we == "off": we = ""
 	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
-		if we == "":
+		if we == "" or we == "off":
 			game.playback_events.erase('weather')
 		else:
 			game.playback_events['weather'] = {'weather':we}
-		
 		if auto_forw: auto_load_next()
 
 #--------------------------------- History -------------------------------------
@@ -1057,7 +993,7 @@ func history_manipulation(ev: Dictionary):
 		
 		for k in ev.keys():
 			if k != 'history':
-				game.history.push_back([k, fun.dvarMarkup(ev[k])])
+				game.history.push_back([k, fun.MarkUp(ev[k])])
 				break
 		
 	elif what == "pop":
@@ -1106,23 +1042,15 @@ func get_target_index(bname : String, target_id):
 	push_error('Cannot find event with id ' + str(target_id) + ' in ' + bname)
 	
 func sideImageChange(ev:Dictionary, auto_forw:bool = true):
-	if ev.size() == 0:
-		return
 	var path = ev['side']
 	var sideImage = stage.get_node('other/sideImage')
-	sideImage.position = Vector2(-35,530) # by default
 	if path == "":
 		sideImage.texture = null
 		game.playback_events.erase('side')
 	else:
 		sideImage.texture = load(vn.SIDE_IMAGE+path)
 		game.playback_events['side'] = ev
-		if ev.has("scale"):
-			# if you want to limit scale to 0-1 for both x and y, use
-			# fun.correct_scale(ev['scale'])
-			sideImage.scale = ev['scale']
-		if ev.has('loc'):
-			sideImage.position = ev['loc']
+		stage.reset_sideImage(_has_or_default(ev,'scale',Vector2(1,1)),_has_or_default(ev,'loc',Vector2(-35, 530)))
 	if auto_forw: auto_load_next()
 
 func check_dialog():
@@ -1160,7 +1088,6 @@ func clear_boxes():
 func wait(time : float) -> void:
 	if just_loaded:
 		just_loaded = false
-	
 	if vn.skipping:
 		auto_load_next()
 		return
@@ -1250,10 +1177,8 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 				stage.change_expression(uid, d[uid])
 			else:
 				stage.join(uid,loc,d[uid])
-				#interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
 		else:
 			stage.join(uid,loc,d[uid])
-			#interpret_events({'chara': uid + ' join', 'loc': loc, 'expression': d[uid]})
 		if fliph: stage.change_expression(uid,'flip')
 		if flipv: stage.change_expression(uid,'flipv')
 	
@@ -1267,20 +1192,19 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 	vn.inLoading = false
 	just_loaded = true
 
-func split_condition(line:String):
+func split_equation(line:String):
 	var arith_symbols = ['>','<', '=', '!', '+', '-', '*', '/']
-	var front_var = ''
-	var back_var = ''
-	var rel = ''
-	var presymbol = true
+	var front_var:String = ''
+	var back_var:String = ''
+	var rel:String = ''
+	var presymbol:bool = true
 	for i in line.length():
 		var le = line[i]
 		if le != " ":
-			var is_symbol = le in arith_symbols
+			var is_symbol:bool = le in arith_symbols
 			if is_symbol:
 				presymbol = false
 				rel += le
-
 			if not (is_symbol) and presymbol:
 				front_var += le
 				
@@ -1301,17 +1225,14 @@ func dvar_or_float(dvar:String):
 
 func flt_text(ev: Dictionary) -> void:
 	var wt = ev['wait']
-	ev['float'] = fun.dvarMarkup(ev['float'])
-	var loc = Vector2(600,300)
-	if ev.has('loc'): loc = ev['loc']
-	var in_t = 1
-	if ev.has('fadein'): in_t = ev['fadein']
+	ev['float'] = fun.MarkUp(ev['float'])
+	var loc = _has_or_default(ev,'loc', Vector2(600,300))
+	var in_t = _has_or_default(ev, 'fadein', 1)
 	var f = load(float_text).instance()
 	if ev.has('font') and ev['font'] != "" and ev['font'] != "default":
 		f.set_font(vn.ROOT_DIR + ev['font'])
 	if ev.has('dir'):
-		var speed = 30
-		if ev.has('speed'): speed = ev['speed']
+		var speed = _has_or_default(ev,'speed', 30)
 		f.set_movement(ev['dir'], speed)
 	self.add_child(f)
 	if ev.has('time') and ev['time'] > wt:
@@ -1321,12 +1242,7 @@ func flt_text(ev: Dictionary) -> void:
 	
 	var has_voice = _check_latest_voice(ev)
 	if ev.has('hist') and (_parse_true_false(ev['hist'])):
-		var who = ''
-		if ev.has('who'): who = ev['who']
-		if has_voice:
-			game.history.push_back([who, ev['float'], latest_voice])
-		else:
-			game.history.push_back([who, ev['float']])
+		_voice_to_hist((has_voice and vn.voice_to_history), _has_or_default(ev,'who',''), ev['float'] )
 		
 	wait(wt)
 
@@ -1420,6 +1336,14 @@ func _hide_namebox(uid:String):
 			return true
 			
 	return false
+	
+# checks if the dict has something, if so, return the value of the field. Else return the
+# given default val
+func _has_or_default(ev:Dictionary, fname:String , default):
+	if ev.has(fname):
+		return ev[fname]
+	else:
+		return default
 
 # Check this event for latest voice... If there is a voice field,
 # play the voice and then return true
@@ -1433,19 +1357,25 @@ func _check_latest_voice(ev:Dictionary):
 		latest_voice = null
 	
 	return false
+	
+func _voice_to_hist(should:bool, who:String, text:String):
+	if should:
+		game.history.append([who, text, latest_voice])
+	else: # should not
+		game.history.append([who, text])
 
 func dimming(c : Color):
 	get_node('background').modulate = c
 	stage.set_modulate_4_all(c)
 	
-func call_method(ev:Dictionary):
+func call_method(ev:Dictionary, auto_forw = true):
 	# rollback and save are not taken care of by default because
 	# there is no way to predict what the method will do
 	if ev.has('params'):
 		callv(ev['call'], ev['params'])
 	else:
 		callv(ev['call'], [])
-	auto_load_next()
+	if auto_forw: auto_load_next()
 
 
 func register_dvar_propagation(method_name:String, dvar_name:String):
@@ -1455,8 +1385,7 @@ func register_dvar_propagation(method_name:String, dvar_name:String):
 		print("The dvar %s cannot be found. Nothing is done." % [dvar_name])
 
 func propagate_dvar_calls(dvar_name:String=''):
-	# propagate to call all methods that should be called when a dvar
-	# is changed. 
+	# propagate to call all methods that should be called when a dvar is changed. 
 	if dvar_name == '':
 		for k in _propagate_dvar_list.keys():
 			propagate_call(k, [vn.dvar[_propagate_dvar_list[k]]], true)
@@ -1565,17 +1494,12 @@ func _parse_loc(loc, ev = {}) -> Vector2:
 		return loc
 	if typeof(loc) == TYPE_STRING and (loc == "R" or loc == "r"):
 		var v = get_viewport().size
-		var rng = RandomNumberGenerator.new()
-		rng.randomize()
-		var rndv = Vector2(rng.randf_range(100, v.x-100),\
-		rng.randf_range(80, v.y-80))
-		return rndv
-	
+		return fun.random_vec(Vector2(100,v.x-100),Vector2(80,v.y-80))
 	# If you get error here, that means the string cannot be split
 	# as floats with delimiter space.
 	var vec = loc.split_floats(" ")
 	if vec.size() != 2:
-		print("Incorrect loc vector format: " + str(ev))
+		print("!!! Incorrect loc vector format: " + str(ev))
 		push_error("2D vector should have two real numbers separated by a space.")
 	return Vector2(vec[0], vec[1])
 	
@@ -1583,10 +1507,7 @@ func _parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
 		return vn.DIRECTION[dir]
 	elif typeof(dir) == TYPE_STRING and (dir == "R" or dir == "r"):
-		var rng = RandomNumberGenerator.new()
-		rng.randomize()
-		var rndv = Vector2(rng.randf_range(-1, 1),rng.randf_range(-1, 1))
-		return rndv.normalized()
+		return fun.random_vec(Vector2(-1,1), Vector2(-1,1)).normalized()
 	else:
 		return _parse_loc(dir, ev).normalized()
 
@@ -1606,7 +1527,7 @@ func _parse_color(color, ev = {}) -> Color:
 			else:
 				return Color(color_vec[0], color_vec[1], color_vec[2], color_vec[3])
 		else:
-			print("Error event: " + str(ev))
+			print("!!! Error color format: " + str(ev))
 			push_error("Expecting value of the form float1 float2 float3( float4) after color.")
 			return Color()
 			
@@ -1631,9 +1552,7 @@ func _parse_true_false(truth, ev = {}) -> bool:
 		truth = truth.to_lower()
 		if truth == "true":
 			return true
-		elif truth == "false":
-			return false
-		else:
+		else: # sloppy here.
 			return false
 	else:
 		print("!!! Format error" + str(ev))

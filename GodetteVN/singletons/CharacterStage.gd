@@ -39,9 +39,10 @@ func get_character_info(uid:String):
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
-func reset_sideImage(sc:Vector2 = Vector2(1,1)):
+func reset_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
 	$other/sideImage.texture = null
 	$other/sideImage.scale = sc
+	$other/sideImage.position = pos
 
 
 func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
@@ -177,8 +178,6 @@ func set_modulate_4_all(c : Color):
 		if n.apply_highlight:
 			n.modulate = c
 
-
-
 func find_chara_on_stage(uid:String):
 	for n in $characters.get_children():
 		if n.unique_id == uid:
@@ -208,6 +207,10 @@ func all_on_stage():
 		output.append(temp)
 			
 	return output
+	
+func clean_up():
+	remove_chara("absolute_all")
+	reset_sideImage()
 
 func remove_on_rollback(arr):
 	for n in $characters.get_children():

@@ -52,14 +52,11 @@ func _on_yesButton_pressed():
 	match type:
 		"main":
 			fileRelated.write_to_config()
-			screen.removeLasting()
-			screen.weather_off()
-			screen.clear_debug()
+			screen.clean_up()
 			music.stop_bgm()
 			game.resetPlayback()
 			chara.dvar_declaration()
-			stage.reset_sideImage()
-			stage.remove_chara('absolute_all')
+			stage.clean_up()
 			#----------------------------------------
 			var error = get_tree().change_scene(vn.ROOT_DIR + vn.title_screen_path)
 			if error == OK:

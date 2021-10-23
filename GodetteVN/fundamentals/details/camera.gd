@@ -32,7 +32,6 @@ func _process(delta):
 	
 	
 func shake(amount, time):
-	
 	shake_amount = amount
 	if time < 0.5:
 		shakeTimer.wait_time = 0.5
