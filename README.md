@@ -22,6 +22,9 @@ To see how spritesheet animation is integrated into VNs, go to /GodetteVN/Charac
 
 Transition system is integrated from eh-jogos's project. You can find it [here](https://github.com/eh-jogos/eh_Transitions)
 
+Shaders are taken from Godot Asset Library, [here](https://godotengine.org/asset-library/asset/122) and
+ [here](https://godotshaders.com/shader/glitch-effect-shader/). Not all shaders are implemented yet.
+
 Video Showcases (Possibly outdated):
 
 [Parallax and Sprite Sheet Animation](https://www.youtube.com/watch?v=sG7tDFsk4HE)
