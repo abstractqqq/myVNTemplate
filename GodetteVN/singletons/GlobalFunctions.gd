@@ -58,7 +58,7 @@ func random_vec(x:Vector2, y:Vector2):
 func calculate(what:String):
 	# what means what to calculate, should be an algebraic expression
 	# only dvars are allowed
-	var calculator = StringCalculator.new()
+	var calculator = DvarCalculator.new()
 	var result =  calculator.calculate(what)
 	calculator.call_deferred('free')
 	return result

@@ -1,5 +1,5 @@
-extends Node
-class_name StringCalculator
+extends Object
+class_name DvarCalculator
 
 # converts evaluates string of arithmetic expression
 

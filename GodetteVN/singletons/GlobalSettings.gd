@@ -150,7 +150,8 @@ func error(message, ev = {}):
 		message += "\n Possible error at event: " + str(ev)
 			
 	push_error(message)
-	get_tree().quit()
+	get_tree().quit() # If I can get rid of this function, then I do not need to extend 
+	# from node.
 
 #------------------------------------------------------------------------------------
 # Private
