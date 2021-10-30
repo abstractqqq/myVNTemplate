@@ -23,5 +23,8 @@ func _ready():
 		# Then even if you delete this line, this dialog will still be spoiler proof.
 		# To revert this, call reset_spoilerproof(scene_path:String)
 		# in fileRelate.gd. Run it once and then comment it out.
+		
+		#fileRelated.reset_all_spoilerproof()
+		
 	else:
 		print("Start scene failed due to problems with dialog json file.")

@@ -194,7 +194,7 @@ func make_spoilerproof(scene_path:String, all_dialog_blocks):
 	if system_data.has(scene_path) == false:
 		var ev = {}
 		for block in all_dialog_blocks.keys():
-			ev[block] = 0
+			ev[block] = -1
 			
 		system_data[scene_path] = ev
 		
@@ -208,7 +208,7 @@ func reset_all_spoilerproof():
 func reset_spoilerproof(scene_path:String):
 	if system_data.has(scene_path):
 		for key in system_data[scene_path].keys():
-			system_data[scene_path][key] = 0
+			system_data[scene_path][key] = -1
 			
 func remove_spoilerproof(scene_path:String):
 	if system_data.has(scene_path):

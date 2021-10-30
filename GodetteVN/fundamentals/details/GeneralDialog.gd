@@ -366,7 +366,7 @@ func generate_choices(ev: Dictionary):
 		var choice_ev = ev2[choice_text] # the choice action
 		choice_text = fun.MarkUp(choice_text)
 		var choice = load(choice_bar).instance()
-		choice.setup_choice_event(choice_text, choice_ev)
+		choice.setup_choice(choice_text,choice_ev,vn.show_chosen_choices)
 		choice.connect("choice_made", self, "on_choice_made")
 		choiceContainer.add_child(choice)
 		# waiting for user choice

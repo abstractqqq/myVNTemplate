@@ -1,11 +1,17 @@
 extends Node
 
+#-----------------
+
+# Maybe these variables should be inside Project Settings in Godot?
+
 # Constants
 const max_history_size = 300 # Max number of history entries
 const max_rollback_steps = 50 # Max steps of rollback to keep
 # It is recommended that max_rollback_steps is kept to a small number.
 const voice_to_history = true # Should voice be replayable in history?
-
+# Do you want to use a different color for chosen choices? Only works
+# if the scene is made spoilerproof.
+const show_chosen_choices = true
 
 # Narrator
 const narrator_display_name:String = ''
@@ -15,6 +21,10 @@ const start_scene_path:String = '/GodetteVN/typicalVNScene.tscn'
 const credit_scene_path:String = "" # if you have one
 const ending_scene_path:String = "/GodetteVN/titleScreen.tscn" 
 # by default, ending scene = go back to title
+
+
+
+#-----------------
 
 # Directories will contain res:/ part, paths above won't, paths below
 # will have full paths.
@@ -62,7 +72,7 @@ const CENTER_DIM = Color(0.7,0.7,0.7,1) # Dimming in center mode
 const NVL_DIM = Color(0.2,0.2,0.2,1) # Dimming in NVL mode
 
 #Skip speed, multiple of 0.05
-const SKIP_SPEED:int = 3 # means skip is 1 left-click per 2 * 0.05 = 0.1 s
+const SKIP_SPEED:int = 3 # means skip is 1 left-click per 3 * 0.05 = 0.15 s
 
 # Transitions
 const TRANSITIONS_DIR = "res://GodetteVN/fundamentals/details/transitions_data/"
@@ -98,8 +108,11 @@ var cps : int = 50 # either 50 or 25
 # Also not "nw". Do not initialize dvar here. Use set_dvar method instead.
 
 var dvar = {}
+# Maybe I should move these somewhere else?
 
 # ------------------------- Game State Variables--------------------------------
+# Maybe I should move these variables to somewhere else?
+
 
 # Special game state variables
 var inLoading = false # Is the game being loaded from the save now? (Only used
@@ -153,6 +166,3 @@ func error(message, ev = {}):
 	get_tree().quit() # If I can get rid of this function, then I do not need to extend 
 	# from node.
 
-#------------------------------------------------------------------------------------
-# Private
-#------------------------------------------------------------------------------------
