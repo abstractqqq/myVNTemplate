@@ -100,14 +100,15 @@ func fadein(uid: String, time: float, location: Vector2, expression:String) -> v
 			var c = load(info['path']).instance()
 			# If load fails, there will be a bug pointing to this line
 			if c.apply_highlight:
-				c.modulate = Color(0.86,0.86,0.86,0)
+				c.modulate = vn.DIM
 			else:
-				c.modulate = Color(1,1,1,0)
-			$characters.add_child(c)
+				c.modulate = Color(1,1,1,1)
+			
+			c.modulate.a = 0
 			c.loc = location
 			c.position = location
-			c.fadein(time)
-			c.change_expression(expression)
+			$characters.add_child(c)
+			c.fadein(time,expression)
 
 func fadeout(uid: String, time: float) -> void:
 	if uid == 'all':
@@ -150,7 +151,7 @@ func set_highlight(uid : String) -> void:
 	var info = chara.all_chara[uid]
 	if info.has('path'):
 		for n in $characters.get_children():
-			if n.unique_id == uid and n.apply_highlight:
+			if n.unique_id == uid and n.apply_highlight and not n.is_fading():
 				n.modulate = Color(1,1,1,1)
 				break
 

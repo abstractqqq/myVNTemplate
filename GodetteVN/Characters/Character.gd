@@ -19,17 +19,18 @@ export(String, FILE, '*.tres') var bold_italics_font = ''
 #
 
 var rng = RandomNumberGenerator.new()
-
+var _fading:bool = false
 #-----------------------------------------------------
 # Character attributes
-var loc = Vector2()
+var loc:Vector2 = Vector2()
 var current_expression : String
 
 #-------------------------------------------------------------------------------
 
 
-func change_expression(e : String) -> bool:
+func change_expression(e : String, in_fadein:bool=false) -> bool:
 	if e == "": e = 'default'
+	if in_fadein: self.modulate.a = 0
 	var expFrames = self.get_sprite_frames()
 	if expFrames.has_animation(e) or e == "flip" or e == "flipv":
 		var prev_exp = current_expression
@@ -39,7 +40,8 @@ func change_expression(e : String) -> bool:
 		else:
 			play(e)
 		current_expression = e
-		_dummy_fadeout(expFrames, prev_exp)
+		if in_fadein == false and _fading == false: # during fading, no dummy fadeout
+			_dummy_fadeout(expFrames, prev_exp)
 		return true
 	else:
 		print("---Warning: " + e + ' not found for character with uid ' + unique_id +"---")
@@ -75,16 +77,20 @@ func _jump_action(params):
 		self.position += params[1] * params[0]
 
 
-func fadein(time : float):
+func fadein(time : float, expression:String=""):
+	var _e = change_expression(expression, true)
+	_fading = true
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(self, "modulate", Color(0.86,0.86,0.86,0), vn.DIM, time,
+	tween.interpolate_property(self, "modulate", Color(0,0,0,0), vn.DIM, time,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
+	_fading = false
 	
 func fadeout(time : float):
+	
 	var tween = Tween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "modulate", vn.DIM, Color(0.86,0.86,0.86,0), time,
@@ -182,4 +188,7 @@ func _follow_fake(params):
 func clear_dummy(ob:Object, _k: NodePath):
 	# This ob will be the dummy created by some method above
 	ob.call_deferred('free')
+	
+func is_fading():
+	return _fading
 

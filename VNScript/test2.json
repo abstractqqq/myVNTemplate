@@ -9,7 +9,7 @@
 				"dvar": "mo = (-mo+50)*10"
 			},
 			{
-				"chara": "female join",
+				"chara": "female fadein",
 				"loc": "1600 600"
 			},
 			{

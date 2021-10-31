@@ -302,12 +302,12 @@ func speech_parse(ev : Dictionary) -> void:
 		dialogbox.add_font_override('normal_font', load(path))
 
 	# Speech
-	var combine = "wwttff"
+	var combine = "wwttff123"
 	for k in ev.keys(): # k is not voice, not speed, means it has to be "uid expression"
 		if k != 'voice' and k != 'speed':
 			combine = k # combine=unique_id and expression combined
 			break
-	if combine == "wwttff": # for loop ends without setting combine
+	if combine == "wwttff123": # for loop ends without setting combine
 		vn.error("Speech event requires a valid character/narrator." ,ev)
 	
 	if ev.has('speed'):
@@ -332,23 +332,24 @@ func generate_choices(ev: Dictionary):
 	if one_time_font_change:
 		var path = vn.FONT_DIR + ev['font']
 		dialogbox.add_font_override('normal_font', load(path))
-	var combine = ""
+	var combine = "wwttff123"
 	for k in ev.keys():
 		if k != 'id' and k != 'choice' and k != 'voice':
 			combine = k
 			break
-	if combine != "":
+	if combine != "wwttff123":
 		say(combine, ev[combine], 0, true)
 	
 	if ev['choice'] == '' or ev['choice'] == 'url': 
 		# This is for url (in-line, textbased) choices
+		# Unimplemented
 		return
 	# Actual choices
 	var options = all_choices[ev['choice']]
 	waiting_cho = true
 	for i in options.size():
 		var ev2 = options[i]
-		if ev2.size()>2 : 
+		if ev2.size()>2: 
 			vn.error('Only size 1 or 2 dict will be accepted as choice.')
 		elif ev2.size() == 2:
 			if ev2.has('condition'):
@@ -901,7 +902,7 @@ func character_event(ev : Dictionary) -> void:
 		# End of the branch
 		
 	else: # uid is not all, and character not on stage
-		var expression = _has_or_default(ev,'expression', '')
+		var expression = _has_or_default(ev,'expression', 'default')
 		if ef == 'join':
 			if ev.has('loc'):
 				stage.join(uid,ev['loc'], expression)
@@ -913,7 +914,7 @@ func character_event(ev : Dictionary) -> void:
 			else:
 				vn.error('Character fadein expects a time and a loc.', ev)
 		else:
-			vn.error('Unknown character event/action.', ev)	
+			vn.error('Unknown character event/action.', ev)
 			
 		if !vn.inLoading:
 			auto_load_next()
