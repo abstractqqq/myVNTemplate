@@ -55,7 +55,7 @@ func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 		c.shake(amount, time, mode)
 
 
-func jump(uid:String, dir:Vector2 = Vector2.UP, amount:float = 80, time:float = 0.25):
+func jump(uid:String, dir:Vector2 = Vector2.UP, amount:float = 80, time:float = 0.15):
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -204,8 +204,9 @@ func get_chara_pos(uid:String)->Vector2:
 func all_on_stage():
 	var output = []
 	for n in $characters.get_children():
-		var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
-		output.append(temp)
+		if n.is_leaving() == false:
+			var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
+			output.append(temp)
 			
 	return output
 	

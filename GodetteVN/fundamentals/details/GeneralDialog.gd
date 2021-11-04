@@ -937,14 +937,14 @@ func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 
 
 func character_jump(uid : String, ev : Dictionary) -> void:
-	stage.jump(uid, _has_or_default(ev,'dir',Vector2.UP), _has_or_default(ev,'amount',80), _has_or_default(ev,'time',0.8))
+	stage.jump(uid, _has_or_default(ev,'dir',Vector2.UP), _has_or_default(ev,'amount',80), _has_or_default(ev,'time',0.15))
 	auto_load_next()
 	
 # redundant? Directly call stage? No. This one has a yield, which should be here.
 func character_fadeout(uid: String, ev:Dictionary):
 	var time = _has_or_default(ev,'time',1)
 	stage.fadeout(uid, time)
-	yield(get_tree().create_timer(time), 'timeout')
+	yield(get_tree(), "idle_frame")
 	auto_load_next()
 
 

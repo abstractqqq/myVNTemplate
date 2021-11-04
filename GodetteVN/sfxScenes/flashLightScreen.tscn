@@ -7,7 +7,6 @@
 position = Vector2( 348.605, 605.97 )
 texture = ExtResource( 1 )
 mode = 3
-range_z_min = -8
-range_z_max = 8
 range_layer_max = 2
+shadow_gradient_length = 726.7
 script = ExtResource( 2 )

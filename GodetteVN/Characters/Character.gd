@@ -20,6 +20,7 @@ export(String, FILE, '*.tres') var bold_italics_font = ''
 
 var rng = RandomNumberGenerator.new()
 var _fading:bool = false
+var _leaving:bool = false
 #-----------------------------------------------------
 # Character attributes
 var loc:Vector2 = Vector2()
@@ -90,7 +91,7 @@ func fadein(time : float, expression:String=""):
 	_fading = false
 	
 func fadeout(time : float):
-	
+	_leaving = true
 	var tween = Tween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "modulate", vn.DIM, Color(0.86,0.86,0.86,0), time,
@@ -98,6 +99,7 @@ func fadeout(time : float):
 	tween.start()
 	yield(get_tree().create_timer(time), "timeout")
 	tween.queue_free()
+	_leaving = false
 	self.queue_free()
 	
 	
@@ -191,4 +193,7 @@ func clear_dummy(ob:Object, _k: NodePath):
 	
 func is_fading():
 	return _fading
+
+func is_leaving():
+	return _leaving
 

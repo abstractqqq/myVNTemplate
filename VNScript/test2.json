@@ -252,7 +252,7 @@
 			},
 			{
 				"chara": "test2 fadeout",
-				"time": 1
+				"time": 10
 			},
 			{
 				"then": "starter",
