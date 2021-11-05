@@ -86,6 +86,8 @@ func updateRollback():
 
 func checkSkippable()->bool:
 	if fileRelated.system_data.has(game.currentNodePath):
+		#print("Current index is %s" %game.currentIndex)
+		#print("Max index is %s" %fileRelated.system_data[game.currentNodePath][game.currentBlock])
 		if game.currentIndex > fileRelated.system_data[game.currentNodePath][game.currentBlock]:
 			return false
 		else:

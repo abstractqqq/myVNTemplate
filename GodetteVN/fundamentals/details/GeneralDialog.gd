@@ -254,7 +254,6 @@ func auto_load_next():
 	if vn.skipping:
 		yield(get_tree(), "idle_frame")
 		if not game.checkSkippable():
-			vn.skipping = false
 			QM.reset_skip()
 	
 	load_event_at_index(current_index)
@@ -583,6 +582,7 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 		auto_load_next()
 
 func change_scene_to(path : String):
+	yield(get_tree(), "idle_frame")
 	stage.clean_up()
 	change_weather('', false) # NOT screen.weather_off because we need to tell the sys
 	# remove record of weather, which is only done in change_weather()
@@ -944,7 +944,7 @@ func character_jump(uid : String, ev : Dictionary) -> void:
 func character_fadeout(uid: String, ev:Dictionary):
 	var time = _has_or_default(ev,'time',1)
 	stage.fadeout(uid, time)
-	yield(get_tree(), "idle_frame")
+	# yield(get_tree(), "idle_frame")
 	auto_load_next()
 
 
@@ -1013,6 +1013,9 @@ func conditional_branch(ev : Dictionary) -> void:
 		change_block_to(ev['else'],0)
 
 func then(ev : Dictionary) -> void:
+	if fileRelated.system_data.has(game.currentNodePath):
+		if game.currentIndex > fileRelated.system_data[game.currentNodePath][game.currentBlock]:
+			fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
 	if ev.has('target id'):
 		change_block_to(ev['then'], 1 + get_target_index(ev['then'], ev['target id']))
 	else:

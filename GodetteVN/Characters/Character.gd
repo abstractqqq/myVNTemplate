@@ -20,7 +20,6 @@ export(String, FILE, '*.tres') var bold_italics_font = ''
 
 var rng = RandomNumberGenerator.new()
 var _fading:bool = false
-var _leaving:bool = false
 #-----------------------------------------------------
 # Character attributes
 var loc:Vector2 = Vector2()
@@ -91,17 +90,8 @@ func fadein(time : float, expression:String=""):
 	_fading = false
 	
 func fadeout(time : float):
-	_leaving = true
-	var tween = Tween.new()
-	add_child(tween)
-	tween.interpolate_property(self, "modulate", vn.DIM, Color(0.86,0.86,0.86,0), time,
-		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-	tween.start()
-	yield(get_tree().create_timer(time), "timeout")
-	tween.queue_free()
-	_leaving = false
-	self.queue_free()
-	
+	var expFrames = self.get_sprite_frames()
+	fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(current_expression,0), time, self)
 	
 func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	if sdir > 0:
@@ -119,24 +109,12 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	tween.queue_free()
 	
 
-
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
 		if prev_exp == "flip" or "flipv":
 			prev_exp = 'default'
-		var dummy = Sprite.new()
-		dummy.name = "_dummy"
-		dummy.scale = self.scale
-		dummy.position = self.position
-		dummy.texture = expFrames.get_frame(prev_exp,0)
-		stage.add_child(dummy)
-		var tween = Tween.new()
-		tween.connect("tween_completed", self, "clear_dummy")
-		dummy.add_child(tween)
-		var m = self.modulate
-		tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
-			Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
-		tween.start()
+			
+		fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
 
 
 #----------------------------------------------------------------------------
@@ -194,6 +172,4 @@ func clear_dummy(ob:Object, _k: NodePath):
 func is_fading():
 	return _fading
 
-func is_leaving():
-	return _leaving
 

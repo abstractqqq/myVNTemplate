@@ -1,6 +1,6 @@
 extends Node
 
-# A collection of functions that are used globally as convenient methods.
+# A collection of functions that are used repeatedly globally
 
 
 
@@ -62,7 +62,32 @@ func calculate(what:String):
 	var result =  calculator.calculate(what)
 	calculator.call_deferred('free')
 	return result
+
+#----------------------------------------------------------------------
+# creates an after image. Used for fadeout effects / other fancy effects
+
+func after_image(pos:Vector2, scale:Vector2, m:Color, fliph:bool, flipv:bool, deg:float, texture:Texture, fade_time:float, to_free:Node=null):
+	if to_free: # if a to_free node is give, this node will be freed. Used in character fadeout.
+		to_free.call_deferred('free')
 	
+	var dummy = Sprite.new()
+	dummy.name = "_dummy"
+	dummy.scale = scale
+	dummy.position = pos
+	dummy.texture = texture
+	dummy.flip_h = fliph
+	dummy.flip_v = flipv
+	dummy.rotation_degrees = deg
+	stage.add_child(dummy)
+	var tween = Tween.new()
+	dummy.add_child(tween)
+	tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
+		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
+	tween.start()
+	yield(get_tree().create_timer(fade_time), 'timeout')
+	dummy.queue_free()
+
+
 #----------------------------------------------------------------------
 # Make a save.
 

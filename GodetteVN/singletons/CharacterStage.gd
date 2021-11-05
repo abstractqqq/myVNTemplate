@@ -204,9 +204,8 @@ func get_chara_pos(uid:String)->Vector2:
 func all_on_stage():
 	var output = []
 	for n in $characters.get_children():
-		if n.is_leaving() == false:
-			var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
-			output.append(temp)
+		var temp = {n.unique_id: n.current_expression, 'loc': n.loc, 'fliph':n.flip_h,'flipv':n.flip_v}
+		output.append(temp)
 			
 	return output
 	
