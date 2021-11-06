@@ -53,5 +53,18 @@ More in the making ~
 Documentation will be in the VNScript editor in the framework.
 
 
-If you want to contact me:
+------------------------------------------------------------------------------------------------------------------------------
+
+### Future Plans:
+
+1. Side Picture correspondence. (Already has everything needed. Just need to create an interface.)
+
+2. Simplify the whole process.
+
+3. More builtin templates. 
+
+------------------------------------------------------------------------------------------------------------------------------
+
+### You can contact me on Discord for questions
+
 Discord: T.Q#8863
