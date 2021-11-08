@@ -83,7 +83,7 @@ func flashlight(sc : Vector2):
 	fl_scene.scale = sc
 	
 func clear_debug()->void:
-	var debugger = get_node("debugger")
+	var debugger = get_node_or_null("debugger")
 	if debugger: debugger.text = ''
 	
 func in_transition(eff_name:String, color:Color, eff_dur:float):
@@ -120,10 +120,13 @@ func reset():
 	_color_panel.visible = false
 	
 func set_debug(debug:bool, text:String=""):
-	if debug == false:
-		$debugger.queue_free()
-	else:
-		$debugger.text = text
+	var debugger = get_node_or_null("debugger")
+	if debugger:
+		if debug == false:
+			debugger.queue_free()
+		else:
+			debugger.text = text
+		
 		
 func clean_up():
 	removeLasting()

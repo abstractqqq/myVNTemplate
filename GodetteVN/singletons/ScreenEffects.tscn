@@ -314,9 +314,9 @@ next/transition_out = "base"
 [node name="debugger" type="Label" parent="."]
 margin_right = 1907.0
 margin_bottom = 137.0
-custom_fonts/font = ExtResource( 5 )
 custom_colors/font_color = Color( 0.815686, 0, 0, 1 )
 custom_colors/font_outline_modulate = Color( 0, 0, 0, 1 )
+custom_fonts/font = ExtResource( 5 )
 autowrap = true
 __meta__ = {
 "_edit_use_anchors_": false

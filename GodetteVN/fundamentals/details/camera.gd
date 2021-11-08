@@ -96,7 +96,6 @@ func camera_move(off:Vector2, t:float, mode = 'linear'):
 		tween.queue_free()
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
-	zm = fun.correct_scale(zm)
 	target_zoom = zm
 	target_offset = off
 	var m = fun.movement_type(mode)
@@ -115,7 +114,6 @@ func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	tween2.queue_free()
 
 func zoom(zm:Vector2, off = Vector2(1,1)):
-	zm = fun.correct_scale(zm)
 	# by default, zoom is instant
 	self.offset = off
 	self.zoom = zm

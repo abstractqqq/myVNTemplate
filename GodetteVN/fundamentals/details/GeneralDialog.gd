@@ -505,7 +505,7 @@ func play_bgm(ev : Dictionary, auto_forw=true) -> void:
 	if path == "" and ev.size() > 1: # must be a fadeout
 		if ev.has('fadeout'):
 			music.fadeout(ev['fadeout'])
-			game.playback_events['bgm'] = {}
+			game.playback_events['bgm'] = {'bgm':''}
 			if auto_forw: auto_load_next()
 			return
 		else:
@@ -513,8 +513,7 @@ func play_bgm(ev : Dictionary, auto_forw=true) -> void:
 			'keyword format.', ev)
 			
 	# Now we're sure it's either play bgm or fadein bgm
-	var vol = 0
-	if ev.has('vol'): vol = ev['vol']
+	var vol = _has_or_default(ev,'vol',0)
 	_cur_bgm = path
 	music.bgm = path
 	var music_path = vn.BGM_DIR + path
@@ -582,7 +581,6 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 		auto_load_next()
 
 func change_scene_to(path : String):
-	yield(get_tree(), "idle_frame")
 	stage.clean_up()
 	change_weather('', false) # NOT screen.weather_off because we need to tell the sys
 	# remove record of weather, which is only done in change_weather()
@@ -1141,7 +1139,7 @@ func load_playback(play_back, RBM = false): # Roll Back Mode
 	vn.inLoading = true
 	if play_back.has('bg'):
 		bg.bg_change(play_back['bg'])
-	if play_back['bgm'].size() > 0:
+	if play_back.has('bgm'):
 		var bgm = play_back['bgm']
 		if RBM:
 			if _cur_bgm != bgm['bgm']:
