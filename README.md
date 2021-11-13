@@ -2,7 +2,7 @@
 
 ## Beta release postponed because of internal restructuring. Will not push to main until after restructure is almost done.
 
-## Goal and Vision: Brining the theatrical experience into your story, right in the Godot Engine.
+## Goal and Vision: Bringing the theatrical experience into your story, right in the Godot Engine.
 
 ### Keypoints: (subject to change...)
 
