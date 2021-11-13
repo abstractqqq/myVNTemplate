@@ -91,7 +91,10 @@ func fadein(time : float, expression:String=""):
 	
 func fadeout(time : float):
 	var expFrames = self.get_sprite_frames()
-	fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(current_expression,0), time, self)
+	var expr = current_expression
+	if current_expression == "flip" or current_expression == "flipv":
+		expr = "default"
+	fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(expr,0), time, self)
 	
 func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	if sdir > 0:

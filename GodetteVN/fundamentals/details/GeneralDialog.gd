@@ -310,10 +310,10 @@ func speech_parse(ev : Dictionary) -> void:
 		vn.error("Speech event requires a valid character/narrator." ,ev)
 	
 	if ev.has('speed'):
-		if (ev['speed'] in cps_dict.keys()):
-			say(combine, ev[combine], cps_dict[ev['speed']])
-		else:
-			say(combine, ev[combine])
+		if (vn.cps_map.has(ev['speed'])):
+			say(combine, ev[combine],vn.cps_map[ev['speed']] )
+		elif typeof(ev['speed']) == TYPE_INT or typeof(ev['speed']) == TYPE_REAL:
+			say(combine, ev[combine], ev['speed'])
 	else:
 		say(combine, ev[combine])
 
@@ -390,7 +390,7 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 				game.nvl_text = ''
 			else:
 				nvlBox.set_dialog(uid, words, cps)
-				game.nvl_text = nvlBox.bbcode_text
+				game.nvl_text = nvlBox.get_text()
 			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, nvlBox.get_text())
 	
 	else:
@@ -413,7 +413,7 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 			just_loaded = false
 		else:
 			dialogbox.set_dialog(words, cps)
-			var new_text = dialogbox.get_text()
+			var new_text = dialogbox.bbcode_text
 			_voice_to_hist((latest_voice!=null) and vn.voice_to_history, uid, new_text)
 			game.playback_events['speech'] = new_text
 		

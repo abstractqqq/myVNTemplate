@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://GodetteVN/fundamentals/details/dialogBox.gd" type="Script" id=1]
+[ext_resource path="res://GodetteVN/fundamentals/details/dialogBoxTextHandler.gd" type="Script" id=1]
 
 [node name="textBox" type="RichTextLabel"]
 margin_left = 526.0
@@ -16,10 +16,10 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="Timer" type="Timer" parent="."]
-
 [node name="autoTimer" type="Timer" parent="."]
 wait_time = 0.05
 
-[connection signal="timeout" from="Timer" to="." method="_on_Timer_timeout"]
+[node name="Tween" type="Tween" parent="."]
+
 [connection signal="timeout" from="autoTimer" to="." method="_on_autoTimer_timeout"]
+[connection signal="tween_completed" from="Tween" to="." method="_on_Tween_tween_completed"]

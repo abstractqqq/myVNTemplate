@@ -4,15 +4,13 @@ extends RichTextLabel
 export(bool) var noise_on = false
 export(String) var noise_file_path = ''
 
-onready var timer = $Timer
 onready var autoTimer = $autoTimer
 var autoCounter = 0
 var skipCounter = 0
-var absWaitTime = 0
 var adding = false
 var nw = false
 
-var leng = 0
+var _target_leng = 0
 
 var FONTS = {}
 const ft = ['normal', 'bold', 'italics', 'bold_italics']
@@ -35,7 +33,7 @@ func set_chara_fonts(ev:Dictionary):
 		if ev[key] != '':
 			add_font_override(key, load(ev[key]))
 
-func set_dialog(words : String, cps = vn.cps, extend = false):
+func set_dialog(words : String, cps = vn.cps, extend = false,mode="linear"):
 	# words will be already preprocessed
 	if extend:
 		visible_characters = self.text.length()
@@ -44,57 +42,43 @@ func set_dialog(words : String, cps = vn.cps, extend = false):
 		visible_characters = 0
 		bbcode_text = words
 		
-	leng = self.text.length()
+	_target_leng = self.text.length()
 	
-	match cps:
-		25: timer.wait_time = 0.04
-		0:
-			visible_characters = -1
-			adding = false
-			if nw:
-				nw = false
-				emit_signal("load_next")
-			return
-		10: timer.wait_time = 0.1
-		_: timer.wait_time = 0.02
-		
+	if cps <= 0:
+		visible_characters = _target_leng
+		adding = false
+		if nw:
+			nw = false
+			emit_signal("load_next")
+		return
+	
 	adding = true
-	timer.start()
+	$Tween.interpolate_property(self, "visible_characters", visible_characters,_target_leng,\
+		float(_target_leng-visible_characters)/float(cps),fun.movement_type(mode),Tween.EASE_IN_OUT)
+	$Tween.start()
+
 	
 func force_finish():
 	if adding:
-		visible_characters = leng
+		visible_characters = _target_leng
 		adding = false
-		timer.stop()
+		$Tween.stop_all()
 		if nw:
 			nw = false
 			if not vn.skipping:
 				emit_signal("load_next")
 
-func _on_Timer_timeout():
-	visible_characters += 1
-	if visible_characters >= leng:
-		adding = false
-		timer.stop()
-		if nw:
-			nw = false
-			emit_signal("load_next")
 
-
-
-# Call this after set_dialog, to get parsed words. (dvars will be parsed
-# into text.)
-func get_text():
-	return self.bbcode_text
-
-
+# Will be moved.
 func _on_autoTimer_timeout():
 	if vn.skipping:
+		# skipping
 		force_finish()
 		skipCounter = (skipCounter + 1)%(vn.SKIP_SPEED)
 		if skipCounter == 1:
 			emit_signal("load_next")
 	else:
+		# Auto forwarding
 		if not adding and vn.auto_on: 
 			autoCounter += 1
 			if autoCounter >= vn.auto_bound:
@@ -106,3 +90,11 @@ func _on_autoTimer_timeout():
 			autoCounter = 0
 			
 		skipCounter = 0
+
+
+func _on_Tween_tween_completed(_object, _key):
+	adding = false
+	if nw:
+		nw = false
+		emit_signal("load_next")
+	

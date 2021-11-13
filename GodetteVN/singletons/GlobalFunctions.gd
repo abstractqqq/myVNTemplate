@@ -178,4 +178,9 @@ func correct_scale(v:Vector2) -> Vector2:
 	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
 
 #---------------------------------------------------------------------
-# String parsing functions
+
+# Global time controller
+
+
+
+

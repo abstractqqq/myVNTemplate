@@ -1,24 +1,37 @@
-# Godette VN, A Visual Novel Framework for Godot Users
+# GodetteVN, A Visual Novel Framework for Godot Users
+
+## Beta release postponed because of internal restructuring. Will not push to main until after restructure is almost done.
+
+## Goal and Vision: Brining the theatrical experience into your story, right in the Godot Engine.
+
+### Keypoints: (subject to change...)
+
+1. Actor Editor: any 2d customization doable in Godot should be applicable to actors. (In progress...)
+2. Script Editor: script should be similar to that of a play in the traditional setting, but formatted in a more programmatic language. (In progress...)
+3. Rich template libraries for "commonly" used components, e.g. timed choices, parallax, weather, etc. (In progress...) 
+4. Key components should be callable programmatically and should be functional without others. (Not started yet...)
+5. Strong unit testing support, instantenous display for the event in your script. (Not started yet...)
+
+
+-------------------------------------------------------------------------------------------------------------
 
 ## Every journey starts with a single step.
 
 For basic dialog for RPG games, then [Dialogic](https://github.com/coppolaemilio/dialogic) might be a better addon than this, 
 because this framework is solely focused on the making of Visual/Graphic Novel. Renpy is also a good 
-alternative if your game doesn't require features that are easier to code in Godot.
+alternative if your game doesn't require features that are easier to make in Godot. Programming knowledge is highly recommended to
+make full use of the framework.
 
 In the folder res://GodetteVN/ , you can find sample projects to run.
 
 Before you run your own sample scene, make sure your character is created via the 
 actor editor and saved as a scene. Moreover, you have to register your characters
-in characterManager.gd (this file can be found in the singleton folder.) 
+in characterManager.gd (this file can be found in the singleton folder.) This may change in the future.
 
 There are 3 core components in this framework.
 1. An actor editor (WIP, mostly stable for written functions) 
 2. A script editor (WIP, mostly stable for written functions)
 3. A core dialog system (basically a json interpreter, mostly stable)  
-
-Core dialog system (messy code alert) can be found in /scenes/fundamental/details/generalDialog.gd
-To see how spritesheet animation is integrated into VNs, go to /GodetteVN/Characters/gt.tscn to check it out.
 
 Transition system is integrated from eh-jogos's project. You can find it [here](https://github.com/eh-jogos/eh_Transitions)
 
@@ -38,6 +51,7 @@ Other examples like timed choice, investigation scene, can be found in the folde
 Projects done with this template:
 
 [My O2A2 entry](https://tqqq.itch.io/o2a2-elegy-of-a-songbird)
+[Remake of the above](https://youtu.be/BArw1Qwrz10)
 
 More in the making ~
 
@@ -61,10 +75,10 @@ Documentation will be in the VNScript editor in the framework.
 
 2. Simplify the whole process.
 
-3. More builtin templates. 
+3. More builtin templates. (Like a customizable phone screen template, liteDialogNode, etc.)
 
 ------------------------------------------------------------------------------------------------------------------------------
 
-### You can contact me on Discord for questions
+### You can contact me on Discord for any questions.
 
 Discord: T.Q#8863

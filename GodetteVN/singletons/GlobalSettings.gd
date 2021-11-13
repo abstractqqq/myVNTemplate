@@ -98,8 +98,9 @@ var auto_bound = -1 # Initialize to -1. Will get changed in fileRelated.
 # how many 0.05s do we need to wait if auto is on
 # Formula ((-1)*auto_speed + 3.25)*20
 
-# DO NOT CHANGE THIS VAR
-var cps : int = 50 # either 50 or 25
+# Default CPS
+var cps : float = 50.0 # either 50 or 25
+var cps_map = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # cps correspondence = {fast:50, slow:25, instant:0, slower:10}
 
 # ---------------------------- Dvar Varibles ----------------------------
@@ -142,12 +143,12 @@ func reset_states():
 #--------------------------------------------------------------------------------
 func set_dvar(v:String, value):
 	if not v.is_valid_identifier():
-		vn.error("A valid dvar name should only contain letters, digits, and underscores and the "+\
+		error("A valid dvar name should only contain letters, digits, and underscores and the "+\
 		"first character should not be a digit.")
 	
 	for bad in vn.BAD_NAMES:
 		if bad == v:
-			vn.error("The name %s cannot be used as a dvar name." % [bad])
+			error("The name %s cannot be used as a dvar name." % [bad])
 		
 	vn.dvar[v] = value
 	print("Successfully set %s to value %s." % [v, value])
@@ -165,4 +166,9 @@ func error(message, ev = {}):
 	push_error(message)
 	get_tree().quit() # If I can get rid of this function, then I do not need to extend 
 	# from node.
+	
+
+
+func _ready():
+	pass
 

@@ -8,7 +8,6 @@ extends RichTextLabel
 # in dialog.gd
 
 # Same as dialog box
-onready var timer = $Timer
 onready var autoTimer = $autoTimer
 var skipCounter = 0
 var autoCounter = 0
@@ -19,19 +18,18 @@ var nw = false
 # center = nvl in disguise
 const default_size = Vector2(1100,800)
 const default_pos = Vector2(410,50)
-const center_size = Vector2(1100,300)
-const center_pos = Vector2(410,400)
+const CENTER_SIZE = Vector2(1100,300)
+const CENTER_POS = Vector2(410,400)
 var last_uid = ''
 var new_dialog = ''
 
-var leng = 0 # Only used in timer to make the condition checking faster
+var _target_leng = 0
 signal load_next
 
 func _ready():
 	autoTimer.stop()
-	timer.stop()
 
-func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false):
+func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false, mode="linear"):
 	if suppress_name: # if name should not be shown, as in the center case treat it as if it is the narrator
 		uid = ""
 		
@@ -58,51 +56,38 @@ func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = fals
 	visible_characters = self.text.length()
 	new_dialog = words
 	bbcode_text += words
-	leng = self.text.length() # latest bbcode_text.length()
+	_target_leng = self.text.length() #
 	
-	match cps:
-		25: timer.wait_time = 0.04
-		0:
-			self.visible_characters = leng
-			adding = false
-			if nw:
-				nw = false
-				emit_signal("load_next")
-			return
-		10: timer.wait_time = 0.1
-		_: timer.wait_time = 0.02
+	if cps <= 0:
+		visible_characters = _target_leng
+		adding = false
+		if nw:
+			nw = false
+			emit_signal("load_next")
+		return
 	
 	adding = true
-	timer.start()
+	$Tween.interpolate_property(self, "visible_characters", visible_characters,_target_leng,\
+		float(_target_leng-visible_characters)/float(cps),fun.movement_type(mode),Tween.EASE_IN_OUT)
+	$Tween.start()
 	
 func force_finish():
 	if adding:
-		self.visible_characters = leng
+		self.visible_characters = _target_leng
 		adding = false
-		timer.stop()
+		$Tween.stop_all()
 		if nw:
 			nw = false
 			if not vn.skipping:
 				emit_signal("load_next")
 
-func _on_Timer_timeout():
-	self.visible_characters += 1
-	if self.visible_characters >= leng:
-		adding = false
-		timer.stop()
-		if nw:
-			nw = false
-			emit_signal("load_next")
 
-
-# Call this after set_dialog, to get newly parsed words. (Pvars will be parsed
-# into text.)
 func get_text():
 	return self.new_dialog
 
 func center_mode():
-	self.rect_position = center_pos
-	self.rect_size = center_size
+	self.rect_position = CENTER_POS
+	self.rect_size = CENTER_SIZE
 	self.grow_horizontal = Control.GROW_DIRECTION_BOTH
 	self.grow_vertical = Control.GROW_DIRECTION_BOTH
 	self.bbcode_text = "[center]"
@@ -130,3 +115,9 @@ func _on_autoTimer_timeout():
 			autoCounter = 0
 			
 		skipCounter = 0
+
+func _on_Tween_tween_completed(_object, _key):
+	adding = false
+	if nw:
+		nw = false
+		emit_signal("load_next")
