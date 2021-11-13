@@ -91,6 +91,13 @@ const BAD_UIDS = ['all', '']
 var MAIN_MENU = preload("res://GodetteVN/fundamentals/mainMenu.tscn")
 
 
+# var screenEffects 
+# var music
+# var notif
+# var game
+# 
+
+
 # --------------------------- Game Experience Variables ------------------------
 
 var auto_on:bool = false # Auto forward or not
