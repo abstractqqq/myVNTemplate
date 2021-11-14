@@ -72,13 +72,11 @@ func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 	deg = (sdir*deg)
 	target_degree = self.rotation_degrees+deg
 	var m = fun.movement_type(mode)
-	var tween = Tween.new()
+	var tween = OneShotTween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
 		m, Tween.EASE_IN_OUT)
 	tween.start()
-	yield(get_tree().create_timer(t), "timeout")
-	tween.queue_free()
 		
 	
 func camera_move(off:Vector2, t:float, mode = 'linear'):
@@ -87,20 +85,18 @@ func camera_move(off:Vector2, t:float, mode = 'linear'):
 		self.offset = off
 	else:
 		var m = fun.movement_type(mode)
-		var tween = Tween.new()
+		var tween = OneShotTween.new()
 		add_child(tween)
 		tween.interpolate_property(self, "offset", self.offset, off, t,
 			m, Tween.EASE_IN_OUT)
 		tween.start()
-		yield(get_tree().create_timer(t), "timeout")
-		tween.queue_free()
 		
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	target_zoom = zm
 	target_offset = off
 	var m = fun.movement_type(mode)
-	var tween1 = Tween.new()
-	var tween2 = Tween.new()
+	var tween1 = OneShotTween.new()
+	var tween2 = OneShotTween.new()
 	add_child(tween1)
 	add_child(tween2)
 	tween1.interpolate_property(self, "offset", self.offset, off, t,
@@ -109,9 +105,6 @@ func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 		m, Tween.EASE_IN_OUT)
 	tween1.start()
 	tween2.start()
-	yield(get_tree().create_timer(t), "timeout")
-	tween1.queue_free()
-	tween2.queue_free()
 
 func zoom(zm:Vector2, off = Vector2(1,1)):
 	# by default, zoom is instant

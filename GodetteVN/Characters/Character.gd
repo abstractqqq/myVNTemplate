@@ -80,14 +80,11 @@ func _jump_action(params):
 func fadein(time : float, expression:String=""):
 	var _e = change_expression(expression, true)
 	_fading = true
-	var tween = Tween.new()
+	var tween = OneShotTween.new(self, "set", ["_fading", false])
 	add_child(tween)
 	tween.interpolate_property(self, "modulate", Color(0,0,0,0), vn.DIM, time,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
-	yield(get_tree().create_timer(time), "timeout")
-	tween.queue_free()
-	_fading = false
 	
 func fadeout(time : float):
 	var expFrames = self.get_sprite_frames()
@@ -103,13 +100,11 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 		sdir = -1
 	deg = (sdir*deg)
 	var m = fun.movement_type(type)
-	var tween = Tween.new()
+	var tween = OneShotTween.new()
 	add_child(tween)
 	tween.interpolate_property(self,'rotation_degrees',self.rotation_degrees, self.rotation_degrees+deg,t,\
 		m,Tween.EASE_IN_OUT)
 	tween.start()
-	yield(get_tree().create_timer(t), "timeout")
-	tween.queue_free()
 	
 
 func _dummy_fadeout(expFrames, prev_exp:String):
@@ -140,9 +135,7 @@ func _dummy_fadeout(expFrames, prev_exp:String):
 # linear. By following this fakeWalker, we can create a fake quadratic movement type
 # if type = quad. 
 #
-# Extra comment: jump, on the other hand, is not often used, and when used, often
-# involves a small amount of jump, like being shocked. So I think it's ok to not
-# implement a movement type for jump.
+# This is the best I can come up with for now...
 
 func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''):
 	self.loc = loca
@@ -174,5 +167,3 @@ func clear_dummy(ob:Object, _k: NodePath):
 	
 func is_fading():
 	return _fading
-
-

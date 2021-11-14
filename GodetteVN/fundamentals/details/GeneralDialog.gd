@@ -36,7 +36,6 @@ var one_time_font_change : bool = false
 #
 var _propagate_dvar_list = {}
 #----------------------
-const cps_dict = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Important components
 onready var bg = $background
 onready var QM = $VNUI/quickMenu
@@ -66,31 +65,10 @@ func set_bg_path(node_path:String):
 func _input(ev):
 	if ev.is_action_pressed('vn_rollback') and (waiting_acc or idle) and not vn.inSetting \
 	and not vn.inNotif and not vn.skipping and allow_rollback:
-		QM.reset_auto_skip()
-		if game.rollback_records.size() >= 1:
-			waiting_acc = false
-			if idle: # This if branch is needed because of how just_loaded works.
-				# Notice (waiting_acc or idle). Ususally player can only rollback when waiting_acc, but
-				# idle is the exception. So here we need to treat this a little differently.
-				idle = false
-			else:
-				game.history.pop_back()
-			screen.clean_up()
-			stage.reset_sideImage()
-			camera.reset()
-			waiting_cho = false
-			centered = false
-			nvl_off()
-			for n in choiceContainer.get_children():
-				n.queue_free()
-			generate_nullify()
-			on_rollback()
-			return
-		else: # Show to readers that they cannot rollback further
-			notif.show('rollback')
+		on_rollback()
 			
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
-		QM._on_historyButton_pressed()
+		QM._on_historyButton_pressed() # bad name... but lol
 		return
 	# QM hiding means that quick menu is being hidden. If that is the case,
 	# then the user probably wants to disable access to main menu too.
@@ -106,6 +84,7 @@ func _input(ev):
 	if ev.is_action_pressed('vn_cancel') and not vn.inNotif and not vn.inSetting and not no_right_click:
 		hide_UI()
 
+	# Can I simplify this?
 	if (ev.is_action_pressed("ui_accept") or ev.is_action_pressed('vn_accept')) and waiting_acc:
 		if hide_vnui: # Show UI
 			hide_UI(true)
@@ -448,8 +427,8 @@ func extend(ev:Dictionary):
 		var words = preprocess(ev[ext])
 		var cps = 50
 		if ev.has('speed'):
-			if (ev['speed'] in cps_dict.keys()):
-				cps = cps_dict[ev['speed']]
+			if (vn.cps_map.has(ev['speed'])):
+				cps = vn.cps_map[ev['speed']]
 		
 		_voice_to_hist(_check_latest_voice(ev) and vn.voice_to_history, prev_speaker, words)
 		if just_loaded:
@@ -1120,6 +1099,30 @@ func _yield_check(npy : bool): # npy = nullily_previous_yield
 	_nullify_prev_yield = npy
 
 func on_rollback():
+	#-------Prepare to rollback
+	QM.reset_auto_skip()
+	if game.rollback_records.size() >= 1:
+		waiting_acc = false
+		if idle: # This if branch is needed because of how just_loaded works.
+			# Notice (waiting_acc or idle). Ususally player can only rollback when waiting_acc, but
+			# idle is the exception. So here we need to treat this a little differently.
+			idle = false
+		else:
+			game.history.pop_back()
+		screen.clean_up()
+		stage.reset_sideImage()
+		camera.reset()
+		waiting_cho = false
+		centered = false
+		nvl_off()
+		for n in choiceContainer.get_children():
+			n.queue_free()
+		generate_nullify()
+	else: # Show to readers that they cannot rollback further
+		notif.show('rollback')
+		return
+	
+	#--------Actually rollback
 	var last = game.rollback_records.pop_back()
 	vn.dvar = last['dvar']
 	propagate_dvar_calls()

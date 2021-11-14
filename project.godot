@@ -44,6 +44,11 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/fundamentals/details/helpClasses/ObjectTimer.gd"
 }, {
+"base": "Tween",
+"class": "OneShotTween",
+"language": "GDScript",
+"path": "res://GodetteVN/fundamentals/details/helpClasses/OneShotTween.gd"
+}, {
 "base": "TextureButton",
 "class": "clickableObject",
 "language": "GDScript",
@@ -67,6 +72,7 @@ _global_script_class_icons={
 "GeneralDialog": "",
 "NotificaionBox": "",
 "ObjectTimer": "",
+"OneShotTween": "",
 "clickableObject": "",
 "eh_TransitionData": "",
 "saveSlot": ""

@@ -79,14 +79,11 @@ func after_image(pos:Vector2, scale:Vector2, m:Color, fliph:bool, flipv:bool, de
 	dummy.flip_v = flipv
 	dummy.rotation_degrees = deg
 	stage.add_child(dummy)
-	var tween = Tween.new()
+	var tween = OneShotTween.new(dummy, "queue_free")
 	dummy.add_child(tween)
 	tween.interpolate_property(dummy, "modulate", m, Color(m.r, m.g, m.b, 0), fade_time,
 		Tween.TRANS_LINEAR, Tween.EASE_IN_OUT)
 	tween.start()
-	yield(get_tree().create_timer(fade_time), 'timeout')
-	dummy.queue_free()
-
 
 #----------------------------------------------------------------------
 # Make a save.
