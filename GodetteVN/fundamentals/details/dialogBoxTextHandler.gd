@@ -4,6 +4,7 @@ extends RichTextLabel
 export(bool) var noise_on = false
 export(String) var noise_file_path = ''
 
+onready var timer = $Timer
 onready var autoTimer = $autoTimer
 var autoCounter = 0
 var skipCounter = 0
@@ -33,7 +34,7 @@ func set_chara_fonts(ev:Dictionary):
 		if ev[key] != '':
 			add_font_override(key, load(ev[key]))
 
-func set_dialog(words : String, cps = vn.cps, extend = false,mode="linear"):
+func set_dialog(words : String, cps = vn.cps, extend = false):
 	# words will be already preprocessed
 	if extend:
 		visible_characters = self.text.length()
@@ -44,29 +45,40 @@ func set_dialog(words : String, cps = vn.cps, extend = false,mode="linear"):
 		
 	_target_leng = self.text.length()
 	
-	if cps <= 0:
-		visible_characters = _target_leng
-		adding = false
-		if nw:
-			nw = false
-			emit_signal("load_next")
-		return
+	match cps:
+		25: timer.wait_time = 0.04
+		0:
+			visible_characters = -1
+			adding = false
+			if nw:
+				nw = false
+				emit_signal("load_next")
+			return
+		10: timer.wait_time = 0.1
+		_: timer.wait_time = 0.02
 	
 	adding = true
-	$Tween.interpolate_property(self, "visible_characters", visible_characters,_target_leng,\
-		float(_target_leng-visible_characters)/float(cps),fun.movement_type(mode),Tween.EASE_IN_OUT)
-	$Tween.start()
+	timer.start()
 
 	
 func force_finish():
 	if adding:
 		visible_characters = _target_leng
 		adding = false
-		$Tween.stop_all()
+		timer.stop()
 		if nw:
 			nw = false
 			if not vn.skipping:
 				emit_signal("load_next")
+
+func _on_Timer_timeout():
+	visible_characters += 1
+	if visible_characters >= _target_leng:
+		adding = false
+		timer.stop()
+		if nw:
+			nw = false
+			emit_signal("load_next")
 
 
 # Will be moved.
@@ -90,11 +102,4 @@ func _on_autoTimer_timeout():
 			autoCounter = 0
 			
 		skipCounter = 0
-
-
-func _on_Tween_tween_completed(_object, _key):
-	adding = false
-	if nw:
-		nw = false
-		emit_signal("load_next")
 	
