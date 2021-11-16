@@ -1,5 +1,8 @@
 extends Node
 
+# Will be reworked
+
+
 # name for this singleton in script is chara
 
 var all_chara = {

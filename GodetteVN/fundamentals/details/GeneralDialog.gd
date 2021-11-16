@@ -169,7 +169,7 @@ func interpret_events(event):
 		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
-			
+	ev.clear()
 #----------------------- on ready, new game, load, set up, end -----------------
 func auto_start():
 	var load_instruction = game.load_instruction
@@ -262,8 +262,7 @@ func set_center(ev: Dictionary):
 		set_nvl({'nvl': true,'font':ev['font']}, false)
 	else:
 		set_nvl({'nvl': true}, false)
-	var u = ''
-	if ev.has('who'): u = ev['who']
+	var u = _has_or_default(ev,"who","")
 	if ev.has('speed'):
 		say(u, ev['center'], ev['speed'])
 	else:
@@ -310,12 +309,12 @@ func generate_choices(ev: Dictionary):
 	if one_time_font_change:
 		var path = vn.FONT_DIR + ev['font']
 		dialogbox.add_font_override('normal_font', load(path))
-	var combine = "wwttff123"
+	var combine
 	for k in ev.keys():
 		if k != 'id' and k != 'choice' and k != 'voice':
 			combine = k
 			break
-	if combine != "wwttff123":
+	if combine: # if not null
 		say(combine, ev[combine], 0, true)
 	
 	if ev['choice'] == '' or ev['choice'] == 'url': 
@@ -388,7 +387,7 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 				dialogbox.reset_fonts()
 		
 		if just_loaded:
-			dialogbox.set_dialog(words, 50)
+			dialogbox.set_dialog(words)
 			just_loaded = false
 		else:
 			dialogbox.set_dialog(words, cps)
@@ -514,8 +513,7 @@ func play_bgm(ev : Dictionary, auto_forw=true) -> void:
 	
 func play_sound(ev :Dictionary) -> void:
 	var audio_path = vn.AUDIO_DIR + ev['audio']
-	var vol = 0
-	if ev.has('vol'): vol = ev['vol'] 
+	var vol = _has_or_default(ev, "vol", 0)
 	music.play_sound(audio_path, vol)
 	auto_load_next()
 	
@@ -526,19 +524,19 @@ func voice(path:String, auto_forw:bool = true) -> void:
 	if auto_forw: auto_load_next()
 	
 #------------------- Related to Background and Godot Scene Change ----------------------
-
+# Bad code. GET RID OF YIELD HERE.
 func change_background(ev : Dictionary, auto_forw=true) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg.bg_change(path)
 	else:
-		var eff_name = 'wwttff'
+		var eff_name
 		for n in ev.keys():
 			var tf = n.to_lower()
 			if tf in vn.TRANSITIONS:
 				eff_name = tf
 				break
-		if eff_name == 'wwttff':
+		if eff_name == null:
 			print("!!! Error at " + str(ev))
 			push_error("Unknown transition type given in bg change event.")
 			
@@ -567,7 +565,7 @@ func change_scene_to(path : String):
 	fileRelated.write_to_config()
 	print("You are changing scene. Rollback will be cleared. It's a good idea to explain "+\
 	"to the player the rules about rollback.")
-	game.rollback_records = []
+	game.rollback_records.clear()
 	if path == vn.title_screen_path:
 		music.stop_bgm()
 	if path == "free":
@@ -581,54 +579,53 @@ func change_scene_to(path : String):
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
 	var og = ev['dvar']
+	# The order is crucial.
+	var separators = ["+=","-=","*=","/=", "^=", "="]
+	var sep = ""
 	var splitted
 	var left
 	var right
-	if "+=" in og: # Bad, bad, bad code.
-		og = og.replace("+=", "=")
-		splitted = og.split("=")
-		left = splitted[0].strip_edges()
-		right = left+ "+" + "(" + splitted[1].strip_edges() + ")"
-	elif "-=" in og:
-		og = og.replace("-=", "=")
-		splitted = og.split("=")
-		left = splitted[0].strip_edges()
-		right = left+ "-" + "(" + splitted[1].strip_edges() + ")"
-	elif "*=" in og:
-		og = og.replace("*=", "=")
-		splitted = og.split("=")
-		left = splitted[0].strip_edges()
-		right = left+ "*" + "(" + splitted[1].strip_edges() + ")"
-	elif "/=" in og:
-		og = og.replace("/=", "=")
-		splitted = og.split("=")
-		left = splitted[0].strip_edges()
-		right = left+ "/" + "(" + splitted[1].strip_edges() + ")"
-	else:
-		splitted = og.split("=")
-		left = splitted[0].strip_edges()
-		right = splitted[1].strip_edges()
 	
+	# Worse than if else chains, but whatever...
+	for s in separators:
+		if s in og:
+			sep = s
+			splitted = og.split(s)
+			left = splitted[0].strip_edges()
+			right = splitted[1].strip_edges()
+			break
+	
+	if sep == "":
+		print("!!! Dvar error: " + str(ev))
+		push_error("No assignment found.")
+		
 	if vn.dvar.has(left):
 		if typeof(vn.dvar[left])== TYPE_STRING:
 			# If we get string, just set it to RHS
 			vn.dvar[left] = right
-		elif right == "true" or right == "True":
+		elif right.to_lower() == "true":
 			vn.dvar[left] = true
-		elif right == "false" or right == "False":
+		elif right.to_lower() == "false":
 			vn.dvar[left] = false
 		else:
-			vn.dvar[left] = fun.calculate(right)
+			match sep:
+				"=": vn.dvar[left] = fun.calculate(right)
+				"+=": vn.dvar[left] += fun.calculate(right)
+				"-=": vn.dvar[left] -= fun.calculate(right)
+				"*=": vn.dvar[left] *= fun.calculate(right)
+				"/=": vn.dvar[left] /= fun.calculate(right)
+				"^=": vn.dvar[left] = pow(vn.dvar[left], fun.calculate(right))
 			
 	else:
-		vn.error("Dvar {0} not found".format({0:left}) ,ev)
+		print("!!! Dvar error: " + str(ev))
+		push_error("Dvar {0} not found".format({0:left}))
 	
 	emit_signal("dvar_set")
 	propagate_dvar_calls(left)
 	auto_load_next()
 	
 func check_condition(cond_list) -> bool:
-	if typeof(cond_list) == 4: # if this is a string, not a list
+	if typeof(cond_list) == TYPE_STRING: # if this is a string, not a list
 		cond_list = [cond_list]
 	
 	var final_result:bool = true # start by assuming final_result is true
@@ -639,7 +636,7 @@ func check_condition(cond_list) -> bool:
 		if all_conditions.has(cond):
 			cond = all_conditions[cond]
 		if typeof(cond) == TYPE_STRING:
-			if cond == "or" or cond == "||":
+			if cond in ["or","||"]:
 				is_or = true
 				continue
 			elif vn.dvar.has(cond) and typeof(vn.dvar[cond]) == TYPE_BOOL:
@@ -698,13 +695,11 @@ func screen_effects(ev: Dictionary, auto_forw=true):
 		"tint": tint(ev)
 		"tintwave": tint(ev)
 		"flashlight": flashlight(ev)
-		_:
+		_: # GET RID OF YIELD HERE
 			if temp.size()==2 and not vn.skipping:
 				var mode = temp[1]
-				var c = Color.black
-				var t = 1
-				if ev.has('time'): t = ev['time']
-				if ev.has('color'): c = ev['color']
+				var c = _has_or_default(ev, "color", Color.black)
+				var t = _has_or_default(ev,"time",1)
 				if ef in vn.TRANSITIONS:
 					if mode == "out": # this might be a bit counter-intuitive
 						# but we have to stick with this
@@ -718,32 +713,9 @@ func screen_effects(ev: Dictionary, auto_forw=true):
 	if !vn.inLoading and auto_forw: auto_load_next()
 
 func flashlight(ev:Dictionary):
-	var sc = Vector2(1,1) # Default value
-	if ev.has('scale'): sc = ev['scale']
+	var sc = _has_or_default(ev, 'scale', Vector2(1,1))
 	screen.flashlight(sc)
 	game.playback_events['screen'] = ev
-
-#func fadein(time : float, auto_forw:bool = true) -> void:
-#	clear_boxes()
-#	if not self.nvl: show_boxes()
-#	QM.visible = false
-#	if not vn.skipping:
-#		screen.play_fade_in(Color.black, time)
-#		yield(get_tree().create_timer(time), "timeout")
-#	
-#	if not QM.hiding: QM.visible = true
-#	if auto_forw: auto_load_next()
-	
-#func fadeout(time : float, auto_forw:bool = true) -> void:
-#	clear_boxes()
-#	hide_boxes()
-#	QM.visible = false
-#	if not vn.skipping:
-#		screen.play_fade_out(Color.black, time)
-#		yield(get_tree().create_timer(time), "timeout")
-#	if not QM.hiding: QM.visible = true
-#	if not self.nvl: show_boxes()
-#	if auto_forw: auto_load_next()
 
 func tint(ev : Dictionary) -> void:
 	if ev.has('color'):
@@ -905,7 +877,7 @@ func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
 func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	var temp = combine.split(" ")
 	var uid = chara.forward_uid(temp[0])
-	if temp.size() > 2 or temp.size() == 0:
+	if not (temp.size() in [1, 2]):
 		vn.error("Wrong express format.")
 	elif temp.size() == 2: # No expression change if temp has size 1.
 		stage.change_expression(uid,temp[1])
@@ -953,7 +925,7 @@ func character_spin(uid:String, ev:Dictionary):
 func change_weather(we:String, auto_forw = true):
 	screen.show_weather(we) # If given weather doesn't exist, nothing will happen
 	if !vn.inLoading:
-		if we == "" or we == "off":
+		if we in ["", "off"]:
 			game.playback_events.erase('weather')
 		else:
 			game.playback_events['weather'] = {'weather':we}
@@ -1067,17 +1039,16 @@ func clear_boxes():
 	dialogbox.bbcode_text = ''
 
 func wait(time : float) -> void:
-	if just_loaded:
-		just_loaded = false
+	if just_loaded: just_loaded = false
 	if vn.skipping:
 		auto_load_next()
 		return
-	if time >= 0.1:
+	if time >= 0:
 		time = stepify(time, 0.1)
 		yield(get_tree().create_timer(time), "timeout")
 		auto_load_next()
 	else:
-		print("Warning: wait time < 0.1s is ignored.")
+		print("Warning: wait time < 0 is ignored.")
 		auto_load_next()
 
 func on_choice_made(ev : Dictionary, rollback_to_choice = true) -> void:
@@ -1086,8 +1057,12 @@ func on_choice_made(ev : Dictionary, rollback_to_choice = true) -> void:
 	for n in choiceContainer.get_children():
 		n.queue_free()
 	
-	if rollback_to_choice and allow_rollback:
-		game.makeSnapshot()
+	if allow_rollback:
+		if rollback_to_choice:
+			game.makeSnapshot()
+		else:
+			game.rollback_records.clear()
+	
 	waiting_cho = false
 	choiceContainer.visible = false
 	if ev.size() == 0:
@@ -1332,7 +1307,7 @@ func show_boxes():
 		hide_all_boxes = false
 		
 func _hide_namebox(uid:String):
-	if not hide_all_boxes:
+	if hide_all_boxes == false:
 		get_node('VNUI/nameBox').visible = true
 	if chara.all_chara.has(uid):
 		var info = chara.all_chara[uid]
@@ -1345,9 +1320,9 @@ func _hide_namebox(uid:String):
 # checks if the dict has something, if so, return the value of the field. Else return the
 # given default val
 func _has_or_default(ev:Dictionary, fname:String , default):
-	if ev.has(fname):
+	if ev.has(fname): 
 		return ev[fname]
-	else:
+	else: 
 		return default
 
 # Check this event for latest voice... If there is a voice field,
@@ -1424,7 +1399,7 @@ func system(ev : Dictionary):
 			# Example {system: RB clear} clears all rollback saves
 			# {system: RB clear_3} clears last 3 rollback saves
 			if temp[1] == "clear":
-				game.rollback_records = []
+				game.rollback_records.clear()
 			else:
 				var splitted = fun.break_line(temp[1], '_')
 				if splitted[0]=='clear' and splitted[1].is_valid_integer():
@@ -1554,8 +1529,7 @@ func _parse_true_false(truth, ev = {}) -> bool:
 	if typeof(truth) == TYPE_BOOL: # 1 = bool
 		return truth
 	if typeof(truth) == TYPE_STRING:
-		truth = truth.to_lower()
-		if truth == "true":
+		if truth.to_lower() == "true":
 			return true
 		else: # sloppy here.
 			return false

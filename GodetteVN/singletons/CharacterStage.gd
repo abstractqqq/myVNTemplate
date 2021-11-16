@@ -48,7 +48,7 @@ func reset_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
 func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 	if uid == 'all':
 		for n in $characters.get_children():
-			if n.in_all:
+			if n.in_all: 
 				n.shake(amount, time, mode)
 	else:
 		var c = find_chara_on_stage(uid)
@@ -136,15 +136,13 @@ func add_to_chara_at(uid:String, pt_name:String, path:String):
 		for c in $characters.get_children():
 			for n in c.get_children():
 				if n is Node2D and n.name == ('_' + pt_name):
-					var inst = load(path).instance()
-					n.add_child(inst)
+					n.add_child(load(path).instance())
 					break
 	else:
 		var c = find_chara_on_stage(uid)
 		for n in c.get_children():
 			if n is Node2D and n.name == ('_' + pt_name):
-				var inst = load(path).instance()
-				n.add_child(inst)
+				n.add_child(load(path).instance())
 				break
 
 func set_highlight(uid : String) -> void:

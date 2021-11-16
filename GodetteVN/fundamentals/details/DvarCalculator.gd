@@ -95,7 +95,7 @@ func _eval_a(ex_arr) -> float:
 		if e.is_valid_float():
 			stack.push_back(float(e))
 		elif vn.dvar.has(e):
-			if typeof(vn.dvar[e]) == TYPE_REAL or typeof(vn.dvar[e]) == TYPE_INT:
+			if typeof(vn.dvar[e]) in [TYPE_REAL, TYPE_INT]:
 				stack.push_back(vn.dvar[e])
 			else:
 				vn.error("The type of dvar {0} is not float. Cannot evaluate.".format({0:e}))
@@ -122,6 +122,5 @@ func _eval_a(ex_arr) -> float:
 				#print("Doing {0}/{1}".format({0:first,1:second}))
 			else:
 				vn.error("Unrecognized operator " + e)
-		
-	var result = stack.pop_back()
-	return result
+
+	return stack.pop_back()
