@@ -80,15 +80,15 @@ func updateRollback():
 	var cur_playback = playback_events.duplicate(true)
 	var rollback_data = {'currentBlock': currentBlock, 'currentIndex': currentIndex, \
 	'currentSaveDesc': currentSaveDesc, 'playback': cur_playback, 'dvar':vn.dvar.duplicate(),
-	'name_patches':chara.chara_name_patch.duplicate()}
+	'name_patches':vn.Chs.chara_name_patch.duplicate()}
 	rollback_records.push_back(rollback_data)
 	
 
 func checkSkippable()->bool:
-	if fileRelated.system_data.has(game.currentNodePath):
+	if vn.Files.system_data.has(game.currentNodePath):
 		#print("Current index is %s" %game.currentIndex)
 		#print("Max index is %s" %fileRelated.system_data[game.currentNodePath][game.currentBlock])
-		if game.currentIndex > fileRelated.system_data[game.currentNodePath][game.currentBlock]:
+		if game.currentIndex > vn.Files.system_data[game.currentNodePath][game.currentBlock]:
 			return false
 		else:
 			return true
@@ -98,7 +98,7 @@ func checkSkippable()->bool:
 func makeSnapshot():
 	updateRollback()
 	if checkSkippable() == false:
-		fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
+		vn.Filles.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
 
 func resetControlStates(to:bool=true):
 	# By default, resets everything back to true

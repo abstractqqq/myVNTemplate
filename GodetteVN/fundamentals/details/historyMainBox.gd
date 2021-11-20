@@ -10,8 +10,8 @@ func _ready():
 		var textbox = tb.instance()
 		var temp = game.history[i]
 		
-		if chara.all_chara.has(temp[0]): # temp[0] = uid
-			var c = chara.all_chara[temp[0]] 
+		if vn.Chs.all_chara.has(temp[0]): # temp[0] = uid
+			var c = vn.Chs.all_chara[temp[0]] 
 			textbox.setName(c["display_name"], c["name_color"])
 		else:
 			textbox.setName(temp[0])

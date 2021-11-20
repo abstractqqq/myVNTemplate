@@ -34,8 +34,8 @@ const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 
 # A duplicate method only for convenience.
 func get_character_info(uid:String):
-	if chara.all_chara.has(uid):
-		return chara.all_chara[uid]
+	if vn.Chs.all_chara.has(uid):
+		return vn.Chs.all_chara[uid]
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
@@ -85,14 +85,14 @@ func change_pos_2(uid:String, loca:Vector2, time:float = 1, type:String= "linear
 	c.change_pos_2(loca, time, type, expr)
 	
 func change_expression(uid:String, expression:String):
-	var info = chara.all_chara[uid]
+	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		var c = find_chara_on_stage(uid)
 		c.change_expression(expression)
 
 func fadein(uid: String, time: float, location: Vector2, expression:String) -> void:
 	# Ignore accidental spriteless character fadein
-	var info = chara.all_chara[uid]
+	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		if vn.skipping:
 			join(uid,location,expression)
@@ -120,7 +120,7 @@ func fadeout(uid: String, time: float) -> void:
 		c.fadeout(time)
 
 func join(uid: String, loc: Vector2, expression:String="default"):
-	var info = chara.all_chara[uid]
+	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		var ch_scene = load(info['path'])
 		# If load fails, there will be a bug pointing to this line
@@ -146,7 +146,7 @@ func add_to_chara_at(uid:String, pt_name:String, path:String):
 				break
 
 func set_highlight(uid : String) -> void:
-	var info = chara.all_chara[uid]
+	var info = vn.Chs.all_chara[uid]
 	if info.has('path'):
 		for n in $characters.get_children():
 			if n.unique_id == uid and n.apply_highlight and not n.is_fading():

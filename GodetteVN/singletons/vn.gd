@@ -91,12 +91,6 @@ const BAD_UIDS = ['all', '']
 var MAIN_MENU = preload("res://GodetteVN/fundamentals/mainMenu.tscn")
 
 
-# var screenEffects 
-# var music
-# var notif
-# var game
-# 
-
 
 # --------------------------- Game Experience Variables ------------------------
 
@@ -108,7 +102,6 @@ var auto_bound = -1 # Initialize to -1. Will get changed in fileRelated.
 # Default CPS
 var cps : float = 50.0 # either 50 or 25
 var cps_map = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
-# cps correspondence = {fast:50, slow:25, instant:0, slower:10}
 
 # ---------------------------- Dvar Varibles ----------------------------
 # VERY IMPORTANT
@@ -116,7 +109,12 @@ var cps_map = {'fast':50, 'slow':25, 'instant':0, 'slower':10}
 # Also not "nw". Do not initialize dvar here. Use set_dvar method instead.
 
 var dvar = {}
-# Maybe I should move these somewhere else?
+onready var Chs = get_node_or_null("Charas")
+onready var Notifs = get_node_or_null("Notifs/Notification")
+onready var Files = get_node_or_null("Files")
+onready var Utils = get_node_or_null("Utils")
+var Scene = null
+
 
 # ------------------------- Game State Variables--------------------------------
 # Maybe I should move these variables to somewhere else?
@@ -148,17 +146,7 @@ func reset_states():
 	auto_on = false
 	
 #--------------------------------------------------------------------------------
-func set_dvar(v:String, value):
-	if not v.is_valid_identifier():
-		error("A valid dvar name should only contain letters, digits, and underscores and the "+\
-		"first character should not be a digit.")
-	
-	for bad in vn.BAD_NAMES:
-		if bad == v:
-			error("The name %s cannot be used as a dvar name." % [bad])
-		
-	vn.dvar[v] = value
-	print("Successfully set %s to value %s." % [v, value])
+
 
 #Deprecated
 func error(message, ev = {}):
@@ -171,11 +159,11 @@ func error(message, ev = {}):
 		message += "\n Possible error at event: " + str(ev)
 			
 	push_error(message)
-	get_tree().quit() # If I can get rid of this function, then I do not need to extend 
-	# from node.
+	get_tree().quit()
 	
-
+func dvar_initialization():
+	$Dvars.dvar_initialization()
 
 func _ready():
-	pass
+	dvar_initialization()
 

@@ -91,7 +91,7 @@ func fadeout(time : float):
 	var expr = current_expression
 	if current_expression == "flip" or current_expression == "flipv":
 		expr = "default"
-	fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(expr,0), time, self)
+	vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(expr,0), time, self)
 	
 func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	if sdir > 0:
@@ -99,7 +99,7 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 	else:
 		sdir = -1
 	deg = (sdir*deg)
-	var m = fun.movement_type(type)
+	var m = vn.Utils.movement_type(type)
 	var tween = OneShotTween.new()
 	add_child(tween)
 	tween.interpolate_property(self,'rotation_degrees',self.rotation_degrees, self.rotation_degrees+deg,t,\
@@ -112,7 +112,7 @@ func _dummy_fadeout(expFrames, prev_exp:String):
 		if prev_exp == "flip" or "flipv":
 			prev_exp = 'default'
 			
-		fun.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
+		vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
 
 
 #----------------------------------------------------------------------------
@@ -139,7 +139,7 @@ func _dummy_fadeout(expFrames, prev_exp:String):
 
 func change_pos_2(loca:Vector2, time:float, type:String="linear", expr:String=''):
 	self.loc = loca
-	var m = fun.movement_type(type)
+	var m = vn.Utils.movement_type(type)
 	var fake = FakeWalker.new()
 	fake.name = "_dummy"
 	fake.position = position

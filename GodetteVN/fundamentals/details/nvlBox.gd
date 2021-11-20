@@ -30,7 +30,7 @@ signal load_next
 func _ready():
 	autoTimer.stop()
 
-func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false, mode="linear"):
+func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false):
 	if suppress_name: # if name should not be shown, as in the center case treat it as if it is the narrator
 		uid = ""
 		
@@ -40,7 +40,7 @@ func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = fals
 			if self.text != '':
 				self.bbcode_text += "\n\n"
 		else:
-			var ch_info = chara.all_chara[uid]
+			var ch_info = vn.Chs.all_chara[uid]
 			var color = ch_info["name_color"]
 			if color == null:
 				color = Color(255,255,255)

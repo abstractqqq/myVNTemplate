@@ -52,7 +52,7 @@ signal dvar_set
 
 #--------------------------------------------------------------------------------
 func _ready():
-	fileRelated.load_config()
+	vn.Files.load_config()
 	screen.set_debug(debug_mode)
 	var _error = self.connect("player_accept", self, '_yield_check')
 	if refresh_game_ctrl_state:
@@ -154,7 +154,7 @@ func interpret_events(event):
 		{'extend', ..}, {'ext', ..}:extend(ev)
 		{'premade'}:
 			if debug_mode: print("PREMADE EVENT:")
-			interpret_events(fun.call_premade_events(ev['premade']))
+			interpret_events(vn.Utils.call_premade_events(ev['premade']))
 		{"system"},{"sys"}: system(ev)
 		{'side'}: sideImageChange(ev)
 		{'choice',..}: generate_choices(ev)
@@ -169,7 +169,7 @@ func interpret_events(event):
 		{'center',..}: set_center(ev)
 		_: speech_parse(ev)
 				
-	ev.clear()
+
 #----------------------- on ready, new game, load, set up, end -----------------
 func auto_start():
 	var load_instruction = game.load_instruction
@@ -182,7 +182,7 @@ func auto_start():
 		print("For auto_start, you need to provide a dialog json file.")
 		return false
 	else:
-		var dialog_data = fileRelated.load_json(dialog_json)
+		var dialog_data = vn.Files.load_json(dialog_json)
 		if dialog_data.has('Dialogs') and dialog_data.has('Choices'):
 			if dialog_data.has('Conditions'):
 				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],dialog_data['Conditions'], load_instruction)
@@ -198,6 +198,7 @@ func get_all_dialog_blocks():
 	return all_blocks
 		
 func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String) -> void:
+	vn.Scene = self
 	get_tree().set_auto_accept_quit(false)
 	game.currentSaveDesc = scene_description
 	game.currentNodePath = get_tree().current_scene.filename
@@ -342,7 +343,7 @@ func generate_choices(ev: Dictionary):
 				break
 		
 		var choice_ev = ev2[choice_text] # the choice action
-		choice_text = fun.MarkUp(choice_text)
+		choice_text = vn.Utils.MarkUp(choice_text)
 		var choice = load(choice_bar).instance()
 		choice.setup_choice(choice_text,choice_ev,vn.show_chosen_choices)
 		choice.connect("choice_made", self, "on_choice_made")
@@ -374,10 +375,10 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 	else:
 		if not _hide_namebox(uid):
 			$VNUI.namebox_follow_chara(uid)
-			var info = chara.all_chara[uid]
+			var info = vn.Chs.all_chara[uid]
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
-			if info['font'] and not one_time_font_change:
+			if info.has('font') and info['font'] and not one_time_font_change:
 				var fonts = {'normal_font': info['normal_font'],
 				'bold_font': info['bold_font'],
 				'italics_font':info['italics_font'],
@@ -413,7 +414,7 @@ func extend(ev:Dictionary):
 		var prev_speaker = game.history.back()[0]
 		if not _hide_namebox(prev_speaker):
 			$VNUI.namebox_follow_chara(prev_speaker)
-			var info = chara.all_chara[prev_speaker]
+			var info = vn.Chs.all_chara[prev_speaker]
 			speaker.set("custom_colors/default_color", info["name_color"])
 			speaker.bbcode_text = info["display_name"]
 			
@@ -562,7 +563,7 @@ func change_scene_to(path : String):
 	change_weather('', false) # NOT screen.weather_off because we need to tell the sys
 	# remove record of weather, which is only done in change_weather()
 	QM.reset_auto_skip()
-	fileRelated.write_to_config()
+	vn.Files.write_to_config()
 	print("You are changing scene. Rollback will be cleared. It's a good idea to explain "+\
 	"to the player the rules about rollback.")
 	game.rollback_records.clear()
@@ -609,12 +610,12 @@ func set_dvar(ev : Dictionary) -> void:
 			vn.dvar[left] = false
 		else:
 			match sep:
-				"=": vn.dvar[left] = fun.calculate(right)
-				"+=": vn.dvar[left] += fun.calculate(right)
-				"-=": vn.dvar[left] -= fun.calculate(right)
-				"*=": vn.dvar[left] *= fun.calculate(right)
-				"/=": vn.dvar[left] /= fun.calculate(right)
-				"^=": vn.dvar[left] = pow(vn.dvar[left], fun.calculate(right))
+				"=": vn.dvar[left] = vn.Utils.calculate(right)
+				"+=": vn.dvar[left] += vn.Utils.calculate(right)
+				"-=": vn.dvar[left] -= vn.Utils.calculate(right)
+				"*=": vn.dvar[left] *= vn.Utils.calculate(right)
+				"/=": vn.dvar[left] /= vn.Utils.calculate(right)
+				"^=": vn.dvar[left] = pow(vn.dvar[left], vn.Utils.calculate(right))
 			
 	else:
 		print("!!! Dvar error: " + str(ev))
@@ -809,7 +810,7 @@ func character_event(ev : Dictionary) -> void:
 	var temp = ev['chara'].split(" ")
 	if temp.size() != 2:
 		vn.error('Expecting a uid and an effect name separated by a space.', ev)
-	var uid = chara.forward_uid(temp[0]) # uid of the character
+	var uid = vn.Chs.forward_uid(temp[0]) # uid of the character
 	var ef = temp[1] # what character effect
 	if uid == 'all' or stage.is_on_stage(uid):
 		match ef: # jump and shake will be ignored during skipping
@@ -876,7 +877,7 @@ func character_shake(uid:String, ev:Dictionary, mode:int=0) -> void:
 
 func express(combine : String, auto_forw:bool = true, ret_uid:bool = false):
 	var temp = combine.split(" ")
-	var uid = chara.forward_uid(temp[0])
+	var uid = vn.Chs.forward_uid(temp[0])
 	if not (temp.size() in [1, 2]):
 		vn.error("Wrong express format.")
 	elif temp.size() == 2: # No expression change if temp has size 1.
@@ -943,7 +944,7 @@ func history_manipulation(ev: Dictionary):
 		
 		for k in ev.keys():
 			if k != 'history':
-				game.history.push_back([k, fun.MarkUp(ev[k])])
+				game.history.push_back([k, vn.Utils.MarkUp(ev[k])])
 				break
 		
 	elif what == "pop":
@@ -962,9 +963,9 @@ func conditional_branch(ev : Dictionary) -> void:
 		change_block_to(ev['else'],0)
 
 func then(ev : Dictionary) -> void:
-	if fileRelated.system_data.has(game.currentNodePath):
-		if game.currentIndex > fileRelated.system_data[game.currentNodePath][game.currentBlock]:
-			fileRelated.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
+	if vn.Files.system_data.has(game.currentNodePath):
+		if game.currentIndex > vn.Files.system_data[game.currentNodePath][game.currentBlock]:
+			vn.Files.system_data[game.currentNodePath][game.currentBlock] = game.currentIndex
 	if ev.has('target id'):
 		change_block_to(ev['then'], 1 + get_target_index(ev['then'], ev['target id']))
 	else:
@@ -1094,7 +1095,7 @@ func on_rollback():
 			n.queue_free()
 		generate_nullify()
 	else: # Show to readers that they cannot rollback further
-		notif.show('rollback')
+		vn.Notifs.show('rollback')
 		return
 	
 	#--------Actually rollback
@@ -1105,8 +1106,8 @@ func on_rollback():
 	game.currentIndex = last['currentIndex']
 	game.currentBlock = last['currentBlock']
 	game.playback_events = last['playback']
-	chara.chara_name_patch = last['name_patches']
-	chara.patch_display_names()
+	vn.Chs.chara_name_patch = last['name_patches']
+	vn.Chs.patch_display_names()
 	current_index = game.currentIndex
 	current_block = all_blocks[game.currentBlock]
 	load_playback(game.playback_events, true)
@@ -1205,7 +1206,7 @@ func dvar_or_float(dvar:String):
 
 func flt_text(ev: Dictionary) -> void:
 	var wt = ev['wait']
-	ev['float'] = fun.MarkUp(ev['float'])
+	ev['float'] = vn.Utils.MarkUp(ev['float'])
 	var loc = _has_or_default(ev,'loc', Vector2(600,300))
 	var in_t = _has_or_default(ev, 'fadein', 1)
 	var f = load(float_text).instance()
@@ -1309,8 +1310,8 @@ func show_boxes():
 func _hide_namebox(uid:String):
 	if hide_all_boxes == false:
 		get_node('VNUI/nameBox').visible = true
-	if chara.all_chara.has(uid):
-		var info = chara.all_chara[uid]
+	if vn.Chs.all_chara.has(uid):
+		var info = vn.Chs.all_chara[uid]
 		if info.has('no_nb') and info['no_nb']:
 			get_node('VNUI/nameBox').visible = false
 			return true
@@ -1401,19 +1402,18 @@ func system(ev : Dictionary):
 			if temp[1] == "clear":
 				game.rollback_records.clear()
 			else:
-				var splitted = fun.break_line(temp[1], '_')
+				var splitted = temp[1].split('_')
 				if splitted[0]=='clear' and splitted[1].is_valid_integer():
 					var n = int(splitted[1])
 					for _i in range(n):
 						game.rollback_records.pop_back()
 		"auto_save", "AS": # make a save, with 0 seconds delay, and save
 			# at current index - 1 because at current index, the event is sys:auto_save
-			fun.make_a_save("[Auto Save] ",0,1)
+			vn.Utils.make_a_save("[Auto Save] ",0,1)
 		"make_save", "MS":
 			QM.reset_auto_skip()
-			notif.show("make_save")
-			var cur_notif = notif.get_current_notif()
-			yield(cur_notif, "clicked")
+			vn.Notifs.show("make_save")
+			yield(vn.Notifs.get_current_notif(), "clicked")
 
 		# The above are not included in 'all'.
 		
@@ -1474,7 +1474,7 @@ func _parse_loc(loc, ev = {}) -> Vector2:
 		return loc
 	if typeof(loc) == TYPE_STRING and (loc == "R" or loc == "r"):
 		var v = get_viewport().size
-		return fun.random_vec(Vector2(100,v.x-100),Vector2(80,v.y-80))
+		return vn.Utils.random_vec(Vector2(100,v.x-100),Vector2(80,v.y-80))
 	# If you get error here, that means the string cannot be split
 	# as floats with delimiter space.
 	var vec = loc.split_floats(" ")
@@ -1487,7 +1487,7 @@ func _parse_dir(dir, ev = {}) -> Vector2:
 	if dir in vn.DIRECTION:
 		return vn.DIRECTION[dir]
 	elif typeof(dir) == TYPE_STRING and (dir == "R" or dir == "r"):
-		return fun.random_vec(Vector2(-1,1), Vector2(-1,1)).normalized()
+		return vn.Utils.random_vec(Vector2(-1,1), Vector2(-1,1)).normalized()
 	else:
 		return _parse_loc(dir, ev).normalized()
 
@@ -1558,6 +1558,11 @@ func _dialog_state_reset():
 		nvlBox.nw = false
 	else:
 		dialogbox.nw = false
+		
+func _notification(what):
+	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
+		vn.Notifs.show("quit")
+		QM.reset_auto_skip()
 
 func preprocess(words : String) -> String:
 	_dialog_state_reset()

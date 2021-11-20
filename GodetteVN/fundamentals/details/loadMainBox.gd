@@ -4,7 +4,7 @@ var slot = preload("res://GodetteVN/fundamentals/details/saveSlot.tscn")
 
 func _ready():
 	# Create the appearance
-	var saves = fileRelated.get_save_files()
+	var saves = vn.Files.get_save_files()
 	for i in range(saves.size()):
 		var saveSlot = slot.instance()
 		var file = File.new()
@@ -17,7 +17,7 @@ func _ready():
 			saveSlot.path = vn.SAVE_DIR + saves[i]
 			# thumbnail
 			var thumbnail = saveSlot.get_node("Button/HBoxContainer/saveThumbnail")
-			thumbnail.texture = fileRelated.data2Thumbnail(data['thumbnail'], data['format'])
+			thumbnail.texture = vn.Files.data2Thumbnail(data['thumbnail'], data['format'])
 			saveSlot.connect('load_ready', self, 'load_save')
 			$allSaves.add_child(saveSlot)
 			file.close()

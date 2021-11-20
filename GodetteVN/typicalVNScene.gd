@@ -5,10 +5,6 @@ extends GeneralDialog
 #---------------------------------------------------------------------
 # To start using a json, do this
 func _ready():
-	# game.currentSaveDesc = scene_description
-	# game.currentNodePath = get_tree().current_scene.filename
-	# This is is to make sure that a quit notification is popped up before quit
-	get_tree().set_auto_accept_quit(false)
 	if auto_start():
 		# The following is optional. 
 		
@@ -18,7 +14,7 @@ func _ready():
 		# For instance, the current implementation is that if you have one save that finished
 		# chapter one, then all your other save files will be able to skip chapter 1.
 		# This line should be included when you're ready to deploy. (Also test it before release)
-		fileRelated.make_spoilerproof(game.currentNodePath, get_all_dialog_blocks())
+		vn.Files.make_spoilerproof(game.currentNodePath, get_all_dialog_blocks())
 		# Once you call the function fileRelated.make_spoilerproof once
 		# Then even if you delete this line, this dialog will still be spoiler proof.
 		# To revert this, call reset_spoilerproof(scene_path:String)

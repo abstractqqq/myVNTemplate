@@ -13,8 +13,8 @@ var path = ''
 func _on_Button_pressed():
 	if mode == 0: # if we are accessing this in the save screen
 		if self.path != '':
-			notif.show("override")
-			var override_choice = notif.get_current_notif()
+			vn.Notif.show("override")
+			var override_choice = vn.Notifs.get_current_notif()
 			override_choice.connect("decision", self, "override_save")
 		else:
 			# self.path == ""
@@ -23,7 +23,7 @@ func _on_Button_pressed():
 	
 	else: # we are accessing this in the load screen
 		if self.path != '':
-			var success = fileRelated.readSave(self)
+			var success = vn.Files.readSave(self)
 			if success:
 				emit_signal('load_ready')
 			else:
@@ -41,7 +41,7 @@ func override_save(yes: bool):
 
 func make_save(save_path):
 	# save current config
-	fileRelated.write_to_config()
+	vn.Files.write_to_config()
 	
 	# appearance of save slot
 	var dt = OS.get_datetime()
@@ -63,8 +63,8 @@ func make_save(save_path):
 	'currentIndex': game.currentIndex, 'thumbnail': raw_thumbnail_data,\
 	'currentSaveDesc': game.currentSaveDesc, 'history':game.history,\
 	'playback': game.playback_events, 'datetime': get_datetime(), 'format':game.currentFormat,\
-	'dvar':vn.dvar, 'rollback':game.rollback_records, 'chara_pointer':chara.chara_pointer,
-	'name_patches':chara.chara_name_patch, 'control_state':game.control_state}
+	'dvar':vn.dvar, 'rollback':game.rollback_records, 'chara_pointer':vn.Chs.chara_pointer,
+	'name_patches':vn.Chs.chara_name_patch, 'control_state':game.control_state}
 
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.SAVE_DIR):
@@ -115,7 +115,7 @@ func load_thumbnail():
 				var error = file.open(vn.THUMBNAIL_DIR + file_name, File.READ)
 				if error == OK:
 					raw_thumbnail_data = file.get_var()
-					thumbnail.texture = fileRelated.data2Thumbnail(raw_thumbnail_data, game.currentFormat)
+					thumbnail.texture = vn.Files.data2Thumbnail(raw_thumbnail_data, game.currentFormat)
 					file.close()
 					break
 				else: # file won't open because of some error

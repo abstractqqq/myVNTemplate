@@ -55,9 +55,9 @@ func readSave(save : saveSlot) -> bool:
 		game.rollback_records = data['rollback']
 		game.playback_events = data['playback']
 		game.load_instruction = "load_game"
-		chara.chara_pointer = data['chara_pointer']
-		chara.chara_name_patch = data['name_patches']
-		chara.patch_display_names()
+		vn.Chs.chara_pointer = data['chara_pointer']
+		vn.Chs.chara_name_patch = data['name_patches']
+		vn.Chs.patch_display_names()
 		vn.dvar = data['dvar']
 		success = true
 		file.close()

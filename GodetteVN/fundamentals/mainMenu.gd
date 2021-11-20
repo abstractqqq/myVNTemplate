@@ -26,15 +26,15 @@ func _input(ev):
 		_on_returnButton_pressed()
 
 func _on_returnButton_pressed():
-	fileRelated.write_to_config()
+	vn.Files.write_to_config()
 	vn.inSetting = false
 	self.queue_free()
 
 func _on_quitButton_pressed():
-	notif.show("quit")
+	vn.Notifs.show("quit")
 
 func _on_mainButton_pressed():
-	notif.show("main")
+	vn.Notifs.show("main")
 
 func _on_saveButton_mouse_entered():
 	renew_content(1)

@@ -1,5 +1,4 @@
 extends TextureRect
-class_name NotificaionBox
 
 
 var type : String
@@ -42,20 +41,20 @@ func set_text(which:String):
 		"make_save":
 			tbox.bbcode_text = "Do you want to make a save?"
 		_:
-			notif.hide()
+			vn.Notifs.hide()
 
 func _on_noButton_pressed():
 	emit_signal("clicked")
-	notif.hide()
+	vn.Notifs.hide()
 
 func _on_yesButton_pressed():
 	match type:
 		"main":
-			fileRelated.write_to_config()
+			vn.Files.write_to_config()
 			screen.clean_up()
 			music.stop_bgm()
 			game.resetPlayback()
-			chara.dvar_declaration()
+			vn.dvar_initialization()
 			stage.clean_up()
 			#----------------------------------------
 			var error = get_tree().change_scene(vn.ROOT_DIR + vn.title_screen_path)
@@ -64,17 +63,17 @@ func _on_yesButton_pressed():
 		"override":
 			emit_signal("decision", true)
 		"quit":
-			fileRelated.write_to_config()
+			vn.Files.write_to_config()
 			get_tree().quit()
 		"make_save":
-			fun.make_a_save("", 0.2)
+			vn.Utils.make_a_save("", 0.2)
 	
 	emit_signal("clicked")
-	notif.hide()
+	vn.Notifs.hide()
 
 func _on_okButton_pressed():
 	emit_signal("clicked")
-	notif.hide()
+	vn.Notifs.hide()
 
 
 

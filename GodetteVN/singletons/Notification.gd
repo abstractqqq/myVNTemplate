@@ -14,6 +14,7 @@ func hide():
 	get_node("backgroundColor").visible = false
 	
 func show(which : String) -> void:
+	clear()
 	vn.inNotif = true
 	get_node("backgroundColor").visible = true
 	if which in notifList:

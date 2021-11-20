@@ -71,7 +71,7 @@ func camera_spin(sdir:int, deg:float, t:float, mode = "linear"):
 		sdir = -1
 	deg = (sdir*deg)
 	target_degree = self.rotation_degrees+deg
-	var m = fun.movement_type(mode)
+	var m = vn.Utils.movement_type(mode)
 	var tween = OneShotTween.new()
 	add_child(tween)
 	tween.interpolate_property(self, "rotation_degrees", self.rotation_degrees, target_degree, t,
@@ -84,7 +84,7 @@ func camera_move(off:Vector2, t:float, mode = 'linear'):
 	if t <= 0.05:
 		self.offset = off
 	else:
-		var m = fun.movement_type(mode)
+		var m = vn.Utils.movement_type(mode)
 		var tween = OneShotTween.new()
 		add_child(tween)
 		tween.interpolate_property(self, "offset", self.offset, off, t,
@@ -94,7 +94,7 @@ func camera_move(off:Vector2, t:float, mode = 'linear'):
 func zoom_timed(zm:Vector2, t:float, mode:String, off = Vector2(1,1)):
 	target_zoom = zm
 	target_offset = off
-	var m = fun.movement_type(mode)
+	var m = vn.Utils.movement_type(mode)
 	var tween1 = OneShotTween.new()
 	var tween2 = OneShotTween.new()
 	add_child(tween1)

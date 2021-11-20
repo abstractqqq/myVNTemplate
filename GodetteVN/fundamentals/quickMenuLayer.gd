@@ -3,12 +3,6 @@ extends Node2D
 var hiding = false
 
 
-func _notification(what):
-	if what == MainLoop.NOTIFICATION_WM_QUIT_REQUEST:
-		notif.clear()
-		notif.show("quit")
-		reset_auto_skip()
-
 func _on_SettingButton_pressed():
 	reset_auto_skip()
 	var setting = load(vn.SETTING_PATH)
@@ -59,19 +53,17 @@ func _on_historyButton_pressed():
 
 func _on_saveButton_pressed():
 	reset_auto_skip()
-	fun.create_thumbnail()
+	vn.Utils.create_thumbnail()
 	var save = load(vn.SAVE_PATH)
 	get_parent().add_child(save.instance())
 
 
 func _on_quitButton_pressed():
-	notif.clear()
-	notif.show("quit")
+	vn.Notifs.show("quit")
 	reset_auto_skip()
 	
 func _on_mainButton_pressed():
-	notif.clear()
-	notif.show("main")
+	vn.Notifs.show("main")
 	reset_auto_skip()
 
 
@@ -158,5 +150,5 @@ func _on_QsaveButton_pressed():
 	var flt = load(vn.DEFAULT_FLOAT).instance()
 	screen.add_child(flt)
 	flt.display("Quick save made.", 2, 0.5, Vector2(60,60), 'res://fonts/ARegular.tres')
-	fun.make_a_save("[Quick Save] ")
+	vn.Utils.make_a_save("[Quick Save] ")
 
