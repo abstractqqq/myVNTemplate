@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://assets/other/penguin.png" type="Texture" id=2]
-[ext_resource path="res://GodetteVN/ClickableObjects/clickableObject1.gd" type="Script" id=3]
+[ext_resource path="res://GodetteVN/ClickObjects/clickableObject1.gd" type="Script" id=3]
 
 [node name="object1" type="TextureButton"]
 margin_left = 1060.0
