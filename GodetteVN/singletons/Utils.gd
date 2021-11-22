@@ -91,14 +91,13 @@ func after_image(pos:Vector2, scale:Vector2, m:Color, fliph:bool, flipv:bool, de
 func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 	var thumbnail = get_viewport().get_texture().get_data()
 	thumbnail.flip_y()
-	thumbnail.resize(width, height, Image.INTERPOLATE_LANCZOS)
-	game.currentFormat = thumbnail.get_format()
-	
+	thumbnail.convert(vn.ThumbnailFormat)
+	thumbnail.resize(width, height, Image.INTERPOLATE_BILINEAR)
+	# print(thumbnail.get_format())
 	var dir = Directory.new()
 	if !dir.dir_exists(vn.THUMBNAIL_DIR):
 		dir.make_dir_recursive(vn.THUMBNAIL_DIR)
 		
-	dir.call_deferred('free')
 		
 	var file = File.new()
 	var save_path = vn.THUMBNAIL_DIR + 'thumbnail.dat'
@@ -108,9 +107,7 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		file.store_var(thumbnail.get_data())
 		file.close()
 		
-
-# sl.make_save only works for standard VN saves. That means if you're 
-# adding extra info, you will have to modify sl.make_save first.
+# Refactor
 func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 	delay = abs(delay)
 	if delay > 0:
@@ -119,15 +116,76 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
 	var slot = load(vn.SAVESLOT)
 	var sl = slot.instance() # bad. See below
-	var temp = game.currentSaveDesc
-	var curId = game.currentIndex
-	game.currentIndex = game.currentIndex - offset_by
-	game.currentSaveDesc = msg + temp
+	var temp = vn.Pgs.currentSaveDesc
+	var curId = vn.Pgs.currentIndex
+	vn.Pgs.currentIndex = vn.Pgs.currentIndex - offset_by
+	vn.Pgs.currentSaveDesc = msg + temp
 	sl.make_save(sl.path)# Because in reality we do not need to instance a save slot object. Only the data
 	sl.queue_free()
-	game.currentSaveDesc = temp
-	game.currentIndex = curId
+	vn.Pgs.currentSaveDesc = temp
+	vn.Pgs.currentIndex = curId
+	
+func gather_save_data():
+	vn.Files.write_to_config()
+	# appearance of save slot
+	var dt = OS.get_datetime()
+	dt['month'] = str(dt['month'])
+	dt['day'] = str(dt['day'])
+	dt['year'] = str(dt['year'])
+	dt['hour'] = str(dt['hour'])
+	dt['minute'] = str(dt['minute'])
+	dt['second'] = str(dt['second'])
+	var datetime = dt['month'] + "/" + dt['day'] + "/" + dt['year'] + \
+	",  " + dt['hour'] + ":" + dt['minute'] + ':' + dt['second']
+	# Actual save
+	vn.Pgs.get_latest_nvl() # get current nvl text.
+	vn.Pgs.get_latest_onstage() # get current on stage characters.
+	var data = {'currentNodePath':vn.Pgs.currentNodePath, 'currentBlock': vn.Pgs.currentBlock,\
+	'currentIndex': vn.Pgs.currentIndex, 'thumbnail': latest_thumbnail(),\
+	'currentSaveDesc': vn.Pgs.currentSaveDesc, 'history':vn.Pgs.history,\
+	'playback': vn.Pgs.playback_events, 'datetime': datetime,\
+	'dvar':vn.dvar, 'rollback':vn.Pgs.rollback_records, 'chara_pointer':vn.Chs.chara_pointer,
+	'name_patches':vn.Chs.chara_name_patch, 'control_state':vn.Pgs.control_state}
+	
+	return data
 
+func latest_thumbnail():
+	
+	var dir = Directory.new()
+	if !dir.dir_exists(vn.THUMBNAIL_DIR):
+		# then go by default
+		return "res://gui/default_save_thumbnail.png"
+
+	# so directory already exists
+	dir.open(vn.THUMBNAIL_DIR)
+	dir.list_dir_begin()
+	
+	while true:
+		var file_name = dir.get_next()
+		if file_name == "":
+			break
+		elif not file_name.begins_with("."):
+			if file_name == 'thumbnail.dat':
+				var file = File.new()
+				var error = file.open(vn.THUMBNAIL_DIR + file_name, File.READ)
+				if error == OK:
+					return file.get_var()
+				else: # file won't open because of some error
+					return "res://gui/default_save_thumbnail.png"
+			else:
+				return "res://gui/default_save_thumbnail.png"
+		
+	dir.list_dir_end()
+	return
+
+func write_to_save(path:String, data:Dictionary):
+	var file = File.new()
+	var error = file.open_encrypted_with_pass(path, File.WRITE, vn.PASSWORD)
+	if error == OK:
+		file.store_var(data)
+		file.close()
+	else:
+		push_error('Error when loading saves. ' + str(error))
 
 #------------------------------------------------------------------------
 # Given any sentence with a [dvar] in it, 

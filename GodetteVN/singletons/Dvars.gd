@@ -3,13 +3,13 @@ extends Node
 func dvar_initialization():
 	var temp = get_node("RegisteredDvars")
 	var temp_node = Node.new()
-	var ban_list = ["Script Variables"]
+	var ban_list = {"Script Variables":false}
 	for p in temp_node.get_property_list():
-		ban_list.append(p['name'])
+		ban_list[p['name']] = false
 	temp_node.queue_free()
 	for dv in temp.get_property_list():
 		var n = dv['name']
-		if n in ban_list:
+		if ban_list.has(n):
 			continue
 		
 		if not n.is_valid_identifier():

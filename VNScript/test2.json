@@ -147,7 +147,7 @@
 				"female": "This is how you play your custom Godot special effect scenes."
 			},
 			{
-				"sfx": "/GodetteVN/sfxScenes/flash.tscn"
+				"sfx": "/GodetteVN/SpecialScenes/flash.tscn"
 			},
 			{
 				"chara": "female jump",

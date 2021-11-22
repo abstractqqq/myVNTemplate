@@ -2,34 +2,6 @@ extends Node2D
 
 const direction = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT, 'right': Vector2.RIGHT}
 
-# Note for future:
-# The code here is highly repetitive. I could have used call() to 
-# simplify many things?
-
-
-# What is the point of making this a singleton instead of a node
-# inside a scene?
-
-# 1. It separates characters from VNs, in case you want to use your 
-# character sprites elsewhere, outside of VNs, e.g. you can call them
-# in a custom movie scene via code. 
-# 2. It makes each part of VN more independent, since
-# characters are so important, they deserve their own stage.
-# 3. Think of this as a universal manager for your character sprites
-# and actions. (Notice the z index.You might need to bump it up depending
-# on ur project.)
-#
-
-# Some recurring code comments:
-
-# 1. You might see this multiple times
-# var c = find_chara_on_stage(uid)
-#	  c.class_methods...
-# It is not gauranteed that find_chara_on_stage will find the chara.
-# If uid hasn't joined, then this method will return null
-# The reason I didn't put an error report like vn.error("...") is that
-# This null error, imo, is more obvious to debug than getting an error
-# reported by vn.error("")
 
 
 # A duplicate method only for convenience.
@@ -55,7 +27,7 @@ func shake(uid : String, amount:float = 250, time:float = 2, mode:int = 0):
 		c.shake(amount, time, mode)
 
 
-func jump(uid:String, dir:Vector2 = Vector2.UP, amount:float = 80, time:float = 0.15):
+func jump(uid:String, dir:Vector2=Vector2.UP, amount:float = 80, time:float = 0.1):
 	if uid == 'all':
 		for n in $characters.get_children():
 			if n.in_all:
@@ -184,7 +156,6 @@ func find_chara_on_stage(uid:String):
 			
 	print('Warning: the character with uid {0} cannot be found or has not joined the stage.'.format({0:uid}))
 	print("Depending on your event, you will get a bug or nothing will be done.")
-
 
 func is_on_stage(uid : String) -> bool:
 	for n in $characters.get_children():

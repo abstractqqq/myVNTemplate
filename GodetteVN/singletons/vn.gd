@@ -9,12 +9,11 @@ const max_history_size = 300 # Max number of history entries
 const max_rollback_steps = 50 # Max steps of rollback to keep
 # It is recommended that max_rollback_steps is kept to a small number.
 const voice_to_history = true # Should voice be replayable in history?
+
 # Do you want to use a different color for chosen choices? Only works
 # if the scene is made spoilerproof.
 const show_chosen_choices = true
 
-# Narrator
-const narrator_display_name:String = ''
 # paths
 const title_screen_path:String = "/GodetteVN/titleScreen.tscn"
 const start_scene_path:String = '/GodetteVN/typicalVNScene.tscn'
@@ -44,24 +43,20 @@ const SCRIPT_DIR:String = "res://VNScript/"
 const THUMBNAIL_DIR:String = "user://temp/"
 const FONT_DIR:String = "res://fonts/"
 # Important screen paths
-const SETTING_PATH:String = "res://GodetteVN/fundamentals/settings.tscn"
-const LOAD_PATH:String = "res://GodetteVN/fundamentals/loadScreen.tscn"
-const SAVE_PATH:String = "res://GodetteVN/fundamentals/saveScreen.tscn"
-const HIST_PATH:String = "res://GodetteVN/fundamentals/historyScreen.tscn"
+const SETTING_PATH:String = "res://GodetteVN/Core/SettingsScreen/settings.tscn"
+const LOAD_PATH:String = "res://GodetteVN/Core/SNL/loadScreen.tscn"
+const SAVE_PATH:String = "res://GodetteVN/Core/SNL/saveScreen.tscn"
+const HIST_PATH:String = "res://GodetteVN/Core/HistoryScreen/historyScreen.tscn"
 # Important small things
-const SAVESLOT:String = "res://GodetteVN/fundamentals/details/saveSlot.tscn"
-const DEFAULT_CHOICE:String = "res://GodetteVN/fundamentals/choiceBar.tscn"
-const DEFAULT_FLOAT:String = 'res://GodetteVN/fundamentals/details/floatText.tscn'
-const DEFAULT_NVL:String = "res://GodetteVN/fundamentals/details/nvlBox.tscn"
+const DEFAULT_CHOICE:String = "res://GodetteVN/Core/choiceBar.tscn"
+const DEFAULT_FLOAT:String = 'res://GodetteVN/Core/_Details/floatText.tscn'
+const DEFAULT_NVL:String = "res://GodetteVN/Core/_Details/nvlBox.tscn"
 
 # size of thumbnail on save slot. Has to manually adjust the TextureRect's size 
 # in textBoxInHistory as well
 const THUMBNAIL_WIDTH = 175
 const THUMBNAIL_HEIGHT = 110
-# If you change these values, then there is a chance that there will be a bug
-# when loading saves. In that case, you probably want to look into currentFormat in
-# GameProgress.gd. It has somethign to do with the format of the image file that is 
-# saved in your game save.
+const ThumbnailFormat = Image.FORMAT_RGB8
 
 # Encryption password used for saves
 const PASSWORD = "nanithefuck"
@@ -72,10 +67,10 @@ const CENTER_DIM = Color(0.7,0.7,0.7,1) # Dimming in center mode
 const NVL_DIM = Color(0.2,0.2,0.2,1) # Dimming in NVL mode
 
 #Skip speed, multiple of 0.05
-const SKIP_SPEED:int = 3 # means skip is 1 left-click per 3 * 0.05 = 0.15 s
+const SKIP_SPEED:int = 3 # 3 means 1 left-click per 3 * 0.05 = 0.15 s
 
 # Transitions
-const TRANSITIONS_DIR = "res://GodetteVN/fundamentals/details/transitions_data/"
+const TRANSITIONS_DIR = "res://GodetteVN/Core/_Details/Transition_Data/"
 const TRANSITIONS = ['fade','sweep_left','sweep_right','sweep_up','sweep_down',
 	'curtain_left','curtain_right','pixelate','diagonal']
 const PHYSICAL_TRANSITIONS = []
@@ -86,10 +81,6 @@ const DIRECTION = {'up': Vector2.UP, 'down': Vector2.DOWN, 'left': Vector2.LEFT,
 const BAD_NAMES = ["nw", "nl", "sm", 'dc','color']
 # Bad uids for characters
 const BAD_UIDS = ['all', '']
-
-# Preloaded Scenes (must be used often)
-var MAIN_MENU = preload("res://GodetteVN/fundamentals/mainMenu.tscn")
-
 
 
 # --------------------------- Game Experience Variables ------------------------
@@ -113,6 +104,8 @@ onready var Chs = get_node_or_null("Charas")
 onready var Notifs = get_node_or_null("Notifs/Notification")
 onready var Files = get_node_or_null("Files")
 onready var Utils = get_node_or_null("Utils")
+onready var Pgs = get_node_or_null("Progress")
+onready var Pre = get_node_or_null("Preloaded")
 var Scene = null
 
 

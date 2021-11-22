@@ -1,15 +1,15 @@
 extends Node
 
-var bgm = ''
+var bgm:String = ''
 
-func play_bgm(path : String, vol = 0):
+func play_bgm(path:String, vol:float = 0.0):
 	finish_anim()
 	$bgm1.stop()
 	$bgm1.volume_db = vol
 	$bgm1.stream = load(path)
 	$bgm1.play()
 	
-func fadeout(time: float):
+func fadeout(time:float):
 	finish_anim()
 	bgm = ''
 	var vol = $bgm1.volume_db
@@ -22,7 +22,7 @@ func fadeout(time: float):
 	$AnimationPlayer.add_animation("fadeout", animation)
 	$AnimationPlayer.play("fadeout")
 
-func fadein(path: String, time: float, vol = 0):
+func fadein(path:String, time:float, vol:float = 0.0):
 	finish_anim()
 	$bgm1.stop()
 	$bgm1.stream = load(path)

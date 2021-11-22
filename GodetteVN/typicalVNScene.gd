@@ -14,7 +14,7 @@ func _ready():
 		# For instance, the current implementation is that if you have one save that finished
 		# chapter one, then all your other save files will be able to skip chapter 1.
 		# This line should be included when you're ready to deploy. (Also test it before release)
-		vn.Files.make_spoilerproof(game.currentNodePath, get_all_dialog_blocks())
+		vn.Files.make_spoilerproof(vn.Pgs.currentNodePath, get_all_dialog_blocks())
 		# Once you call the function fileRelated.make_spoilerproof once
 		# Then even if you delete this line, this dialog will still be spoiler proof.
 		# To revert this, call reset_spoilerproof(scene_path:String)

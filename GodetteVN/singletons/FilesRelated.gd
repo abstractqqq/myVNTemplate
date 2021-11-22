@@ -31,30 +31,30 @@ func get_save_files():
 	dir.call_deferred('free')
 	return files
 
-func data2Thumbnail(img_data:PoolByteArray, format) -> ImageTexture:
+func data2Thumbnail(img_data:PoolByteArray) -> ImageTexture:
 	
 	var img = Image.new()
 	img.create_from_data(vn.THUMBNAIL_WIDTH, vn.THUMBNAIL_HEIGHT,\
-	false, format, img_data)
+	false, vn.ThumbnailFormat, img_data)
+	# Creates a texture according to the imageTexture data
 	var texture = ImageTexture.new()
 	texture.create_from_image(img)
-	
 	return texture
 	
-func readSave(save : saveSlot) -> bool:
+func readSave(save) -> bool:
 	var success = false
 	var file = File.new()
 	var error = file.open_encrypted_with_pass(save.path, File.READ, vn.PASSWORD)
 	if error == OK:
 		var data = file.get_var()
-		game.currentSaveDesc = data['currentSaveDesc']
-		game.currentIndex = data['currentIndex']
-		game.currentNodePath = data['currentNodePath']
-		game.currentBlock = data['currentBlock']
-		game.history = data['history']
-		game.rollback_records = data['rollback']
-		game.playback_events = data['playback']
-		game.load_instruction = "load_game"
+		vn.Pgs.currentSaveDesc = data['currentSaveDesc']
+		vn.Pgs.currentIndex = data['currentIndex']
+		vn.Pgs.currentNodePath = data['currentNodePath']
+		vn.Pgs.currentBlock = data['currentBlock']
+		vn.Pgs.history = data['history']
+		vn.Pgs.rollback_records = data['rollback']
+		vn.Pgs.playback_events = data['playback']
+		vn.Pgs.load_instruction = "load_game"
 		vn.Chs.chara_pointer = data['chara_pointer']
 		vn.Chs.chara_name_patch = data['name_patches']
 		vn.Chs.patch_display_names()

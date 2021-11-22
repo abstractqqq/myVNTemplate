@@ -8,19 +8,19 @@ signal transition_finished
 
 var transition_data : Resource = null setget _set_transition_data, _get_transition_data
 
-#--- private variables ------------------------------------------------------------------
-
 var _casted_transition_data : eh_TransitionData = null
 
 onready var _color_panel: ColorRect = $eh_Transitions
 onready var _animator: AnimationPlayer = $eh_Transitions/AnimationPlayer
 onready var _shader: ShaderMaterial = _color_panel.material
+#------------------------------------------------------------------------
+
 
 const all_weathers = {
-	'rain': "res://GodetteVN/fundamentals/details/weather/rain.tscn",
-	'snow': "res://GodetteVN/fundamentals/details/weather/snow.tscn",
-	'light': "res://GodetteVN/fundamentals/details/weather/light.tscn",
-	'dust': "res://GodetteVN/fundamentals/details/weather/dust.tscn"
+	'rain': "res://GodetteVN/Core/_Details/Weathers/rain.tscn",
+	'snow': "res://GodetteVN/Core/_Details/Weathers/snow.tscn",
+	'light': "res://GodetteVN/Core/_Details/Weathers/light.tscn",
+	'dust': "res://GodetteVN/Core/_Details/Weathers/dust.tscn"
 }
 
 #--------------------------------------------------------------------------------------------------
@@ -50,13 +50,13 @@ func removeLasting():
 
 
 func pixel_in(t:float):
-	var rect = load("res://GodetteVN/fundamentals/details/transitionRect.tscn")
+	var rect = load("res://GodetteVN/Core/_Details/transitionRect.tscn")
 	var r = rect.instance()
 	self.add_child(r)
 	r.pixelate_in(t)
 
 func pixel_out(t:float):
-	var rect = load("res://GodetteVN/fundamentals/details/transitionRect.tscn")
+	var rect = load("res://GodetteVN/Core/_Details/transitionRect.tscn")
 	var r = rect.instance()
 	self.add_child(r)
 	r.pixelate_out(t)
@@ -64,21 +64,21 @@ func pixel_out(t:float):
 
 func tint(c: Color,time : float):
 	removeLasting()
-	var tintRect = load("res://GodetteVN/fundamentals/details/tintRect.tscn")
+	var tintRect = load("res://GodetteVN/Core/_Details/tintRect.tscn")
 	var tint = tintRect.instance()
 	get_node('lasting').add_child(tint)
 	tint.set_tint(c, time)
 	
 func tintWave(c: Color, t : float):
 	removeLasting()
-	var tintRect = load("res://GodetteVN/fundamentals/details/tintRect.tscn")
+	var tintRect = load("res://GodetteVN/Core/_Details/tintRect.tscn")
 	var tint = tintRect.instance()
 	get_node('lasting').add_child(tint)
 	tint.set_tintwave(c, t)
 	
 func flashlight(sc : Vector2):
 	removeLasting()
-	var fl_scene = load("res://GodetteVN/sfxScenes/flashLightScreen.tscn").instance()
+	var fl_scene = load("res://GodetteVN/SpecialScenes/flashLightScreen.tscn").instance()
 	get_node("lasting").add_child(fl_scene)
 	fl_scene.scale = sc
 	

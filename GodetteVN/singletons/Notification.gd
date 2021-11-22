@@ -1,6 +1,5 @@
 extends CanvasLayer
 
-var general = preload("res://GodetteVN/fundamentals/details/notifBoxes/NotificationBox.tscn")
 const notifList = ["quit", "main", "override", 'rollback', 'make_save']
 
 
@@ -18,7 +17,7 @@ func show(which : String) -> void:
 	vn.inNotif = true
 	get_node("backgroundColor").visible = true
 	if which in notifList:
-		var n = general.instance()
+		var n = vn.Pre.NOTIF_BOX.instance()
 		n.set_text(which)
 		get_node("currentNotif").add_child(n)
 

@@ -1,14 +1,13 @@
 extends Node
 
 var all_chara = {
-	# Narrator
+	# Narrator, the key empty string "" is its UID!
 	"":{"uid":'', "display_name":"","name_color":Color(0,0,0,1),'font':false}
 }
 
 
 var chara_pointer = {}
 var chara_name_patch = {}
-
 
 
 func _ready():

@@ -14,62 +14,62 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/Characters/Character.gd"
 }, {
+"base": "TextureButton",
+"class": "ClickableObject",
+"language": "GDScript",
+"path": "res://GodetteVN/Core/_Details/HelperClasses/clickableObject.gd"
+}, {
 "base": "Object",
 "class": "DvarCalculator",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/DvarCalculator.gd"
+"path": "res://GodetteVN/Core/_Details/DvarCalculator.gd"
 }, {
 "base": "Node2D",
 "class": "FakeWalker",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/helpClasses/FakeWalker.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/FakeWalker.gd"
 }, {
 "base": "RichTextLabel",
 "class": "FloatText",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/floatText.gd"
+"path": "res://GodetteVN/Core/_Details/floatText.gd"
 }, {
 "base": "Node2D",
 "class": "GeneralDialog",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/GeneralDialog.gd"
+"path": "res://GodetteVN/Core/CoreDialog/GeneralDialog.gd"
 }, {
 "base": "Timer",
 "class": "ObjectTimer",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/helpClasses/ObjectTimer.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/ObjectTimer.gd"
 }, {
 "base": "Tween",
 "class": "OneShotTween",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/helpClasses/OneShotTween.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/OneShotTween.gd"
 }, {
-"base": "TextureButton",
-"class": "clickableObject",
+"base": "CanvasLayer",
+"class": "VNScreen",
 "language": "GDScript",
-"path": "res://GodetteVN/clickableObjects/clickableObject.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/VNScreen.gd"
 }, {
 "base": "Resource",
 "class": "eh_TransitionData",
 "language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/transitions_data/eh_TransitionData.gd"
-}, {
-"base": "Control",
-"class": "saveSlot",
-"language": "GDScript",
-"path": "res://GodetteVN/fundamentals/details/saveSlot.gd"
+"path": "res://GodetteVN/Core/_Details/Transition_Data/eh_TransitionData.gd"
 } ]
 _global_script_class_icons={
 "Character": "",
+"ClickableObject": "",
 "DvarCalculator": "",
 "FakeWalker": "",
 "FloatText": "",
 "GeneralDialog": "",
 "ObjectTimer": "",
 "OneShotTween": "",
-"clickableObject": "",
-"eh_TransitionData": "",
-"saveSlot": ""
+"VNScreen": "",
+"eh_TransitionData": ""
 }
 
 [application]
@@ -81,11 +81,10 @@ config/icon="res://godette.png"
 
 [autoload]
 
-vn="*res://GodetteVN/singletons/vn.tscn"
-game="*res://GodetteVN/singletons/GameProgress.gd"
-stage="*res://GodetteVN/singletons/CharacterStage.tscn"
-music="*res://GodetteVN/singletons/MusicController.tscn"
-screen="*res://GodetteVN/singletons/ScreenEffects.tscn"
+vn="*res://GodetteVN/Singletons/vn.tscn"
+stage="*res://GodetteVN/Singletons/CharacterStage.tscn"
+music="*res://GodetteVN/Singletons/MusicController.tscn"
+screen="*res://GodetteVN/Singletons/ScreenEffects.tscn"
 
 [display]
 
