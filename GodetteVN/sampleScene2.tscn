@@ -8,8 +8,7 @@
 script = ExtResource( 1 )
 debug_mode = true
 scene_description = "Introduction to System 2"
-choice_bar = "res://GodetteVN/fundamentals/choiceBar.tscn"
-float_text = "res://GodetteVN/fundamentals/details/floatText.tscn"
+choice_bar = "res://GodetteVN/Core/ChoiceBar/choiceBar.tscn"
 
 [node name="background" parent="." instance=ExtResource( 4 )]
 

@@ -81,10 +81,10 @@ config/icon="res://godette.png"
 
 [autoload]
 
-vn="*res://GodetteVN/Singletons/vn.tscn"
-stage="*res://GodetteVN/Singletons/CharacterStage.tscn"
-music="*res://GodetteVN/Singletons/MusicController.tscn"
-screen="*res://GodetteVN/Singletons/ScreenEffects.tscn"
+vn="*res://GodetteVN/Important/vn.tscn"
+stage="*res://GodetteVN/Important/CharacterStage.tscn"
+music="*res://GodetteVN/Important/MusicController.tscn"
+screen="*res://GodetteVN/Important/ScreenEffects.tscn"
 
 [display]
 
