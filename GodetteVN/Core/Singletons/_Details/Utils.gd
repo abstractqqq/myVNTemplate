@@ -107,7 +107,7 @@ func create_thumbnail(width = vn.THUMBNAIL_WIDTH, height = vn.THUMBNAIL_HEIGHT):
 		file.store_var(thumbnail.get_data())
 		file.close()
 		
-# Refactor
+# Need to Refactor
 func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 	delay = abs(delay)
 	if delay > 0:
@@ -224,6 +224,24 @@ func MarkUp(words:String):
 		i += 1
 	
 	return output
+	
+#---------------------------------------------------------------------
+# read the string and try to understand it
+func read(s:String, json:bool=false):
+	if json:
+		pass
+	else:
+		match s.to_lower():
+			"true": return true
+			"false": return false
+			_: 
+				if vn.dvar.has(s):
+					return vn.dvar[s]
+				if s.is_valid_float():
+					return float(s)
+				else:
+					return null
+	
 
 #---------------------------------------------------------------------
 # Used if you only want your scale/zoom parameters to be between 0 and 1.
@@ -233,7 +251,6 @@ func correct_scale(v:Vector2) -> Vector2:
 	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
 
 #---------------------------------------------------------------------
-
 # Global time controller
 
 

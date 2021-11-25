@@ -6,8 +6,6 @@ class_name DvarCalculator
 const p = ["(", ")"]
 const prec = {"(":0 , "+":1, "-": 1, "*":2, "/":2, "^":3}
 const operators = ["+", "-", "*", "^", "/", "("]
-const bool_prec = {"==":1, ">=":1, "<=":1, "<":1, ">":1, 'and': 0, 'or': 0}
-const bool_operators = ["==",'>=','<=','!=','<','>', 'and', 'or']
 const left = "("
 const right = ")"
 
@@ -50,7 +48,7 @@ func _infix_postfix(ex:String):
 	if _paren_check(ex):
 		var regexMatch = "(\\d+\\.?\\d*)|(\\+)|(-)|(\\*)|(\\^)|(\\()|(\\))|(/)"
 		for v in vn.dvar.keys():
-			if typeof(vn.dvar[v]) == TYPE_INT or typeof(vn.dvar[v]) == TYPE_REAL:
+			if typeof(vn.dvar[v]) in [TYPE_INT, TYPE_REAL]:
 				if v in ex:
 					regexMatch += "|("+v+")"
 				
@@ -86,7 +84,7 @@ func _infix_postfix(ex:String):
 		return output
 		
 	else:
-		vn.error("Check your parenthesis.")
+		push_error("Parenthesis!")
 		
 func _eval_a(ex_arr) -> float:
 	
@@ -98,7 +96,7 @@ func _eval_a(ex_arr) -> float:
 			if typeof(vn.dvar[e]) in [TYPE_REAL, TYPE_INT]:
 				stack.push_back(vn.dvar[e])
 			else:
-				vn.error("The type of dvar {0} is not float. Cannot evaluate.".format({0:e}))
+				push_error("The type of dvar {0} is not number. Cannot evaluate.".format({0:e}))
 		else:
 			var second = stack.pop_back()
 			var first = stack.pop_back()
@@ -121,6 +119,6 @@ func _eval_a(ex_arr) -> float:
 				stack.push_back(first/second)
 				#print("Doing {0}/{1}".format({0:first,1:second}))
 			else:
-				vn.error("Unrecognized operator " + e)
+				push_error("Unrecognized operator " + e)
 
 	return stack.pop_back()

@@ -33,7 +33,7 @@ var hide_vnui : bool = false
 var no_scroll : bool = false
 var no_right_click : bool = false
 var one_time_font_change : bool = false
-#
+# Dvar Propagation
 var _propagate_dvar_list = {}
 #----------------------
 # Important components
@@ -73,7 +73,7 @@ func _input(ev):
 	# QM hiding means that quick menu is being hidden. If that is the case,
 	# then the user probably wants to disable access to main menu too.
 	if ev.is_action_pressed('ui_cancel') and not vn.inSetting and not vn.inNotif and not QM.hiding:
-		add_child(vn.Pre.MAIN_MENU.instance())
+		add_child(vn.MAIN_MENU.instance())
 		return
 	
 	if waiting_cho:
@@ -171,24 +171,25 @@ func interpret_events(event):
 				
 
 #----------------------- on ready, new game, load, set up, end -----------------
-func auto_start():
+func auto_start(start_block:String="starter", start_id=null):
 	var load_instruction = vn.Pgs.load_instruction
 	print("--- Beta Notice: auto_start currently only works if you use json files for dialog. ---")
 	if load_instruction != "new_game" and load_instruction != "load_game":
-		print("Unknown load instruction. It can either be new_game or load_game.")
+		print("!!! Unknown load instruction. It can either be new_game or load_game.")
 		return false
 	
 	if self.dialog_json == "":
-		print("For auto_start, you need to provide a dialog json file.")
+		print("!!! For auto_start, you need to provide a dialog json file.")
 		return false
 	else:
 		var dialog_data = vn.Files.load_json(dialog_json)
 		if dialog_data.has('Dialogs') and dialog_data.has('Choices'):
 			if dialog_data.has('Conditions'):
-				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],dialog_data['Conditions'], load_instruction)
+				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],dialog_data['Conditions'], load_instruction,\
+					start_block, start_id)
 			else:
-				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],{}, load_instruction)
-			
+				start_scene(dialog_data['Dialogs'],dialog_data['Choices'],{}, load_instruction,\
+					start_block, start_id)
 			return true
 		else:
 			print("Dialog json file must contain 'Dialogs' and 'Choices' (even if empty).")
@@ -197,7 +198,8 @@ func auto_start():
 func get_all_dialog_blocks():
 	return all_blocks
 		
-func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary, load_instruction : String = "new_game") -> void:
+func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionary,\
+	load_instruction : String = "new_game", start_block:String="starter", start_id=null) -> void:
 	vn.Scene = self
 	get_tree().set_auto_accept_quit(false)
 	vn.Pgs.currentSaveDesc = scene_description
@@ -207,13 +209,17 @@ func start_scene(blocks : Dictionary, choices: Dictionary, conditions: Dictionar
 	all_conditions = conditions
 	dialogbox.connect('load_next', self, 'trigger_accept')
 	if load_instruction == "new_game":
-		current_index = 0
-		if blocks.has("starter"):
-			current_block = blocks['starter'] # this is an array of events
+		if start_id:
+			current_index = get_target_index(start_block,start_id)
 		else:
-			vn.error("Dialog must have a block called starter.")
-		vn.Pgs.currentIndex = 0
-		vn.Pgs.currentBlock = 'starter' # this is the name corresponding to the array
+			current_index = 0
+		if blocks.has(start_block):
+			current_block = blocks[start_block]
+		else:
+			push_error("Start block %s not found." % start_block)
+		
+		vn.Pgs.currentIndex = current_index
+		vn.Pgs.currentBlock = start_block # this is the name corresponding to the array
 	elif load_instruction == "load_game":
 		vn.Pgs.load_instruction = "new_game" # reset after loading
 		current_index = vn.Pgs.currentIndex
@@ -291,8 +297,12 @@ func speech_parse(ev : Dictionary) -> void:
 	if ev.has('speed'):
 		if (vn.cps_map.has(ev['speed'])):
 			say(combine, ev[combine],vn.cps_map[ev['speed']] )
-		elif typeof(ev['speed']) == TYPE_INT or typeof(ev['speed']) == TYPE_REAL:
-			say(combine, ev[combine], ev['speed'])
+		else:
+			print("!!! Unknown speed value in " + str(ev))
+			push_error("Unknown speed value.")
+		# Should I allow other values?
+		#elif typeof(ev['speed']) == TYPE_INT or typeof(ev['speed']) == TYPE_REAL:
+		#	say(combine, ev[combine], ev['speed'])
 	else:
 		say(combine, ev[combine])
 
@@ -604,18 +614,18 @@ func set_dvar(ev : Dictionary) -> void:
 		if typeof(vn.dvar[left])== TYPE_STRING:
 			# If we get string, just set it to RHS
 			vn.dvar[left] = right
-		elif right.to_lower() == "true":
-			vn.dvar[left] = true
-		elif right.to_lower() == "false":
-			vn.dvar[left] = false
 		else:
-			match sep:
-				"=": vn.dvar[left] = vn.Utils.calculate(right)
-				"+=": vn.dvar[left] += vn.Utils.calculate(right)
-				"-=": vn.dvar[left] -= vn.Utils.calculate(right)
-				"*=": vn.dvar[left] *= vn.Utils.calculate(right)
-				"/=": vn.dvar[left] /= vn.Utils.calculate(right)
-				"^=": vn.dvar[left] = pow(vn.dvar[left], vn.Utils.calculate(right))
+			var result = vn.Utils.read(right)
+			if result: # result not null
+				vn.dvar[left] = result
+			else:
+				match sep:
+					"=": vn.dvar[left] = vn.Utils.calculate(right)
+					"+=": vn.dvar[left] += vn.Utils.calculate(right)
+					"-=": vn.dvar[left] -= vn.Utils.calculate(right)
+					"*=": vn.dvar[left] *= vn.Utils.calculate(right)
+					"/=": vn.dvar[left] /= vn.Utils.calculate(right)
+					"^=": vn.dvar[left] = pow(vn.dvar[left], vn.Utils.calculate(right))
 			
 	else:
 		print("!!! Dvar error: " + str(ev))
@@ -647,19 +657,19 @@ func check_condition(cond_list) -> bool:
 				continue
 
 			var parsed = split_equation(cond)
-			var front_var = parsed[0]
+			var front = parsed[0]
 			var rel = parsed[1]
-			var back_var = parsed[2]
-			front_var = _parse_var(front_var)
-			back_var = _parse_var(back_var)
+			var back = parsed[2]
+			front = vn.Utils.calculate(front)
+			back = vn.Utils.calculate(back)
 			match rel:
-				"=", "==": result = (front_var == back_var)
-				"<=": result = (front_var <= back_var)
-				">=": result = (front_var >= back_var)
-				"<": result = (front_var < back_var)
-				">": result = (front_var > back_var)
-				"!=": result = (front_var != back_var)
-				_: vn.error('Unknown Relation ' + rel)
+				"=", "==": result = (front == back)
+				"<=": result = (front <= back)
+				">=": result = (front >= back)
+				"<": result = (front < back)
+				">": result = (front > back)
+				"!=": result = (front!= back)
+				_: push_error("Unknown relation %s" %rel)
 			
 			final_result = _a_what_b(is_or, final_result, result)
 		elif typeof(cond) == TYPE_ARRAY: # array type
@@ -670,16 +680,7 @@ func check_condition(cond_list) -> bool:
 		is_or = false
 	# If for loop ends, then all conditions must be passed. 
 	return final_result
-
-func _parse_var(st:String):
-	st = st.to_lower()
-	if st == "true":
-		return true
-	elif st == "false":
-		return false
-	else:
-		return dvar_or_float(st)
-		
+	
 func _a_what_b(is_or:bool, a:bool, b:bool)->bool:
 	if is_or:
 		return (a or b)
@@ -993,7 +994,9 @@ func get_target_index(bname : String, target_id):
 		var d = all_blocks[bname][i]
 		if d.has('id') and (d['id'] == target_id):
 			return i
-	push_error('Cannot find event with id ' + str(target_id) + ' in ' + bname)
+	
+	print('!!! Cannot find event with id %s in %s, defaulted to index 0.' % [target_id, bname])
+	return 0
 	
 func sideImageChange(ev:Dictionary, auto_forw:bool = true):
 	var path = ev['side']
@@ -1191,18 +1194,10 @@ func split_equation(line:String):
 				
 			if not (is_symbol) and not presymbol:
 				back_var += le
-				
+	
+	# Check if back var is an expression or a variable
+	
 	return [front_var, rel, back_var]
-
-func dvar_or_float(dvar:String):
-	var output = 0
-	if vn.dvar.has(dvar):
-		output = vn.dvar[dvar]
-	elif dvar.is_valid_float():
-		output = dvar.to_float()
-	else:
-		vn.error('Variable is not a dvar and is not a valid float.')
-	return output
 
 func flt_text(ev: Dictionary) -> void:
 	var wt = ev['wait']

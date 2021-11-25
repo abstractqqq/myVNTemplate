@@ -85,7 +85,6 @@ func _on_Timer_timeout():
 func _on_global_timeout():
 	if get_parent().visible == false:
 		return
-	
 	if vn.skipping:
 		force_finish()
 		skipCounter = (skipCounter + 1)%(vn.SKIP_SPEED)

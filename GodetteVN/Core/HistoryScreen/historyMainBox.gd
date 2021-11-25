@@ -15,7 +15,7 @@ func _ready():
 			textbox.setName(temp[0])
 		textbox.setText(temp[1])
 		if temp.size()>= 3:
-			var vb = preload("res://GodetteVN/Core/_Details/voiceButton.tscn").instance()
+			var vb = load("res://GodetteVN/Core/_Details/voiceButton.tscn").instance()
 			vb.path = temp[-1]
 			textbox.get_node("box/VBoxContainer").add_child(vb)
 		$textContainer.add_child(textbox)
