@@ -36,7 +36,4 @@ var cond_blocks = {
 
 #---------------------------------------------------------------------
 func _ready():
-	game.currentSaveDesc = scene_description
-	game.currentNodePath = get_tree().current_scene.filename
-	get_tree().set_auto_accept_quit(false)
-	start_scene(dialog_blocks, choice_blocks, cond_blocks, game.load_instruction)
+	start_scene(dialog_blocks, choice_blocks, cond_blocks)

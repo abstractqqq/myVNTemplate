@@ -43,7 +43,7 @@ var main_block = [
 	{'chara':'female move', 'loc':"1400 600", 'expression':'smile2'},
 	{'female': 'Let me show you a cool new feature.'},
 	{'female': "Suppose I am very confused now."},
-	{'chara':'female add', 'path':'/GodetteVN/sfxScenes/questionMark.tscn','at':'head'},
+	{'chara':'female add', 'path':'/GodetteVN/SpecialScenes/questionMark.tscn','at':'head'},
 	{'female':"If you look at the code, it says the special effect question mark should show up "+\
 	"at 'head'."},
 	{'female':'That means you can define points on your character and show special '+\
@@ -103,10 +103,7 @@ var choice_blocks = {'food': food_choices}
 
 #---------------------------------------------------------------------
 func _ready():
-	game.currentSaveDesc = scene_description
-	game.currentNodePath = get_tree().current_scene.filename
-	get_tree().set_auto_accept_quit(false)
-	start_scene(dialog_blocks, choice_blocks, {}, game.load_instruction)
+	start_scene(dialog_blocks, choice_blocks, {}, vn.Pgs.load_instruction, "starter", 10)
 
 #---------------------------------------------------------------------
 

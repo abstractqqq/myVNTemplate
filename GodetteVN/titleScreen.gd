@@ -7,7 +7,7 @@ func _ready():
 	OS.set_window_maximized(true)
 	
 func _on_exitButton_pressed():
-	fileRelated.write_to_config()
+	vn.Files.write_to_config()
 	get_tree().quit()
 
 func _on_settingsButton_pressed():
@@ -15,7 +15,7 @@ func _on_settingsButton_pressed():
 	self.add_child(setting.instance())
 
 func _on_newGameButton_pressed():
-	game.load_instruction = "new_game"
+	vn.Pgs.load_instruction = "new_game"
 	var error = get_tree().change_scene(vn.ROOT_DIR + vn.start_scene_path)
 	if error == OK:
 		self.queue_free()
