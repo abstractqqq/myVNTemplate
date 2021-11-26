@@ -2,7 +2,6 @@ extends CanvasLayer
 
 #------------------------------------------------------------------------------
 func _ready():
-	# no need to read quit message to quit the game in main menu
 	get_tree().set_auto_accept_quit(true)
 	OS.set_window_maximized(true)
 	
@@ -11,8 +10,7 @@ func _on_exitButton_pressed():
 	get_tree().quit()
 
 func _on_settingsButton_pressed():
-	var setting = load(vn.SETTING_PATH)
-	self.add_child(setting.instance())
+	add_child(load(vn.SETTING_PATH).instance())
 
 func _on_newGameButton_pressed():
 	vn.Pgs.load_instruction = "new_game"
@@ -21,6 +19,5 @@ func _on_newGameButton_pressed():
 		self.queue_free()
 
 func _on_loadButton_pressed():
-	var loading = load(vn.LOAD_PATH)
-	self.add_child(loading.instance())
+	add_child(load(vn.LOAD_PATH).instance())
 

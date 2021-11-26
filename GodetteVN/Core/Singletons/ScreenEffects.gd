@@ -82,10 +82,6 @@ func flashlight(sc : Vector2):
 	get_node("lasting").add_child(fl_scene)
 	fl_scene.scale = sc
 	
-func clear_debug()->void:
-	var debugger = get_node_or_null("debugger")
-	if debugger: debugger.text = ''
-	
 func in_transition(eff_name:String, color:Color, eff_dur:float):
 	if eff_name in vn.TRANSITIONS:
 		if eff_name == "fade":

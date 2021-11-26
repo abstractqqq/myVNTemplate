@@ -16,7 +16,6 @@ export(String, FILE, '*.tres') var normal_font = ''
 export(String, FILE, '*.tres') var bold_font = ''
 export(String, FILE, '*.tres') var italics_font = ''
 export(String, FILE, '*.tres') var bold_italics_font = ''
-#
 
 var rng = RandomNumberGenerator.new()
 var _fading:bool = false
@@ -44,8 +43,8 @@ func change_expression(e : String, in_fadein:bool=false) -> bool:
 			_dummy_fadeout(expFrames, prev_exp)
 		return true
 	else:
-		print("---Warning: " + e + ' not found for character with uid ' + unique_id +"---")
-		print("---Nothing is done.---")
+		print("!!! Warning: " + e + ' not found for character with uid ' + unique_id +"---")
+		print("!!! Nothing is done.")
 		return false
 
 func shake(amount: float, time : float, mode = 0):
@@ -89,14 +88,14 @@ func fadein(time : float, expression:String=""):
 func fadeout(time : float):
 	var expFrames = self.get_sprite_frames()
 	var expr = current_expression
-	if current_expression == "flip" or current_expression == "flipv":
+	if current_expression in ["flip","flipv"]:
 		expr = "default"
 	vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(expr,0), time, self)
 	
 func spin(sdir:int,deg:float,t:float,type:String="linear"):
-	if sdir > 0:
+	if sdir > 0: 
 		sdir = 1
-	else:
+	else: 
 		sdir = -1
 	deg = (sdir*deg)
 	var m = vn.Utils.movement_type(type)
@@ -109,8 +108,8 @@ func spin(sdir:int,deg:float,t:float,type:String="linear"):
 
 func _dummy_fadeout(expFrames, prev_exp:String):
 	if fade_on_change and prev_exp != "":
-		if prev_exp == "flip" or "flipv":
-			prev_exp = 'default'
+		if prev_exp in ["flip","flipv"]:
+			prev_exp = current_expression
 			
 		vn.Utils.after_image(self.position, self.scale, self.modulate, self.flip_h, self.flip_v, self.rotation_degrees, expFrames.get_frame(prev_exp,0), fade_time)
 

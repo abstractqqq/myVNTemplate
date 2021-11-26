@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "TextureButton",
 "class": "ClickableObject",
 "language": "GDScript",
-"path": "res://GodetteVN/Core/_Details/HelperClasses/clickableObject.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/ClickObj.gd"
 }, {
 "base": "Object",
 "class": "DvarCalculator",
@@ -54,6 +54,16 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://GodetteVN/Core/_Details/HelperClasses/VNScreen.gd"
 }, {
+"base": "Button",
+"class": "VNTextButton",
+"language": "GDScript",
+"path": "res://GodetteVN/Core/_Details/HelperClasses/VNTextButton.gd"
+}, {
+"base": "TextureButton",
+"class": "VNTextureButton",
+"language": "GDScript",
+"path": "res://GodetteVN/Core/_Details/HelperClasses/VNTextureButton.gd"
+}, {
 "base": "Resource",
 "class": "eh_TransitionData",
 "language": "GDScript",
@@ -69,6 +79,8 @@ _global_script_class_icons={
 "ObjectTimer": "",
 "OneShotTween": "",
 "VNScreen": "",
+"VNTextButton": "",
+"VNTextureButton": "",
 "eh_TransitionData": ""
 }
 

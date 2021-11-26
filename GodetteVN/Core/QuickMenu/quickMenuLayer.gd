@@ -2,49 +2,11 @@ extends Node2D
 
 var hiding = false
 
-
 func _on_SettingButton_pressed():
 	reset_auto_skip()
 	vn.Scene.add_child(load(vn.SETTING_PATH).instance())
 
-
-func _on_saveButton_mouse_entered():
-	vn.noMouse = true
-	
-
-func _on_saveButton_mouse_exited():
-	vn.noMouse = false
-
-
-func _on_SettingButton_mouse_entered():
-	vn.noMouse = true
-
-
-func _on_SettingButton_mouse_exited():
-	vn.noMouse = false
-
-
-func _on_quitButton_mouse_entered():
-	vn.noMouse = true
-
-
-func _on_quitButton_mouse_exited():
-	vn.noMouse = false
-
-
-func _on_historyButton_mouse_entered():
-	vn.noMouse = true
-
-func _on_historyButton_mouse_exited():
-	vn.noMouse = false
-
-func _on_mainButton_mouse_entered():
-	vn.noMouse = true
-
-func _on_mainButton_mouse_exited():
-	vn.noMouse = false
-
-func _on_historyButton_pressed():
+func on_historyButton_pressed():
 	reset_auto_skip()
 	vn.Scene.add_child(load(vn.HIST_PATH).instance())
 
@@ -72,15 +34,6 @@ func _on_autoButton_pressed():
 		auto.modulate = Color(1,0,0,1)
 	else:
 		auto.modulate = Color(1,1,1,1)
-		
-
-func _on_autoButton_mouse_entered():
-	vn.noMouse = true
-
-
-func _on_autoButton_mouse_exited():
-	vn.noMouse = false
-
 
 func reset_auto():
 	var auto = get_node('autoButton')
@@ -88,12 +41,6 @@ func reset_auto():
 	auto.modulate = Color(1,1,1,1)
 	vn.auto_on = false
 
-
-func _on_skipButton_mouse_entered():
-	vn.noMouse = true
-
-func _on_skipButton_mouse_exited():
-	vn.noMouse = false
 
 func _on_skipButton_pressed():
 	reset_auto()
@@ -110,14 +57,6 @@ func reset_skip():
 	sk.modulate = Color(1,1,1,1)
 	vn.skipping = false
 	
-
-
-func _on_loadButton_mouse_entered():
-	vn.noMouse = true
-
-func _on_loadButton_mouse_exited():
-	vn.noMouse = false
-
 func _on_loadButton_pressed():
 	reset_auto_skip()
 	var loading = load(vn.LOAD_PATH)
@@ -137,15 +76,8 @@ func enable_skip_auto():
 	get_node("skipButton").disabled = false
 
 
-func _on_QsaveButton_mouse_entered():
-	vn.noMouse = true
-
-func _on_QsaveButton_mouse_exited():
-	vn.noMouse = false
-
 func _on_QsaveButton_pressed():
 	var flt = load(vn.DEFAULT_FLOAT).instance()
 	screen.add_child(flt)
 	flt.display("Quick save made.", 2, 0.5, Vector2(60,60), 'res://fonts/ARegular.tres')
 	vn.Utils.make_a_save("[Quick Save] ")
-

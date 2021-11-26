@@ -53,7 +53,6 @@ signal dvar_set
 #--------------------------------------------------------------------------------
 func _ready():
 	vn.Files.load_config()
-	screen.set_debug(debug_mode)
 	var _error = self.connect("player_accept", self, '_yield_check')
 	if refresh_game_ctrl_state:
 		vn.Pgs.resetControlStates()
@@ -68,7 +67,7 @@ func _input(ev):
 		on_rollback()
 			
 	if ev.is_action_pressed('vn_upscroll') and not vn.inSetting and not vn.inNotif and not no_scroll:
-		QM._on_historyButton_pressed() # bad name... but lol
+		QM.on_historyButton_pressed() # bad name... but lol
 		return
 	# QM hiding means that quick menu is being hidden. If that is the case,
 	# then the user probably wants to disable access to main menu too.
@@ -121,7 +120,6 @@ func interpret_events(event):
 	var ev = event.duplicate(true)
 	if debug_mode:
 		var msg = "Debug :" + str(ev)
-		screen.set_debug(debug_mode, "Debug :" + str(ev))
 		print(msg)
 	
 	# Pre-parse, keep this at minimum
@@ -153,7 +151,7 @@ func interpret_events(event):
 		{'then',..}: then(ev)
 		{'extend', ..}, {'ext', ..}:extend(ev)
 		{'premade'}:
-			if debug_mode: print("PREMADE EVENT:")
+			if debug_mode: print("!!! PREMADE EVENT:")
 			interpret_events(vn.Utils.call_premade_events(ev['premade']))
 		{"system"},{"sys"}: system(ev)
 		{'side'}: sideImageChange(ev)
@@ -173,7 +171,7 @@ func interpret_events(event):
 #----------------------- on ready, new game, load, set up, end -----------------
 func auto_start(start_block:String="starter", start_id=null):
 	var load_instruction = vn.Pgs.load_instruction
-	print("--- Beta Notice: auto_start currently only works if you use json files for dialog. ---")
+	print("!!! Beta Notice: auto_start currently only works if you use json files for dialog. ---")
 	if load_instruction != "new_game" and load_instruction != "load_game":
 		print("!!! Unknown load instruction. It can either be new_game or load_game.")
 		return false
@@ -245,6 +243,7 @@ func auto_load_next():
 	load_event_at_index(current_index)
 
 #------------------------ Related to Dialog Progression ------------------------
+# Cleaned this shit up. Either on / off, or true/false. Don't mix.
 func set_nvl(ev: Dictionary, auto_forw = true):
 	if typeof(ev['nvl']) == TYPE_BOOL:
 		self.nvl = ev['nvl']
@@ -354,6 +353,7 @@ func generate_choices(ev: Dictionary):
 		
 		var choice_ev = ev2[choice_text] # the choice action
 		choice_text = vn.Utils.MarkUp(choice_text)
+		# Preload?
 		var choice = load(choice_bar).instance()
 		choice.setup_choice(choice_text,choice_ev,vn.show_chosen_choices)
 		choice.connect("choice_made", self, "on_choice_made")
@@ -413,10 +413,11 @@ func say(combine : String, words : String, cps = 50, ques = false) -> void:
 
 func extend(ev:Dictionary):
 	# Cannot use extend with a choice, extend doesn't support font
-	if vn.Pgs.playback_events['speech'] == '' or self.nvl:
+	if vn.Pgs.playback_events['speech'] == '' or self.nvl or self.waiting_cho:
 		print("!!! Warning: you're getting his warning either because you're in nvl mode")
 		print("!!! Or because you're using extend without a previous speech event.")
-		print("!!! In either case, nothing is done.")
+		print("!!! Or because you're waiting for a choice to be made.")
+		print("!!! In all cases, nothing is done.")
 		auto_load_next()
 	else:
 		# get previous speaker from history
@@ -429,11 +430,8 @@ func extend(ev:Dictionary):
 			speaker.bbcode_text = info["display_name"]
 			
 		var ext = 'extend'
-		for k in ev.keys():
-			if k == "ext":
-				ext = 'ext'
-				break
-		
+		if ev.has('ext'): ext = 'ext'
+
 		var words = preprocess(ev[ext])
 		var cps = 50
 		if ev.has('speed'):
@@ -1507,15 +1505,17 @@ func _parse_nvl(nvl_state):
 	if typeof(nvl_state) == TYPE_BOOL:
 		return nvl_state
 	elif typeof(nvl_state) == TYPE_STRING:
-		nvl_state = nvl_state.to_lower()
-		if nvl_state == "clear":
-			return nvl_state
-		elif nvl_state == "on":
-			return true
-		elif nvl_state == "off":
-			return false
-		else:
-			return _parse_true_false(nvl_state)
+		match nvl_state.to_lower():
+			"clear": return nvl_state
+			"on":  return true
+			"off": return false
+			_:
+				var result = vn.Utils.read(nvl_state)
+				if typeof(result) == TYPE_BOOL:
+					return result
+				else:
+					print("!!! Format error for NVL event.")
+					push_error("Expecting either boolean data or 'true' or 'false' strings.")
 
 func _parse_true_false(truth, ev = {}) -> bool:
 	if typeof(truth) == TYPE_BOOL: # 1 = bool
@@ -1526,8 +1526,6 @@ func _parse_true_false(truth, ev = {}) -> bool:
 		else: # sloppy here.
 			return false
 	else:
-		print("!!! Format error" + str(ev))
-		push_error("Expecting either boolean data or 'true' or 'false' strings.")
 		return false
 
 func _parse_params(p, _ev = {}): # If params has a string which is a dvar,

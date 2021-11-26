@@ -1,7 +1,8 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=5 format=2]
 
 [ext_resource path="res://fonts/ArchitectsDaughter.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://GodetteVN/Core/QuickMenu/quickMenuLayer.gd" type="Script" id=2]
+[ext_resource path="res://GodetteVN/Core/_Details/HelperClasses/VNTextButton.gd" type="Script" id=3]
 
 [sub_resource type="DynamicFont" id=1]
 size = 28
@@ -21,6 +22,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Skip"
 flat = true
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -36,9 +38,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Auto"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="SettingButton" type="Button" parent="."]
 margin_left = 1139.58
@@ -52,9 +52,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Setting"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="loadButton" type="Button" parent="."]
 margin_left = 880.0
@@ -68,9 +66,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Load"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="QsaveButton" type="Button" parent="."]
 margin_left = 965.707
@@ -84,9 +80,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Q.Save"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="saveButton" type="Button" parent="."]
 margin_left = 800.0
@@ -100,9 +94,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Save"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="historyButton" type="Button" parent="."]
 margin_left = 1069.58
@@ -116,6 +108,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Hist."
 flat = true
+script = ExtResource( 3 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -132,9 +125,7 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Main"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
 [node name="quitButton" type="Button" parent="."]
 visible = false
@@ -149,34 +140,14 @@ custom_fonts/font = SubResource( 1 )
 shortcut_in_tooltip = false
 text = "Quit"
 flat = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
+script = ExtResource( 3 )
 
-[connection signal="mouse_entered" from="skipButton" to="." method="_on_skipButton_mouse_entered"]
-[connection signal="mouse_exited" from="skipButton" to="." method="_on_skipButton_mouse_exited"]
 [connection signal="pressed" from="skipButton" to="." method="_on_skipButton_pressed"]
-[connection signal="mouse_entered" from="autoButton" to="." method="_on_autoButton_mouse_entered"]
-[connection signal="mouse_exited" from="autoButton" to="." method="_on_autoButton_mouse_exited"]
 [connection signal="pressed" from="autoButton" to="." method="_on_autoButton_pressed"]
-[connection signal="mouse_entered" from="SettingButton" to="." method="_on_SettingButton_mouse_entered"]
-[connection signal="mouse_exited" from="SettingButton" to="." method="_on_SettingButton_mouse_exited"]
 [connection signal="pressed" from="SettingButton" to="." method="_on_SettingButton_pressed"]
-[connection signal="mouse_entered" from="loadButton" to="." method="_on_loadButton_mouse_entered"]
-[connection signal="mouse_exited" from="loadButton" to="." method="_on_loadButton_mouse_exited"]
 [connection signal="pressed" from="loadButton" to="." method="_on_loadButton_pressed"]
-[connection signal="mouse_entered" from="QsaveButton" to="." method="_on_QsaveButton_mouse_entered"]
-[connection signal="mouse_exited" from="QsaveButton" to="." method="_on_QsaveButton_mouse_exited"]
 [connection signal="pressed" from="QsaveButton" to="." method="_on_QsaveButton_pressed"]
-[connection signal="mouse_entered" from="saveButton" to="." method="_on_saveButton_mouse_entered"]
-[connection signal="mouse_exited" from="saveButton" to="." method="_on_saveButton_mouse_exited"]
 [connection signal="pressed" from="saveButton" to="." method="_on_saveButton_pressed"]
-[connection signal="mouse_entered" from="historyButton" to="." method="_on_historyButton_mouse_entered"]
-[connection signal="mouse_exited" from="historyButton" to="." method="_on_historyButton_mouse_exited"]
-[connection signal="pressed" from="historyButton" to="." method="_on_historyButton_pressed"]
-[connection signal="mouse_entered" from="mainButton" to="." method="_on_mainButton_mouse_entered"]
-[connection signal="mouse_exited" from="mainButton" to="." method="_on_mainButton_mouse_exited"]
+[connection signal="pressed" from="historyButton" to="." method="on_historyButton_pressed"]
 [connection signal="pressed" from="mainButton" to="." method="_on_mainButton_pressed"]
-[connection signal="mouse_entered" from="quitButton" to="." method="_on_quitButton_mouse_entered"]
-[connection signal="mouse_exited" from="quitButton" to="." method="_on_quitButton_mouse_exited"]
 [connection signal="pressed" from="quitButton" to="." method="_on_quitButton_pressed"]

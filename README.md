@@ -1,6 +1,6 @@
 # GodetteVN, A Visual Novel Framework for Godot Users
 
-## Beta release postponed because of internal restructuring. Will not push to main until after restructure is almost done.
+## Refactoring almost done. Getting ready to push out more related content.
 
 ## Goal and Vision: Bringing the theatrical experience into your story, right in the Godot Engine.
 
