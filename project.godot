@@ -17,7 +17,7 @@ _global_script_classes=[ {
 "base": "TextureButton",
 "class": "ClickableObject",
 "language": "GDScript",
-"path": "res://GodetteVN/Core/_Details/HelperClasses/ClickObj.gd"
+"path": "res://GodetteVN/Core/_Details/HelperClasses/ClickableObject.gd"
 }, {
 "base": "Object",
 "class": "DvarCalculator",

@@ -23,7 +23,9 @@ func _ready():
 		FONTS[f] = get('custom_fonts/%s_font'%f)
 		
 	var _err = vn.get_node("GlobalTimer").connect("timeout",self, "_on_global_timeout")
-	
+	var sb = get_v_scroll()
+	var _err2 = sb.connect("mouse_entered", vn.Utils, "no_mouse")
+	var _err3 = sb.connect("mouse_exited", vn.Utils, "yes_mouse")
 
 func reset_fonts():
 	for f in ft:

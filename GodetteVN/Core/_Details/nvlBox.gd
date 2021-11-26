@@ -28,6 +28,9 @@ signal load_next
 
 func _ready():
 	var _err = vn.get_node("GlobalTimer").connect("timeout",self, "_on_global_timeout")
+	var sb = get_v_scroll()
+	var _err2 = sb.connect("mouse_entered", vn.Utils, "no_mouse")
+	var _err3 = sb.connect("mouse_exited", vn.Utils, "yes_mouse")
 
 func set_dialog(uid : String, words : String, cps = vn.cps, suppress_name = false):
 	if suppress_name: # if name should not be shown, as in the center case treat it as if it is the narrator

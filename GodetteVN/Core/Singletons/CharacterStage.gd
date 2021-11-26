@@ -11,8 +11,7 @@ func get_character_info(uid:String):
 	else:
 		vn.error("No character with this uid {0} is found".format({0:uid}))
 
-func reset_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
-	$other/sideImage.texture = null
+func set_sideImage(sc:Vector2 = Vector2(1,1), pos:Vector2 = Vector2(-35,530)):
 	$other/sideImage.scale = sc
 	$other/sideImage.position = pos
 
@@ -180,7 +179,7 @@ func all_on_stage():
 	
 func clean_up():
 	remove_chara("absolute_all")
-	reset_sideImage()
+	set_sideImage()
 
 func remove_on_rollback(arr):
 	for n in $characters.get_children():

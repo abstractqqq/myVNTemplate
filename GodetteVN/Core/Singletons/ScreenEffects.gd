@@ -1,7 +1,5 @@
 extends CanvasLayer
 
-# This part is copied from eh_jogo's great project on transition effects
-# You can find it at https://github.com/eh-jogos/eh_Transitions
 signal transition_started
 signal transition_mid_point_reached
 signal transition_finished
@@ -49,19 +47,6 @@ func removeLasting():
 		n.call_deferred('free')
 
 
-func pixel_in(t:float):
-	var rect = load("res://GodetteVN/Core/_Details/transitionRect.tscn")
-	var r = rect.instance()
-	self.add_child(r)
-	r.pixelate_in(t)
-
-func pixel_out(t:float):
-	var rect = load("res://GodetteVN/Core/_Details/transitionRect.tscn")
-	var r = rect.instance()
-	self.add_child(r)
-	r.pixelate_out(t)
-
-
 func tint(c: Color,time : float):
 	removeLasting()
 	var tintRect = load("res://GodetteVN/Core/_Details/tintRect.tscn")
@@ -82,36 +67,30 @@ func flashlight(sc : Vector2):
 	get_node("lasting").add_child(fl_scene)
 	fl_scene.scale = sc
 	
-func in_transition(eff_name:String, color:Color, eff_dur:float):
-	if eff_name in vn.TRANSITIONS:
-		if eff_name == "fade":
-			play_fade_in(color, eff_dur)
-		elif eff_name == "pixelate":
-			pixel_in(eff_dur)
-		else:
-			var t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
-			t_data.duration = eff_dur
-			t_data.color = color
-			if t_data != null and t_data is eh_TransitionData:
-				change_transition_data_oneshot(t_data)
-			
-			play_transition_in()
-		
-func out_transition(eff_name:String, color:Color, eff_dur:float):
-	if eff_name in vn.TRANSITIONS:
-		if eff_name == "fade":
-			play_fade_out(color, eff_dur)
-		elif eff_name == "pixelate":
-			pixel_out(eff_dur)
-		else:
-			var t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
-			t_data.duration = eff_dur
-			t_data.color = color
-			if t_data != null and t_data is eh_TransitionData:
-				change_transition_data_oneshot(t_data)
-			
-			play_transition_out()
-			
+func screen_transition(mode:String, eff_name:String,color:Color,eff_dur:float,bg_path:String=''):
+	if not (mode in ['full', 'in', 'out']):
+		push_error("Transition mode can only be full, in, or out.")
+	
+	var func_identifer:String = "transition" 
+	var params:Array = []
+	
+	match eff_name:
+		"fade":
+			func_identifer = eff_name
+			params.append_array([color, eff_dur])
+		"pixelate":
+			func_identifer = eff_name
+			params.append(eff_dur)
+		_:
+			_setup_transition_data(eff_name,color,eff_dur)
+	
+	if mode == "full":
+		params.append(bg_path)
+		call("play_%s_%s" %[func_identifer,mode], params)
+	else:
+		call("play_%s_%s" %[func_identifer,mode], params)
+	
+
 func reset():
 	_color_panel.visible = false
 	
@@ -127,11 +106,10 @@ func set_debug(debug:bool, text:String=""):
 func clean_up():
 	removeLasting()
 	weather_off()
-	clear_debug()
 
 ### eh's Public Methods --------------------------------------------------------------------------------
 
-func play_transition_in() -> void:
+func play_transition_in(_p=[]) -> void:
 	_color_panel.visible = true
 	_play_in_animation(
 			_casted_transition_data.transition_in,
@@ -139,7 +117,7 @@ func play_transition_in() -> void:
 			_casted_transition_data.duration
 	)
 
-func play_transition_out() -> void:
+func play_transition_out(_p=[]) -> void:
 	_color_panel.visible = true
 	_play_out_animation(
 			_casted_transition_data.transition_out,
@@ -147,33 +125,81 @@ func play_transition_out() -> void:
 			_casted_transition_data.duration
 	)
 
-func play_transition_full() -> void:
+func play_transition_full(params:Array) -> void:
 	_color_panel.visible = true
 	if _animator.is_playing():
 		_raise_multiple_transition_error()
 		return
 	
+	if vn.Scene:
+		vn.Scene.hide_boxes()
+		vn.Scene.QM.visible = false
 	play_transition_in()
 	yield(self, "transition_mid_point_reached")
+	if vn.Scene:
+		vn.Scene.bg.bg_change(params[0])
 	play_transition_out()
+	if vn.Scene:
+		vn.Scene.show_boxes()
+		if not vn.Scene.QM.hiding: 
+			vn.Scene.QM.visible = true
 
 
-func play_fade_in(color: Color = Color.black, duration: float = 0.5) -> void:
-	_play_in_animation("fade_in", color, duration)
+func play_fade_in(params:Array) -> void:
+	_play_in_animation("fade_in", params[0], params[1])
 
+func play_fade_out(params:Array) -> void:
+	_play_out_animation("fade_out", params[0], params[1])
 
-func play_fade_out(color: Color = Color.black, duration: float = 0.5) -> void:
-	_play_out_animation("fade_out", color, duration)
-
-
-func play_fade_transition(color: Color = Color.black, duration: float = 0.5) -> void:
+func play_fade_full(params:Array) -> void:
+	# Values in params
+	# 0 : color
+	# 1 : duration
+	# 2 : bgpath
 	if _animator.is_playing():
 		_raise_multiple_transition_error()
 		return
 	
-	play_fade_in(color, duration)
+	if vn.Scene:
+		vn.Scene.hide_boxes()
+		vn.Scene.QM.visible = false
+	play_fade_in([params[0], params[1]])
+	if vn.Scene:
+		vn.Scene.bg.bg_change(params[2])
 	yield(self, "transition_mid_point_reached")
-	play_fade_out(color, duration)
+	play_fade_out([params[0], params[1]])
+	if vn.Scene:
+		vn.Scene.show_boxes()
+		if not vn.Scene.QM.hiding: 
+			vn.Scene.QM.visible = true
+			
+func play_pixelate_in(params:Array):
+	# 0 : duration
+	var r = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
+	self.add_child(r)
+	r.pixelate_in(params[0])
+
+func play_pixelate_out(params:Array):
+	var r = load("res://GodetteVN/Core/_Details/transitionRect.tscn").instance()
+	self.add_child(r)
+	r.pixelate_out(params[0])
+	
+func play_pixelate_full(params:Array)->void:
+	# params
+	# 0 : duration
+	# 1 : bg_path
+	if vn.Scene:
+		vn.Scene.hide_boxes()
+		vn.Scene.QM.visible = false
+	play_pixelate_in([params[0]])
+	yield(self,"transition_mid_point_reached")
+	if vn.Scene:
+		vn.Scene.bg.bg_change(params[1])
+	play_pixelate_out([params[0]])
+	if vn.Scene:
+		vn.Scene.show_boxes()
+		if not vn.Scene.QM.hiding: 
+			vn.Scene.QM.visible = true
 
 func change_transition_data_oneshot(data: eh_TransitionData) -> void:
 	var backup_transition: eh_TransitionData = transition_data
@@ -202,6 +228,12 @@ func is_transitioning_out() -> bool:
 
 #--------------------------------------------------------------------------------
 ### eh's Private Methods -------------------------------------------------------------------------------
+func _setup_transition_data(eff_name:String, color:Color, eff_dur:float):
+	var t_data = load(vn.TRANSITIONS_DIR+eff_name+".tres")
+	t_data.duration = eff_dur
+	t_data.color = color
+	if t_data != null and t_data is eh_TransitionData:
+		change_transition_data_oneshot(t_data)
 
 func _play_in_animation(animation : String, color: Color, duration: float) -> void:
 	if _animator.is_playing():

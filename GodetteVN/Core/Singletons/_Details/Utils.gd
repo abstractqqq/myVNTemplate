@@ -114,8 +114,8 @@ func make_a_save(msg = "[Quick Save] " , delay:float = 0.0, offset_by:int = 0):
 		yield(get_tree().create_timer(delay), 'timeout')
 		
 	create_thumbnail() # delay is mostly used to control the timing of the thumbnail
-	var slot = load(vn.SAVESLOT)
-	var sl = slot.instance() # bad. See below
+
+	var sl = vn.Pre.SAVE_SLOT.instance() # bad. See below
 	var temp = vn.Pgs.currentSaveDesc
 	var curId = vn.Pgs.currentIndex
 	vn.Pgs.currentIndex = vn.Pgs.currentIndex - offset_by
@@ -226,22 +226,26 @@ func MarkUp(words:String):
 	return output
 	
 #---------------------------------------------------------------------
-# read the string and try to understand it
-func read(s:String, json:bool=false):
-	if json:
-		pass
+# read the input and try to understand it
+# If input is not string, simply return the input
+# If input is a string and cannot be understood, it will return false.
+func read(s, json:bool=false):
+	if typeof(s) == TYPE_STRING:
+		if json:
+			pass
+		else:
+			match s.to_lower():
+				"true": return true
+				"false": return false
+				_: 
+					if vn.dvar.has(s):
+						return vn.dvar[s]
+					if s.is_valid_float():
+						return float(s)
+					else:
+						return false
 	else:
-		match s.to_lower():
-			"true": return true
-			"false": return false
-			_: 
-				if vn.dvar.has(s):
-					return vn.dvar[s]
-				if s.is_valid_float():
-					return float(s)
-				else:
-					return null
-	
+		return s
 
 #---------------------------------------------------------------------
 # Used if you only want your scale/zoom parameters to be between 0 and 1.
@@ -249,7 +253,13 @@ func read(s:String, json:bool=false):
 # recommended however, because this might destroy the image)
 func correct_scale(v:Vector2) -> Vector2:
 	return Vector2(min(1,abs(v.x)), min(1,abs(v.y)))
+	
+# No Mouse for control nodes
+func no_mouse():
+	vn.noMouse = true
 
+func yes_mouse():
+	vn.noMouse = false
 #---------------------------------------------------------------------
 # Global time controller
 

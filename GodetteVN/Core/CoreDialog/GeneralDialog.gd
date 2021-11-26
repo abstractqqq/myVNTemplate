@@ -538,29 +538,20 @@ func change_background(ev : Dictionary, auto_forw=true) -> void:
 	var path = ev['bg']
 	if ev.size() == 1 or vn.skipping or vn.inLoading:
 		bg.bg_change(path)
-	else:
-		var eff_name
-		for n in ev.keys():
-			var tf = n.to_lower()
-			if tf in vn.TRANSITIONS:
-				eff_name = tf
+	else: # size > 1
+		var eff_name = ""
+		for k in ev.keys():
+			if k in vn.TRANSITIONS:
+				eff_name = k
 				break
-		if eff_name == null:
-			print("!!! Error at " + str(ev))
+		if eff_name == "":
+			print("!!! Unknown transition at " + str(ev))
 			push_error("Unknown transition type given in bg change event.")
 			
 		var eff_dur = float(ev[eff_name])/2 # transition effect total duration / 2
-		var color = Color.black
-		if ev.has('color'): color = ev['color']
-		hide_boxes()
-		QM.visible = false
-		screen.in_transition(eff_name, color, eff_dur)
-		yield(screen, "transition_mid_point_reached")
-		bg.bg_change(path)
-		screen.out_transition(eff_name, color, eff_dur)
+		var color = _has_or_default(ev, 'color', Color.black)
+		screen.screen_transition("full",eff_name,color,eff_dur,path)
 		yield(screen, "transition_finished")
-		show_boxes()
-		if not QM.hiding: QM.visible = true
 	
 	if !vn.inLoading and auto_forw:
 		vn.Pgs.playback_events['bg'] = path
@@ -571,11 +562,10 @@ func change_scene_to(path : String):
 	change_weather('', false) # NOT screen.weather_off because we need to tell the sys
 	# remove record of weather, which is only done in change_weather()
 	QM.reset_auto_skip()
-	vn.Files.write_to_config()
 	print("You are changing scene. Rollback will be cleared. It's a good idea to explain "+\
 	"to the player the rules about rollback.")
 	vn.Pgs.rollback_records.clear()
-	if path == vn.title_screen_path:
+	if path in [vn.title_screen_path, vn.ending_scene_path]:
 		music.stop_bgm()
 	if path == "free":
 		music.stop_bgm()
@@ -588,7 +578,7 @@ func change_scene_to(path : String):
 #------------------------------ Related to Dvar --------------------------------
 func set_dvar(ev : Dictionary) -> void:
 	var og = ev['dvar']
-	# The order is crucial.
+	# The order is crucial, = has to be at the end.
 	var separators = ["+=","-=","*=","/=", "^=", "="]
 	var sep = ""
 	var splitted
@@ -636,7 +626,6 @@ func set_dvar(ev : Dictionary) -> void:
 func check_condition(cond_list) -> bool:
 	if typeof(cond_list) == TYPE_STRING: # if this is a string, not a list
 		cond_list = [cond_list]
-	
 	var final_result:bool = true # start by assuming final_result is true
 	var is_or:bool = false
 	while cond_list.size() > 0:
@@ -644,7 +633,8 @@ func check_condition(cond_list) -> bool:
 		var cond = cond_list.pop_front()
 		if all_conditions.has(cond):
 			cond = all_conditions[cond]
-		if typeof(cond) == TYPE_STRING:
+		var type = typeof(cond)
+		if type == TYPE_STRING:
 			if cond in ["or","||"]:
 				is_or = true
 				continue
@@ -670,10 +660,10 @@ func check_condition(cond_list) -> bool:
 				_: push_error("Unknown relation %s" %rel)
 			
 			final_result = _a_what_b(is_or, final_result, result)
-		elif typeof(cond) == TYPE_ARRAY: # array type
+		elif type == TYPE_ARRAY: # array type
 			final_result = _a_what_b(is_or, final_result, check_condition(cond))
 		else:
-			vn.error("Unknown entry in a condition array.")
+			push_error("Unknown entry in the condition array %s." %cond_list)
 
 		is_or = false
 	# If for loop ends, then all conditions must be passed. 
@@ -695,7 +685,7 @@ func screen_effects(ev: Dictionary, auto_forw=true):
 		"tint": tint(ev)
 		"tintwave": tint(ev)
 		"flashlight": flashlight(ev)
-		_: # GET RID OF YIELD HERE
+		_:
 			if temp.size()==2 and not vn.skipping:
 				var mode = temp[1]
 				var c = _has_or_default(ev, "color", Color.black)
@@ -703,10 +693,10 @@ func screen_effects(ev: Dictionary, auto_forw=true):
 				if ef in vn.TRANSITIONS:
 					if mode == "out": # this might be a bit counter-intuitive
 						# but we have to stick with this
-						screen.in_transition(ef,c,t)
+						screen.screen_transition('in',ef,c,t)
 						yield(screen, "transition_mid_point_reached")
 					elif mode == "in":
-						screen.out_transition(ef,c,t)
+						screen.screen_transition('out',ef,c,t)
 						yield(screen, "transition_finished")
 				screen.reset()
 	
@@ -1005,7 +995,7 @@ func sideImageChange(ev:Dictionary, auto_forw:bool = true):
 	else:
 		sideImage.texture = load(vn.SIDE_IMAGE+path)
 		vn.Pgs.playback_events['side'] = ev
-		stage.reset_sideImage(_has_or_default(ev,'scale',Vector2(1,1)),_has_or_default(ev,'loc',Vector2(-35, 530)))
+		stage.set_sideImage(_has_or_default(ev,'scale',Vector2(1,1)),_has_or_default(ev,'loc',Vector2(-35, 530)))
 	if auto_forw: auto_load_next()
 
 func check_dialog():
@@ -1087,7 +1077,7 @@ func on_rollback():
 		else:
 			vn.Pgs.history.pop_back()
 		screen.clean_up()
-		stage.reset_sideImage()
+		stage.set_sideImage()
 		camera.reset()
 		waiting_cho = false
 		centered = false
@@ -1507,17 +1497,13 @@ func _parse_nvl(nvl_state):
 	elif typeof(nvl_state) == TYPE_STRING:
 		match nvl_state.to_lower():
 			"clear": return nvl_state
-			"on":  return true
-			"off": return false
+			"on", "true":  return true
+			"off", "false": return false
 			_:
-				var result = vn.Utils.read(nvl_state)
-				if typeof(result) == TYPE_BOOL:
-					return result
-				else:
-					print("!!! Format error for NVL event.")
-					push_error("Expecting either boolean data or 'true' or 'false' strings.")
+				print("!!! Format error for NVL event.")
+				push_error("Expecting either boolean or 'true'/'false','on'/'off' strings.")
 
-func _parse_true_false(truth, ev = {}) -> bool:
+func _parse_true_false(truth) -> bool:
 	if typeof(truth) == TYPE_BOOL: # 1 = bool
 		return truth
 	if typeof(truth) == TYPE_STRING:
@@ -1595,3 +1581,7 @@ func preprocess(words : String) -> String:
 		i += 1
 	
 	return output
+	
+func _exit_tree():
+	vn.Scene = null
+	vn.Files.write_to_config()
